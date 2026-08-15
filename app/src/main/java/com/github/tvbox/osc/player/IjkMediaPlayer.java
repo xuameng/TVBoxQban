@@ -216,22 +216,31 @@ public class IjkMediaPlayer extends IjkPlayer {
         int videoSelected = mMediaPlayer.getSelectedTrack(ITrackInfo.MEDIA_TRACK_TYPE_VIDEO);
         int index = 0;
         for (IjkTrackInfo info : trackInfo) {
-            if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO) {
-                if (isAttachedPicture(info)) {
-                    LOG.i("echo-ijk-skip-attached-picture:" + info.getInfoInline());
-                    index++;
-                    continue;
-                }
-                TrackInfoBean v = new TrackInfoBean();
-                String name = processVideoName(info.getInfoInline());
-                String language = getFriendlyLanguage(info.getLanguage(), info.getInfoInline());
-                v.language = language;
-                v.name = buildDisplayName("视轨", data.getVideo().size() + 1, language, name);
-                v.trackId = index;
-                v.index = index;
-                v.selected = index == videoSelected;
-                data.addVideo(v);
-            } else if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO) {//音轨信息
+           if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO) {
+    if (isAttachedPicture(info)) {
+        LOG.i("echo-ijk-skip-attached-picture:" + info.getInfoInline());
+        index++;
+        continue;
+    }
+    TrackInfoBean v = new TrackInfoBean();
+    Map<String, String> videoInfo = parseVideoInfo(info.getInfoInline());
+    String codec = videoInfo.get("codec");       // "h264" / "avc" / "hevc" 等
+    String resolution = videoInfo.get("resolution"); // "1920x1080"
+
+    // 拼成: 1920x1080[h264视轨]
+    StringBuilder nameBuilder = new StringBuilder();
+    if (!resolution.isEmpty()) {
+        nameBuilder.append(resolution);
+    }
+    nameBuilder.append("[").append(codec.isEmpty() ? "未知" : codec).append("视轨]");
+
+    v.name = nameBuilder.toString();
+    v.language = getFriendlyLanguage(info.getLanguage(), info.getInfoInline());
+    v.trackId = index;
+    v.index = index;
+    v.selected = index == videoSelected;
+    data.addVideo(v);
+} else if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO) {//音轨信息
                 String infoInline = info.getInfoInline();
                 if (!TextUtils.isEmpty(infoInline)) {
                     String lower = infoInline.toLowerCase();
@@ -305,16 +314,41 @@ public class IjkMediaPlayer extends IjkPlayer {
         return "";
     }
 
-    private String buildDisplayName(String prefix, int number, String language, String detail) {
-        StringBuilder builder = new StringBuilder(prefix).append(number);
-        if (language != null && !language.isEmpty()) {
-            builder.append(" - ").append(language);
+/**
+ * 从 ijk infoInline 中提取编码和分辨率
+ * 返回: { "codec": "h264", "resolution": "1920x1080" }
+ */
+private Map<String, String> parseVideoInfo(String infoInline) {
+    Map<String, String> result = new HashMap<>();
+    result.put("codec", "");
+    result.put("resolution", "");
+    if (infoInline == null || infoInline.isEmpty()) return result;
+
+    // 原始格式类似: "VIDEO, h264, 2500 kb/s, 1920 x 1080" 或 "VIDEO, h264, 1920 x 1080"
+    String cleaned = infoInline
+            .replace("VIDEO,", "")
+            .replace("N/A,", "")
+            .replaceAll("\\s+", " ")
+            .trim();
+
+    // 按逗号分割
+    String[] parts = cleaned.split(",");
+    if (parts.length == 0) return result;
+
+    // 第一个通常是编码
+    result.put("codec", parts[0].trim());
+
+    // 找分辨率：匹配 "数字 x 数字" 或 "数字X数字"
+    for (String part : parts) {
+        String trimmed = part.trim();
+        if (trimmed.matches("\\d+\\s*[xX×]\\s*\\d+")) {
+            result.put("resolution", trimmed.replaceAll("\\s+", "").replace("×", "x"));
+            break;
         }
-        if (detail != null && !detail.isEmpty()) {
-            builder.append(" ").append(detail);
-        }
-        return builder.toString();
     }
+
+    return result;
+}
 
     public void setTrack(int trackIndex) {
         int audioSelected = mMediaPlayer.getSelectedTrack(ITrackInfo.MEDIA_TRACK_TYPE_AUDIO);
