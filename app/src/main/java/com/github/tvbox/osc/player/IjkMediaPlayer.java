@@ -280,6 +280,31 @@ public class IjkMediaPlayer extends IjkPlayer {
                 && format.getInteger(IjkMediaMeta.IJKM_KEY_FPS_NUM) <= 0;
     }
 
+    private String getFriendlyLanguage(String language, String rawInfo) {
+        String text = ((language == null ? "" : language) + " " + (rawInfo == null ? "" : rawInfo)).toLowerCase();
+        if (text.contains("yue") || text.contains("cantonese") || text.contains("\u7ca4") || text.contains("\u5e7f\u4e1c")) {
+            return "\u7ca4\u8bed";
+        }
+        if (text.contains("zh") || text.contains("chi") || text.contains("zho") || text.contains("chs")
+                || text.contains("cht") || text.contains("cmn") || text.contains("\u4e2d")
+                || text.contains("\u56fd\u8bed") || text.contains("\u666e\u901a\u8bdd")) {
+            return "\u56fd\u8bed";
+        }
+        if (text.contains("en") || text.contains("eng") || text.contains("english") || text.contains("\u82f1")) {
+            return "\u82f1\u8bed";
+        }
+        if (text.contains("ja") || text.contains("jpn") || text.contains("japanese") || text.contains("\u65e5")) {
+            return "\u65e5\u8bed";
+        }
+        if (text.contains("ko") || text.contains("kor") || text.contains("korean") || text.contains("\u97e9")) {
+            return "\u97e9\u8bed";
+        }
+        if (text.contains("tha") || text.contains("thai") || text.contains("th")) {
+            return "\u6cf0\u8bed";
+        }
+        return "";
+    }
+
     private String buildDisplayName(String prefix, int number, String language, String detail) {
         StringBuilder builder = new StringBuilder(prefix).append(number);
         if (language != null && !language.isEmpty()) {
