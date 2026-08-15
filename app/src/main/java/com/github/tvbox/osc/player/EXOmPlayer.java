@@ -181,7 +181,18 @@ public class EXOmPlayer extends ExoMediaPlayer {
                             t.trackGroupId = groupIndex;
                             t.renderId = groupArrayIndex;
                             data.addSubtitle(t);
-                        }
+                        } else if (MimeTypes.isVideo(format.sampleMimeType)) {
+    TrackInfoBean t = new TrackInfoBean();
+    t.name = (data.getVideo().size() + 1) + "：" 
+           + trackNameProvider.getTrackName(format) 
+           + "[" + format.codecs + "视频轨]";
+    t.language = "";
+    t.trackId = formatIndex;
+    t.selected = false; // 或根据当前选中状态判断
+    t.trackGroupId = groupIndex;
+    t.renderId = groupArrayIndex;
+    data.addVideo(t);  // 需要 TrackInfo 类中有对应的 addVideo() 方法
+}
                     }
                 }
             }
