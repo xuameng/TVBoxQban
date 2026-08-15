@@ -401,6 +401,11 @@ public class PlayFragment extends BaseLazyFragment {
             }
 
             @Override
+            public void selectVideoTrack() {
+                selectMyVideoTrack();
+            }
+
+            @Override
             public void prepared() {
                 initSubtitleView();
                 if (mVideoView != null) mVideoView.prepared();
@@ -684,6 +689,66 @@ public class PlayFragment extends BaseLazyFragment {
                 return oldItem.trackId == newItem.trackId;
             }
         }, bean, trackInfo.getAudioSelected(false));
+        dialog.show();
+    }
+
+    void selectMyVideoTrack() {
+        AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
+        TrackInfo trackInfo = null;
+        if (mediaPlayer instanceof IjkMediaPlayer) {
+            trackInfo = ((IjkMediaPlayer) mediaPlayer).getTrackInfo();
+        } else if (mediaPlayer instanceof EXOmPlayer) {
+            trackInfo = ((EXOmPlayer) mediaPlayer).getTrackInfo();
+        }
+        if (trackInfo == null || trackInfo.getVideo().isEmpty()) {
+            Toast.makeText(mContext, "没有视轨", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        List<TrackInfoBean> tracks = trackInfo.getVideo();
+        SelectDialog<TrackInfoBean> dialog = new SelectDialog<>(getActivity());
+        dialog.setTip("切换视轨");
+        dialog.setAdapter(new SelectDialogAdapter.SelectDialogInterface<TrackInfoBean>() {
+            @Override
+            public void click(TrackInfoBean value, int pos) {
+                try {
+                    for (TrackInfoBean track : tracks) {
+                        track.selected = isSameTrack(track, value);
+                    }
+                    mediaPlayer.pause();
+                    long progress = mediaPlayer.getCurrentPosition();
+                    if (mediaPlayer instanceof IjkMediaPlayer) {
+                        ((IjkMediaPlayer) mediaPlayer).setTrack(value.trackId);
+                    } else if (mediaPlayer instanceof EXOmPlayer) {
+                        ((EXOmPlayer) mediaPlayer).selectExoTrack(value);
+                    }
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mediaPlayer.seekTo(progress);
+                            mediaPlayer.start();
+                        }
+                    }, 200);
+                    dialog.dismiss();
+                } catch (Exception e) {
+                    LOG.e("echo-switch-video-track-error:" + e.getMessage());
+                }
+            }
+
+            @Override
+            public String getDisplay(TrackInfoBean val) {
+                return val.name;
+            }
+        }, new DiffUtil.ItemCallback<TrackInfoBean>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull @NotNull TrackInfoBean oldItem, @NonNull @NotNull TrackInfoBean newItem) {
+                return isSameTrack(oldItem, newItem);
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull @NotNull TrackInfoBean oldItem, @NonNull @NotNull TrackInfoBean newItem) {
+                return isSameTrack(oldItem, newItem);
+            }
+        }, tracks, trackInfo.getVideoSelected(false));
         dialog.show();
     }
 
