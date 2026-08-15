@@ -18,6 +18,8 @@ import java.net.URLEncoder;  //xuameng新增
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.HashMap;  //xuameng记忆选择音轨
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import com.github.tvbox.osc.util.AudioTrackMemory;  //xuameng记忆选择音轨
 import java.util.List;  //默认选中文音轨
 
@@ -280,6 +282,9 @@ private String processVideoName(String rawName) {
         resolution = matcher.group(1) + "x" + matcher.group(2);
     }
     
+    if (TextUtils.isEmpty(codec)){    //xuameng formatCodecs这是文件类型当audioCodecs返回空是用formatCodecs代替
+        codec = "未知";
+    }
     // 拼成: 720x1280[h264视轨]
     if (!resolution.isEmpty()) {
         return resolution + "[" + codec + "视轨]";
