@@ -10,6 +10,7 @@ public class TrackInfo {
 
     public TrackInfo() {
         audio = new ArrayList<>();
+        video = new ArrayList<>();
         subtitle = new ArrayList<>();
     }
 
