@@ -5,6 +5,7 @@ import java.util.List;
 
 public class TrackInfo {
     private List<TrackInfoBean> audio;
+    private List<TrackInfoBean> video;
     private List<TrackInfoBean> subtitle;
 
     public TrackInfo() {
