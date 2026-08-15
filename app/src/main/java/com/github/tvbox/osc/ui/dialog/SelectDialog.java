@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class SelectDialog<T> extends BaseDialog {
+    private TvRecyclerView tvRecyclerView;   // xuameng
     public SelectDialog(@NonNull @NotNull Context context) {
         super(context);
         setContentView(R.layout.dialog_select);
@@ -46,7 +47,7 @@ public class SelectDialog<T> extends BaseDialog {
         final int selectIdx = select;
         SelectDialogAdapter<T> adapter = new SelectDialogAdapter<>(sourceBeanSelectDialogInterface, sourceBeanItemCallback);
         adapter.setData(data, select);
-        TvRecyclerView tvRecyclerView = findViewById(R.id.list);
+        tvRecyclerView = findViewById(R.id.list);
         tvRecyclerView.setAdapter(adapter);
         tvRecyclerView.setSelectedPosition(select);
         if (select<5){
@@ -65,6 +66,7 @@ public class SelectDialog<T> extends BaseDialog {
     }
 
     private void safeSelecttvRecyclerView(int i) {     //xuameng滚动调整
+        if (tvRecyclerView == null) return;  
         // 检查 RecyclerView 是否处于安全状态
         if (tvRecyclerView.isComputingLayout() || tvRecyclerView.isScrolling()) {
             // 延迟执行，避免在布局计算或滚动过程中操作
