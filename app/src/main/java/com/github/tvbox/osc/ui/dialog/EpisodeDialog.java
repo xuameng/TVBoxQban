@@ -34,8 +34,9 @@ public class EpisodeDialog extends BaseDialog {
     private final int selectedPosition;
     private final EpisodeSelectListener listener;
 
-    private V7GridLayoutManager mEpisodeLayoutManager;
-    private androidx.recyclerview.widget.LinearSmoothScroller smoothScroller;
+    private V7GridLayoutManager mEpisodeLayoutManager;   //xuameng滚动调整
+    private androidx.recyclerview.widget.LinearSmoothScroller smoothScroller;  //xuameng滚动调整
+    private TvRecyclerView mEpisodeList;  //xuameng滚动调整
 
     public EpisodeDialog(@NonNull @NotNull Context context, String title, List<VodInfo.VodSeries> episodes, int selectedPosition, EpisodeSelectListener listener) {
         super(context);
@@ -57,12 +58,12 @@ public class EpisodeDialog extends BaseDialog {
             }
         });
 
-        TvRecyclerView episodeList = findViewById(R.id.episode_list);
+        TvRecyclerView mEpisodeList = findViewById(R.id.episode_list);
         EpisodeAdapter adapter = new EpisodeAdapter(selectedPosition);
-        episodeList.setHasFixedSize(true);
+        mEpisodeList.setHasFixedSize(true);
         V7GridLayoutManager layoutManager = new V7GridLayoutManager(getContext(), 1);
-        episodeList.setLayoutManager(layoutManager);
-        episodeList.setAdapter(adapter);
+        mEpisodeList.setLayoutManager(layoutManager);
+        mEpisodeList.setAdapter(adapter);
         adapter.setNewData(episodes);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -73,55 +74,51 @@ public class EpisodeDialog extends BaseDialog {
             }
         });
 
-mEpisodeLayoutManager = layoutManager;
+        mEpisodeLayoutManager = layoutManager;  //xuameng滚动调整
+        smoothScroller = new androidx.recyclerview.widget.LinearSmoothScroller(getContext()) {
+            @Override
+            protected float calculateSpeedPerPixel(android.util.DisplayMetrics displayMetrics) {
+                // 数值越大滚得越快
+                return 100f / displayMetrics.densityDpi;
+            }
 
-smoothScroller = new androidx.recyclerview.widget.LinearSmoothScroller(getContext()) {
-    @Override
-    protected float calculateSpeedPerPixel(android.util.DisplayMetrics displayMetrics) {
-        // 数值越大滚得越快，原 DetailActivity 是 100f
-        return 100f / displayMetrics.densityDpi;
+            @Override
+            public android.graphics.PointF computeScrollVectorForPosition(int targetPosition) {
+                return mEpisodeLayoutManager.computeScrollVectorForPosition(targetPosition);
+            }
+        };
+
+        mEpisodeList.post(new Runnable() {  //xuameng滚动调整
+            @Override
+            public void run() {
+                layoutManager.setSpanCount(getSpanCount(mEpisodeList.getWidth()));
+                customEpisodeScrollPos(selectedPosition);
+                mEpisodeList.setSelectedPosition(selectedPosition);
+                mEpisodeList.requestFocus();
+            }
+        });
     }
 
-    @Override
-    public android.graphics.PointF computeScrollVectorForPosition(int targetPosition) {
-        return mEpisodeLayoutManager.computeScrollVectorForPosition(targetPosition);
-    }
-};
+        private void customEpisodeScrollPos(int targetPos) { //xuameng滚动调整
+            // LayoutManager 还没准备好就延迟重试
+            if (mEpisodeLayoutManager == null || mEpisodeList == null) {
+                mEpisodeList.postDelayed(() -> customEpisodeScrollPos(targetPos), 100);
+                return;
+            }
 
-episodeList.post(new Runnable() {
-    @Override
-    public void run() {
-        layoutManager.setSpanCount(getSpanCount(episodeList.getWidth()));
+            // 快速跳过去（无动画，瞬间到位）
+            mEpisodeLayoutManager.scrollToPositionWithOffset(
+                    targetPos > 10 ? targetPos - 10 : 0, 0
+            );
 
-        customEpisodeScrollPos(selectedPosition);
-
-        episodeList.setSelectedPosition(selectedPosition);
-        episodeList.requestFocus();
-    }
-});
-    }
-
-private void customEpisodeScrollPos(int targetPos) {
-    // LayoutManager 还没准备好就延迟重试
-    if (mEpisodeLayoutManager == null || episodeList == null) {
-        episodeList.postDelayed(() -> customEpisodeScrollPos(targetPos), 100);
-        return;
-    }
-
-    // 1️⃣ 先快速跳过去（无动画，瞬间到位）
-    mEpisodeLayoutManager.scrollToPositionWithOffset(
-            targetPos > 10 ? targetPos - 10 : 0,
-            0
-    );
-
-    // 2️⃣ 再用 SmoothScroller 做短距离微调（看起来很顺）
-    episodeList.postDelayed(() -> {
-        if (mEpisodeLayoutManager != null && smoothScroller != null) {
-            smoothScroller.setTargetPosition(targetPos);
-            mEpisodeLayoutManager.startSmoothScroll(smoothScroller);
+            // 用 SmoothScroller 做短距离微调（看起来很顺）
+            mEpisodeList.postDelayed(() -> {
+                if (mEpisodeLayoutManager != null && smoothScroller != null) {
+                    smoothScroller.setTargetPosition(targetPos);
+                    mEpisodeLayoutManager.startSmoothScroll(smoothScroller);
+                }
+            }, 50);
         }
-    }, 50);
-}
 
     private int getSpanCount(int gridWidth) {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
