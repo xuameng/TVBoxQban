@@ -8,7 +8,7 @@
     <string name="exo_track_selection_none">未知</string>
     <string name="exo_track_selection_auto">自动</string>
     <string name="exo_track_unknown">未知</string>
-    <string name="exo_track_resolution">%1$dx%2$d</string>
+    <string name="exo_track_resolution">%1$dX%2$d</string>
     <string name="exo_track_mono">单声道</string>
     <string name="exo_track_stereo">立体声</string>
     <string name="exo_track_surround">环绕声</string>
