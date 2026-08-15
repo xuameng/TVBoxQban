@@ -59,6 +59,18 @@ public class SelectDialog<T> extends BaseDialog {
             public void run() {
                 if (selectIdx >= 5) {
                     tvRecyclerView.smoothScrollToPosition(selectIdx);
+                    mEpisodeList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                            super.onScrollStateChanged(recyclerView, newState);
+                            if (newState == tvRecyclerView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
+                                // 滚动已经停止，执行你需要的操作
+                                //	mGridView.requestFocus();
+                                safeSelecttvRecyclerView(selectIdx);
+                                tvRecyclerView.removeOnScrollListener(this);    //xuameng删除滚动监听
+                            }
+                        }
+                    });
                     safeSelecttvRecyclerView(selectIdx);  //xuameng滚动调整
                 }
             }
