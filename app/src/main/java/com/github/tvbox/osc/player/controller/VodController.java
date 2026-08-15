@@ -352,7 +352,7 @@ public class VodController extends BaseController {
     public SimpleSubtitleView mSubtitleView;
     TextView mZimuBtn;
     TextView mAudioTrackBtn;
-    TextView mVideoTrackBtn;
+    TextView mVideoTrackBtn;  //xuameng视轨
     TextView mDanmuSettingBtn;  //xuameng弹幕设置
     TextView mDanmuSearchUiBtn;  //xuameng 弹幕搜索
     public TextView mLandscapePortraitBtn;
@@ -1512,7 +1512,7 @@ public class VodController extends BaseController {
                 listener.selectAudioTrack();
             }
         });
-        mVideoTrackBtn.setOnClickListener(new OnClickListener() {
+        mVideoTrackBtn.setOnClickListener(new OnClickListener() {  //xuameng视轨
             @Override
             public void onClick(View view) {
                 FastClickCheckUtil.check(view);
@@ -1772,7 +1772,7 @@ public class VodController extends BaseController {
             mPlayerTimeStartBtn.setText(PlayerUtils.stringForTime(mPlayerConfig.getInt("st") * 1000));
             mPlayerTimeSkipBtn.setText(PlayerUtils.stringForTime(mPlayerConfig.getInt("et") * 1000));
   //          mAudioTrackBtn.setVisibility((playerType == 1 || playerType == 2) ? VISIBLE : GONE);     //xuameng不判断音轨了全部显示
-            mVideoTrackBtn.setVisibility((playerType == 1 || playerType == 2) ? VISIBLE : GONE);
+            mVideoTrackBtn.setVisibility((playerType == 1 || playerType == 2) ? VISIBLE : GONE);  //xuameng视轨
             mAudioTrackBtn.setVisibility(View.VISIBLE);
             mPlayrender.setText((pr == 0) ? "T渲染" : "S渲染"); //xuameng 渲染
             mPlayanimation.setText(musicAnimation ? "音柱已开" : "音柱已关");  //xuameng音乐播放动画获取状态
