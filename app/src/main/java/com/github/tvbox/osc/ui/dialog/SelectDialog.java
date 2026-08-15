@@ -2,6 +2,8 @@ package com.github.tvbox.osc.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -47,18 +49,34 @@ public class SelectDialog<T> extends BaseDialog {
         TvRecyclerView tvRecyclerView = findViewById(R.id.list);
         tvRecyclerView.setAdapter(adapter);
         tvRecyclerView.setSelectedPosition(select);
-        if (select<10){
+        if (select<5){
             tvRecyclerView.setSelection(select);
         }
+
         tvRecyclerView.post(new Runnable() {
             @Override
             public void run() {
-                if (selectIdx >= 10) {
+                if (selectIdx >= 5) {
                     tvRecyclerView.smoothScrollToPosition(selectIdx);
-                    tvRecyclerView.setSelectionWithSmooth(selectIdx);
+                    safeSelecttvRecyclerView(selectIdx);  //xuameng滚动调整
                 }
             }
         });
+    }
+
+    private void safeSelecttvRecyclerView(int i) {     //xuameng滚动调整
+        // 检查 RecyclerView 是否处于安全状态
+        if (tvRecyclerView.isComputingLayout() || tvRecyclerView.isScrolling()) {
+            // 延迟执行，避免在布局计算或滚动过程中操作
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    safeSelecttvRecyclerView(i); 
+                }
+            }, 20);
+            return;
+        }
+        tvRecyclerView.setSelection(i);
     }
 
 }
