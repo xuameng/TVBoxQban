@@ -187,6 +187,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                             if (TextUtils.isEmpty(formatCodecs)){    //xuameng formatCodecs这是文件类型当audioCodecs返回空是用formatCodecs代替
                                 formatCodecs = "未知";
                             }
+                            String formatCodecs = simplifyCodec(format.codecs);
                             TrackInfoBean t = new TrackInfoBean();
                             t.name = (data.getVideo().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + formatCodecs + "视轨]";
                             t.language = "";
@@ -201,6 +202,42 @@ public class EXOmPlayer extends ExoMediaPlayer {
             }
         }
         return data;
+    }
+
+    /**
+     * xuameng从完整 codec 字符串中提取简短编码名
+     * avc1.640032 → avc
+     * hev1.1.6.L93.B0 → hevc
+     * mp4a.40.2 → aac
+     * 其他原样返回
+     */
+    private String simplifyCodec(String codec) {
+        if (TextUtils.isEmpty(codec)) return "未知";
+    
+        // 按点分割，取第一段
+        String[] parts = codec.split("\\.");
+        String prefix = parts[0].toLowerCase().trim();
+    
+        // 常见映射
+        switch (prefix) {
+            case "avc1":
+            case "avc2":
+            case "avc3":
+            case "avc4":
+                return "h264";
+            case "hev1":
+            case "hvc1":
+                return "hevc";
+            case "vp09":
+            case "vp9":
+                return "vp9";
+            case "av01":
+                return "av1";
+            case "mp4a":
+                return "aac";
+            default:
+            return prefix;
+        }
     }
 
     @SuppressLint("UnsafeOptInUsageError")
