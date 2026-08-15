@@ -59,7 +59,7 @@ public class SelectDialog<T> extends BaseDialog {
             public void run() {
                 if (selectIdx >= 5) {
                     tvRecyclerView.smoothScrollToPosition(selectIdx);
-                    mEpisodeList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    tvRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                         @Override
                         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                             super.onScrollStateChanged(recyclerView, newState);
