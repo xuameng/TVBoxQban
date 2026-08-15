@@ -725,7 +725,7 @@ public class PlayFragment extends BaseLazyFragment {
                     if (mediaPlayer instanceof IjkMediaPlayer) {
                         ((IjkMediaPlayer) mediaPlayer).setTrack(value.trackId);
                     } else if (mediaPlayer instanceof EXOmPlayer) {
-                        ((EXOmPlayer) mediaPlayer).selectExoTrack(value);
+                        ((EXOmPlayer) mediaPlayer).selectExoTrackVideo(value);
                     }
                     new Handler().postDelayed(new Runnable() {
                         @Override
