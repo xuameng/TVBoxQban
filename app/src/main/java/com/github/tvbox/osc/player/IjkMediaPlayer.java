@@ -218,21 +218,20 @@ public class IjkMediaPlayer extends IjkPlayer {
         int videoSelected = mMediaPlayer.getSelectedTrack(ITrackInfo.MEDIA_TRACK_TYPE_VIDEO);
         int index = 0;
         for (IjkTrackInfo info : trackInfo) {
-            if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO) {
-    if (isAttachedPicture(info)) {
-        LOG.i("echo-ijk-skip-attached-picture:" + info.getInfoInline());
-        index++;
-        continue;
-    }
-    TrackInfoBean v = new TrackInfoBean();
-    int trackNum = data.getVideo().size() + 1;
-    v.name = trackNum + "：" + processVideoName(info.getInfoInline());
-    v.language = getFriendlyLanguage(info.getLanguage(), info.getInfoInline());
-    v.trackId = index;
-    v.index = index;
-    v.selected = index == videoSelected;
-    data.addVideo(v);
-
+            if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO) {  //xuameng视轨信息
+                if (isAttachedPicture(info)) {
+                    LOG.i("echo-ijk-skip-attached-picture:" + info.getInfoInline());
+                    index++;
+                    continue;
+                }
+                TrackInfoBean v = new TrackInfoBean();
+                int trackNum = data.getVideo().size() + 1;
+                v.name = trackNum + "：" + processVideoName(info.getInfoInline());  //xuameng视轨信息
+                v.language = getFriendlyLanguage(info.getLanguage(), info.getInfoInline());
+                v.trackId = index;
+                v.index = index;
+                v.selected = index == videoSelected;
+                data.addVideo(v);
             } else if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO) {//音轨信息
                 String infoInline = info.getInfoInline();
                 if (!TextUtils.isEmpty(infoInline)) {
@@ -264,33 +263,33 @@ public class IjkMediaPlayer extends IjkPlayer {
         return data;
     }
 
-private String processVideoName(String rawName) {
-    if (rawName == null || rawName.isEmpty()) return "";
+    private String processVideoName(String rawName) {   //xuameng 转换视轨信息
+        if (rawName == null || rawName.isEmpty()) return "";
     
-    String codec = "";
-    String resolution = "";
+        String codec = "";
+        String resolution = "";
     
-    // 提取编码（VIDEO, 后面第一个逗号前的部分）
-    String[] parts = rawName.replace("VIDEO,", "").replace("N/A,", "").split(",");
-    if (parts.length > 0) {
-        codec = parts[0].trim();
-    }
+        // 提取编码（VIDEO, 后面第一个逗号前的部分）
+        String[] parts = rawName.replace("VIDEO,", "").replace("N/A,", "").split(",");
+        if (parts.length > 0) {
+            codec = parts[0].trim();
+        }
     
-    // 提取分辨率：直接从原始串搜 "数字 x 数字"（不管split，不管空格）
-    Matcher matcher = Pattern.compile("(\\d+)\\s*[xX×*]\\s*(\\d+)").matcher(rawName);
-    if (matcher.find()) {
-        resolution = matcher.group(1) + "x" + matcher.group(2);
-    }
+        // 提取分辨率：直接从原始串搜 "数字 x 数字"（不管split，不管空格）
+        Matcher matcher = Pattern.compile("(\\d+)\\s*[xX×*]\\s*(\\d+)").matcher(rawName);
+        if (matcher.find()) {
+            resolution = matcher.group(1) + "x" + matcher.group(2);
+        }
     
-    if (TextUtils.isEmpty(codec)){    //xuameng formatCodecs这是文件类型当audioCodecs返回空是用formatCodecs代替
-        codec = "未知";
+        if (TextUtils.isEmpty(codec)){  
+            codec = "未知";
+        }
+        // 拼成: 720x1280[h264视轨]
+        if (!resolution.isEmpty()) {
+            return resolution + "[" + codec + "视轨]";
+        }
+        return "[" + codec + "视轨]";
     }
-    // 拼成: 720x1280[h264视轨]
-    if (!resolution.isEmpty()) {
-        return resolution + "[" + codec + "视轨]";
-    }
-    return "[" + codec + "视轨]";
-}
 
     private boolean isAttachedPicture(IjkTrackInfo info) {
         IMediaFormat format = info.getFormat();
