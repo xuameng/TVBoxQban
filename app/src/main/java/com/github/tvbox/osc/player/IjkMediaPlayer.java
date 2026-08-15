@@ -216,31 +216,22 @@ public class IjkMediaPlayer extends IjkPlayer {
         int videoSelected = mMediaPlayer.getSelectedTrack(ITrackInfo.MEDIA_TRACK_TYPE_VIDEO);
         int index = 0;
         for (IjkTrackInfo info : trackInfo) {
-           if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO) {
+            if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO) {
     if (isAttachedPicture(info)) {
         LOG.i("echo-ijk-skip-attached-picture:" + info.getInfoInline());
         index++;
         continue;
     }
     TrackInfoBean v = new TrackInfoBean();
-    Map<String, String> videoInfo = parseVideoInfo(info.getInfoInline());
-    String codec = videoInfo.get("codec");       // "h264" / "avc" / "hevc" 等
-    String resolution = videoInfo.get("resolution"); // "1920x1080"
-
-    // 拼成: 1920x1080[h264视轨]
-    StringBuilder nameBuilder = new StringBuilder();
-    if (!resolution.isEmpty()) {
-        nameBuilder.append(resolution);
-    }
-    nameBuilder.append("[").append(codec.isEmpty() ? "未知" : codec).append("视轨]");
-
-    v.name = nameBuilder.toString();
+    int trackNum = data.getVideo().size() + 1;
+    v.name = trackNum + "：" + processVideoName(info.getInfoInline());
     v.language = getFriendlyLanguage(info.getLanguage(), info.getInfoInline());
     v.trackId = index;
     v.index = index;
     v.selected = index == videoSelected;
     data.addVideo(v);
-} else if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO) {//音轨信息
+
+            } else if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO) {//音轨信息
                 String infoInline = info.getInfoInline();
                 if (!TextUtils.isEmpty(infoInline)) {
                     String lower = infoInline.toLowerCase();
@@ -271,14 +262,30 @@ public class IjkMediaPlayer extends IjkPlayer {
         return data;
     }
 
-    private String processVideoName(String rawName) {
-        if (rawName == null) return "";
-        return rawName.replace("VIDEO,", "")
-                .replace("N/A,", "")
-                .replace(" ", "")
-                .replaceAll("^,+|,+$", "")
-                .replace(",", " / ");
+private String processVideoName(String rawName) {
+    if (rawName == null || rawName.isEmpty()) return "";
+    
+    String codec = "";
+    String resolution = "";
+    
+    // 提取编码（VIDEO, 后面第一个逗号前的部分）
+    String[] parts = rawName.replace("VIDEO,", "").replace("N/A,", "").split(",");
+    if (parts.length > 0) {
+        codec = parts[0].trim();
     }
+    
+    // 提取分辨率：直接从原始串搜 "数字 x 数字"（不管split，不管空格）
+    Matcher matcher = Pattern.compile("(\\d+)\\s*[xX×*]\\s*(\\d+)").matcher(rawName);
+    if (matcher.find()) {
+        resolution = matcher.group(1) + "x" + matcher.group(2);
+    }
+    
+    // 拼成: 720x1280[h264视轨]
+    if (!resolution.isEmpty()) {
+        return resolution + "[" + codec + "视轨]";
+    }
+    return "[" + codec + "视轨]";
+}
 
     private boolean isAttachedPicture(IjkTrackInfo info) {
         IMediaFormat format = info.getFormat();
@@ -313,42 +320,6 @@ public class IjkMediaPlayer extends IjkPlayer {
         }
         return "";
     }
-
-/**
- * 从 ijk infoInline 中提取编码和分辨率
- * 返回: { "codec": "h264", "resolution": "1920x1080" }
- */
-private Map<String, String> parseVideoInfo(String infoInline) {
-    Map<String, String> result = new HashMap<>();
-    result.put("codec", "");
-    result.put("resolution", "");
-    if (infoInline == null || infoInline.isEmpty()) return result;
-
-    // 原始格式类似: "VIDEO, h264, 2500 kb/s, 1920 x 1080" 或 "VIDEO, h264, 1920 x 1080"
-    String cleaned = infoInline
-            .replace("VIDEO,", "")
-            .replace("N/A,", "")
-            .replaceAll("\\s+", " ")
-            .trim();
-
-    // 按逗号分割
-    String[] parts = cleaned.split(",");
-    if (parts.length == 0) return result;
-
-    // 第一个通常是编码
-    result.put("codec", parts[0].trim());
-
-    // 找分辨率：匹配 "数字 x 数字" 或 "数字X数字"
-    for (String part : parts) {
-        String trimmed = part.trim();
-        if (trimmed.matches("\\d+\\s*[xX×]\\s*\\d+")) {
-            result.put("resolution", trimmed.replaceAll("\\s+", "").replace("×", "x"));
-            break;
-        }
-    }
-
-    return result;
-}
 
     public void setTrack(int trackIndex) {
         int audioSelected = mMediaPlayer.getSelectedTrack(ITrackInfo.MEDIA_TRACK_TYPE_AUDIO);
