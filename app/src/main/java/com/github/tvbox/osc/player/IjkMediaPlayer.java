@@ -22,6 +22,8 @@ import com.github.tvbox.osc.util.AudioTrackMemory;  //xuameng记忆选择音轨
 import java.util.List;  //默认选中文音轨
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkMediaMeta;
+import tv.danmaku.ijk.media.player.misc.IMediaFormat;
 import tv.danmaku.ijk.media.player.misc.ITrackInfo;
 import tv.danmaku.ijk.media.player.misc.IjkTrackInfo;
 import xyz.doikki.videoplayer.ijk.IjkPlayer;
@@ -211,9 +213,25 @@ public class IjkMediaPlayer extends IjkPlayer {
         TrackInfo data = new TrackInfo();
         int subtitleSelected = mMediaPlayer.getSelectedTrack(ITrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT);
         int audioSelected = mMediaPlayer.getSelectedTrack(ITrackInfo.MEDIA_TRACK_TYPE_AUDIO);
+        int videoSelected = mMediaPlayer.getSelectedTrack(ITrackInfo.MEDIA_TRACK_TYPE_VIDEO);
         int index = 0;
         for (IjkTrackInfo info : trackInfo) {
-            if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO) {//音轨信息
+            if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_VIDEO) {
+                if (isAttachedPicture(info)) {
+                    LOG.i("echo-ijk-skip-attached-picture:" + info.getInfoInline());
+                    index++;
+                    continue;
+                }
+                TrackInfoBean v = new TrackInfoBean();
+                String name = processVideoName(info.getInfoInline());
+                String language = getFriendlyLanguage(info.getLanguage(), info.getInfoInline());
+                v.language = language;
+                v.name = buildDisplayName("视轨", data.getVideo().size() + 1, language, name);
+                v.trackId = index;
+                v.index = index;
+                v.selected = index == videoSelected;
+                data.addVideo(v);
+            } else if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_AUDIO) {//音轨信息
                 String infoInline = info.getInfoInline();
                 if (!TextUtils.isEmpty(infoInline)) {
                     String lower = infoInline.toLowerCase();
@@ -230,8 +248,7 @@ public class IjkMediaPlayer extends IjkPlayer {
                 a.selected = index == audioSelected;
                 // 如果需要，还可以检查轨道的描述或标题以获取更多信息
                 data.addAudio(a);
-            }
-            if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT) {//内置字幕
+            } else if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT) {//内置字幕
                 String trackName = "";
                 TrackInfoBean t = new TrackInfoBean();
                 t.name = trackName;
@@ -243,6 +260,35 @@ public class IjkMediaPlayer extends IjkPlayer {
             index++;
         }
         return data;
+    }
+
+    private String processVideoName(String rawName) {
+        if (rawName == null) return "";
+        return rawName.replace("VIDEO,", "")
+                .replace("N/A,", "")
+                .replace(" ", "")
+                .replaceAll("^,+|,+$", "")
+                .replace(",", " / ");
+    }
+
+    private boolean isAttachedPicture(IjkTrackInfo info) {
+        IMediaFormat format = info.getFormat();
+        if (format == null) return false;
+        String codecName = format.getString(IjkMediaMeta.IJKM_KEY_CODEC_NAME);
+        return "mjpeg".equalsIgnoreCase(codecName)
+                && format.getInteger(IjkMediaMeta.IJKM_KEY_BITRATE) <= 0
+                && format.getInteger(IjkMediaMeta.IJKM_KEY_FPS_NUM) <= 0;
+    }
+
+    private String buildDisplayName(String prefix, int number, String language, String detail) {
+        StringBuilder builder = new StringBuilder(prefix).append(number);
+        if (language != null && !language.isEmpty()) {
+            builder.append(" - ").append(language);
+        }
+        if (detail != null && !detail.isEmpty()) {
+            builder.append(" ").append(detail);
+        }
+        return builder.toString();
     }
 
     public void setTrack(int trackIndex) {
