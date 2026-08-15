@@ -58,7 +58,7 @@ public class EpisodeDialog extends BaseDialog {
             }
         });
 
-        TvRecyclerView mEpisodeList = findViewById(R.id.episode_list);
+        mEpisodeList = findViewById(R.id.episode_list);
         EpisodeAdapter adapter = new EpisodeAdapter(selectedPosition);
         mEpisodeList.setHasFixedSize(true);
         V7GridLayoutManager layoutManager = new V7GridLayoutManager(getContext(), 1);
