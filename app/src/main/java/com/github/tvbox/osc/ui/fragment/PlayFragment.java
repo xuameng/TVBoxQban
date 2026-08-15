@@ -692,6 +692,12 @@ public class PlayFragment extends BaseLazyFragment {
         dialog.show();
     }
 
+    private boolean isSameTrack(TrackInfoBean left, TrackInfoBean right) {
+        return left.renderId == right.renderId
+                && left.trackGroupId == right.trackGroupId
+                && left.trackId == right.trackId;
+    }
+
     void selectMyVideoTrack() {
         AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
         TrackInfo trackInfo = null;
@@ -701,7 +707,7 @@ public class PlayFragment extends BaseLazyFragment {
             trackInfo = ((EXOmPlayer) mediaPlayer).getTrackInfo();
         }
         if (trackInfo == null || trackInfo.getVideo().isEmpty()) {
-            Toast.makeText(mContext, "没有视轨", Toast.LENGTH_SHORT).show();
+            App.showToastShort(mContext, "没有视轨");
             return;
         }
         List<TrackInfoBean> tracks = trackInfo.getVideo();
