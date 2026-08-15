@@ -53,4 +53,17 @@ public class TrackInfo {
     public void addSubtitle(TrackInfoBean subtitle) {
         this.subtitle.add(subtitle);
     }
+
+    public List<TrackInfoBean> getVideo() {
+        return video;
+    }
+
+    public int getVideoSelected(boolean track) {
+        return getSelected(video, track);
+    }
+
+    public void addVideo(TrackInfoBean video) {
+        this.video.add(video);
+    }
+
 }
