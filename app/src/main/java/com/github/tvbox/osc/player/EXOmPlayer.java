@@ -24,6 +24,7 @@ import com.github.tvbox.osc.util.AudioTrackMemory;  //xuameng记忆选择音轨
 public class EXOmPlayer extends ExoMediaPlayer {
     private String audioId = "";
     private String subtitleId = "";
+    private String videoId = "";   //xuameng视轨
     private static AudioTrackMemory memory;    //xuameng记忆选择音轨
     
     public EXOmPlayer(Context context) {
@@ -182,17 +183,15 @@ public class EXOmPlayer extends ExoMediaPlayer {
                             t.renderId = groupArrayIndex;
                             data.addSubtitle(t);
                         } else if (MimeTypes.isVideo(format.sampleMimeType)) {
-    TrackInfoBean t = new TrackInfoBean();
-    t.name = (data.getVideo().size() + 1) + "：" 
-           + trackNameProvider.getTrackName(format) 
-           + "[" + format.codecs + "视频轨]";
-    t.language = "";
-    t.trackId = formatIndex;
-    t.selected = false; // 或根据当前选中状态判断
-    t.trackGroupId = groupIndex;
-    t.renderId = groupArrayIndex;
-    data.addVideo(t);  // 需要 TrackInfo 类中有对应的 addVideo() 方法
-}
+                            TrackInfoBean t = new TrackInfoBean();
+                            t.name = (data.getVideo().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + format.codecs + "视轨]";
+                            t.language = "";
+                            t.trackId = formatIndex;
+                            t.selected = group.isTrackSelected(formatIndex); 
+                            t.trackGroupId = groupIndex;
+                            t.renderId = groupArrayIndex;
+                            data.addVideo(t);  
+                        }
                     }
                 }
             }
@@ -204,6 +203,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
     private void getExoSelectedTrack() {
         audioId = "";
         subtitleId = "";
+        videoId = "";  //xuameng视轨
         Tracks tracks = mMediaPlayer.getCurrentTracks();
         if (tracks == null) return;
         for (Tracks.Group group : tracks.getGroups()) {
@@ -214,6 +214,8 @@ public class EXOmPlayer extends ExoMediaPlayer {
                         audioId = format.id;
                     } else if (MimeTypes.isText(format.sampleMimeType)) {
                         subtitleId = format.id;
+                    } else if (MimeTypes.isVideo(format.sampleMimeType)) {  //xuameng视轨
+                        videoId = format.id;
                     }
                 }
             }
