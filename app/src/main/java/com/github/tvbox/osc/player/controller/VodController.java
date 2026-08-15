@@ -352,7 +352,7 @@ public class VodController extends BaseController {
     public SimpleSubtitleView mSubtitleView;
     TextView mZimuBtn;
     TextView mAudioTrackBtn;
-    TextView mVideoTrackBtn
+    TextView mVideoTrackBtn;
     TextView mDanmuSettingBtn;  //xuameng弹幕设置
     TextView mDanmuSearchUiBtn;  //xuameng 弹幕搜索
     public TextView mLandscapePortraitBtn;
