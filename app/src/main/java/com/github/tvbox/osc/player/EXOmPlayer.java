@@ -183,8 +183,12 @@ public class EXOmPlayer extends ExoMediaPlayer {
                             t.renderId = groupArrayIndex;
                             data.addSubtitle(t);
                         } else if (MimeTypes.isVideo(format.sampleMimeType)) {
+                            String formatCodecs = format.codecs;
+                            if (TextUtils.isEmpty(formatCodecs)){    //xuameng formatCodecs这是文件类型当audioCodecs返回空是用formatCodecs代替
+                                formatCodecs = "未知";
+                            }
                             TrackInfoBean t = new TrackInfoBean();
-                            t.name = (data.getVideo().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + format.codecs + "视轨]";
+                            t.name = (data.getVideo().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + formatCodecs + "视轨]";
                             t.language = "";
                             t.trackId = formatIndex;
                             t.selected = !StringUtils.isEmpty(videoId) && videoId.equals(format.id);
