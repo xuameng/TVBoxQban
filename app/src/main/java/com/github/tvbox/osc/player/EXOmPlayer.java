@@ -187,7 +187,7 @@ public class EXOmPlayer extends ExoMediaPlayer {
                             t.name = (data.getVideo().size() + 1) + "：" + trackNameProvider.getTrackName(format) + "[" + format.codecs + "视轨]";
                             t.language = "";
                             t.trackId = formatIndex;
-                            t.selected = group.isTrackSelected(formatIndex); 
+                            t.selected = !StringUtils.isEmpty(videoId) && videoId.equals(format.id);
                             t.trackGroupId = groupIndex;
                             t.renderId = groupArrayIndex;
                             data.addVideo(t);  
