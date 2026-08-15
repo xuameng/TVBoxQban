@@ -271,6 +271,40 @@ public class EXOmPlayer extends ExoMediaPlayer {
             }
         }
     }
+
+    public void selectExoTrackVideo(@Nullable TrackInfoBean videoTrackBean) {    //xuameng选择视轨
+        MappingTrackSelector.MappedTrackInfo trackInfo = getTrackSelector().getCurrentMappedTrackInfo();
+        if (trackInfo == null) return;
+
+        if (videoTrackBean == null) {
+            // 禁用视频轨道（一般很少用，但保留逻辑完整性）
+            for (int renderIndex = 0; renderIndex < trackInfo.getRendererCount(); renderIndex++) {
+                if (trackInfo.getRendererType(renderIndex) == C.TRACK_TYPE_VIDEO) {
+                    DefaultTrackSelector.Parameters.Builder parametersBuilder =
+                            getTrackSelector().getParameters().buildUpon();
+                    parametersBuilder.setRendererDisabled(renderIndex, true);
+                    getTrackSelector().setParameters(parametersBuilder);
+                    break;
+                }
+            }
+        } else {
+            // 先确认 renderId 确实是视频类型
+            if (trackInfo.getRendererType(videoTrackBean.renderId) != C.TRACK_TYPE_VIDEO) {
+                LogUtils.e("selectExoTrackVideo: renderId does not point to a video track!");
+                return;
+            }
+
+            TrackGroupArray trackGroupArray = trackInfo.getTrackGroups(videoTrackBean.renderId);
+            DefaultTrackSelector.SelectionOverride override =
+                    new DefaultTrackSelector.SelectionOverride(videoTrackBean.trackGroupId, videoTrackBean.trackId);
+
+            DefaultTrackSelector.Parameters.Builder parametersBuilder =
+                    getTrackSelector().buildUponParameters();
+            parametersBuilder.setRendererDisabled(videoTrackBean.renderId, false);
+            parametersBuilder.setSelectionOverride(videoTrackBean.renderId, trackGroupArray, override);
+            getTrackSelector().setParameters(parametersBuilder);
+        }
+    }
     
     //xuameng记忆选择音轨
     public void loadDefaultTrack(String playKey) {
