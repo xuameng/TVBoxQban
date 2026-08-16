@@ -263,42 +263,42 @@ public class IjkMediaPlayer extends IjkPlayer {
         return data;
     }
 
-private String processVideoName(IjkTrackInfo info) {
-    if (info == null) return "未知视轨";
+    private String processVideoName(IjkTrackInfo info) {    //xuameng 转换视轨信息
+        if (info == null) return "未知视轨";
 
-    String rawName = info.getInfoInline();
-    if (rawName == null || rawName.isEmpty()) return "未知视轨";
+        String rawName = info.getInfoInline();
+        if (rawName == null || rawName.isEmpty()) return "未知视轨";
 
-    String codec = "";
-    String resolution = "";
+        String codec = "";
+        String resolution = "";
 
-    // 提取编码
-    String[] parts = rawName.replace("VIDEO,", "").replace("N/A,", "").split(",");
-    if (parts.length > 0) {
-        codec = parts[0].trim();
+        // 提取编码
+        String[] parts = rawName.replace("VIDEO,", "").replace("N/A,", "").split(",");
+        if (parts.length > 0) {
+            codec = parts[0].trim();
+        }
+
+        // 提取分辨率
+        Matcher matcher = Pattern.compile("(\\d+)\\s*[xX×*]\\s*(\\d+)").matcher(rawName);
+        if (matcher.find()) {
+            resolution = matcher.group(1) + " X " + matcher.group(2);
+        }
+
+        // 直接从 IjkStreamMeta 拿码率，格式统一、零解析
+        String bitrate = info.mStreamMeta != null ? info.mStreamMeta.getBitrateInline() : "";
+        if ("N/A".equals(bitrate)) bitrate = "";  // 无效码率不显示
+
+        if (TextUtils.isEmpty(codec)) {
+            codec = "未知";
+        }
+        if (TextUtils.isEmpty(resolution)) {
+            return "[" + codec + "视轨]";
+        }
+        if (!TextUtils.isEmpty(bitrate)) {
+            return resolution + "," + bitrate + "[" + codec + "视轨]";
+        }
+        return resolution + "[" + codec + "视轨]";
     }
-
-    // 提取分辨率
-    Matcher matcher = Pattern.compile("(\\d+)\\s*[xX×*]\\s*(\\d+)").matcher(rawName);
-    if (matcher.find()) {
-        resolution = matcher.group(1) + " X " + matcher.group(2);
-    }
-
-    // 直接从 IjkStreamMeta 拿码率，格式统一、零解析
-    String bitrate = info.mStreamMeta != null ? info.mStreamMeta.getBitrateInline() : "";
-    if ("N/A".equals(bitrate)) bitrate = "";  // 无效码率不显示
-
-    if (TextUtils.isEmpty(codec)) {
-        codec = "未知";
-    }
-    if (TextUtils.isEmpty(resolution)) {
-        return "[" + codec + "视轨]";
-    }
-    if (!TextUtils.isEmpty(bitrate)) {
-        return resolution + "," + bitrate + "[" + codec + "视轨]";
-    }
-    return resolution + "[" + codec + "视轨]";
-}
 
     private boolean isAttachedPicture(IjkTrackInfo info) {
         IMediaFormat format = info.getFormat();
