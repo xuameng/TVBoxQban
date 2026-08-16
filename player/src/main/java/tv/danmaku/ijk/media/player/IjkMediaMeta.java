@@ -351,9 +351,9 @@ public class IjkMediaMeta {
             if (mWidth <= 0 || mHeight <= 0) {
                 return "N/A";
             } else if (mSarNum <= 0 || mSarDen <= 0) {
-                return String.format(Locale.US, "%d X %d", mWidth, mHeight);
+                return String.format(Locale.US, "%d x %d", mWidth, mHeight);
             } else {
-                return String.format(Locale.US, "%d X %d [SAR %d:%d]", mWidth,
+                return String.format(Locale.US, "%d x %d [SAR %d:%d]", mWidth,
                         mHeight, mSarNum, mSarDen);
             }
         }
