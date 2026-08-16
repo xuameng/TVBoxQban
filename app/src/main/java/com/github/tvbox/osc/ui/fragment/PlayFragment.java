@@ -805,10 +805,10 @@ public class PlayFragment extends BaseLazyFragment {
                     }
 
                     // xuameng判断选中的字幕是否为 PGS 格式 或图形字幕
-                    boolean isPgsSubtitle = value.language != null 
-                        && (value.language.toLowerCase().contains("pgs")
-                        || value.language.toLowerCase().contains("vobsub")
-                        || value.language.toLowerCase().contains("dvb"));
+                    boolean isPgsSubtitle = value.name != null 
+                        && (value.name.toLowerCase().contains("pgs")
+                        || value.name.toLowerCase().contains("vobsub")
+                        || value.name.toLowerCase().contains("dvb"));
                     if (mediaPlayer instanceof EXOmPlayer) {
 
                         if (isPgsSubtitle) {
@@ -1075,9 +1075,9 @@ public class PlayFragment extends BaseLazyFragment {
 
                 // 判断当前选中的字幕是否为 PGS或图形字幕
                 boolean isPgsSelected = false;
-                if (selectedSubtitleTrack != null && selectedSubtitleTrack.language != null) {
+                if (selectedSubtitleTrack != null && selectedSubtitleTrack.name != null) {
                     try {
-                        String lang = selectedSubtitleTrack.language.toLowerCase();
+                        String lang = selectedSubtitleTrack.name.toLowerCase();
                         isPgsSelected = lang.contains("pgs") || lang.contains("vobsub") || lang.contains("dvb");
                     } catch (Exception e) {
                     // 处理可能的异常情况
@@ -1141,7 +1141,7 @@ public class PlayFragment extends BaseLazyFragment {
                         int selectedIndex = trackInfo.getSubtitleSelected(true);
                         boolean hasCh =false;
                         for(TrackInfoBean subtitleTrackInfoBean : subtitleTrackList) {
-                            String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
+                            String lowerLang = subtitleTrackInfoBean.name.toLowerCase();
                             if (isChineseSubtitle(subtitleTrackInfoBean)){    //xuameng修复EXO播放器也可以默认选择中文字幕
                                 hasCh=true;                               
                                     if (mVideoView.getMediaPlayer() instanceof IjkMediaPlayer){
@@ -1168,11 +1168,11 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     public boolean isChineseSubtitle(TrackInfoBean subtitleTrackInfoBean) {   //xuameng判断中文字幕
-       if (subtitleTrackInfoBean == null || subtitleTrackInfoBean.language == null) {
+       if (subtitleTrackInfoBean == null || subtitleTrackInfoBean.name == null) {
             return false;
         }
     
-        String lowerLang = subtitleTrackInfoBean.language.toLowerCase();
+        String lowerLang = subtitleTrackInfoBean.name.toLowerCase();
     
         // 检测顺序很重要，先检测更具体的标识
         if (lowerLang.contains("中英")) {
