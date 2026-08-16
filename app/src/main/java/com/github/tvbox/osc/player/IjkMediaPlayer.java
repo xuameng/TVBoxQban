@@ -250,10 +250,10 @@ public class IjkMediaPlayer extends IjkPlayer {
                 // 如果需要，还可以检查轨道的描述或标题以获取更多信息
                 data.addAudio(a);
             } else if (info.getTrackType() == ITrackInfo.MEDIA_TRACK_TYPE_TIMEDTEXT) {//内置字幕
-                String trackName = "";
+                String trackName = (data.getSubtitle().size() + 1) + "：" + info.getInfoInline();   //xuameng 字幕信息
                 TrackInfoBean t = new TrackInfoBean();
                 t.name = trackName;
-                t.language = (data.getSubtitle().size() + 1) + "：" + info.getInfoInline();   //xuameng 字幕信息
+                t.language = "";
                 t.trackId = index;
                 t.selected = index == subtitleSelected;
                 data.addSubtitle(t);
