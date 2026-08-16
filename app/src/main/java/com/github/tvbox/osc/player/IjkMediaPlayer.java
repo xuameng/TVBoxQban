@@ -226,7 +226,7 @@ public class IjkMediaPlayer extends IjkPlayer {
                 }
                 TrackInfoBean v = new TrackInfoBean();
                 int trackNum = data.getVideo().size() + 1;
-                v.name = trackNum + "：" + processVideoName(info.getInfoInline());  //xuameng视轨信息
+                v.name = trackNum + "：" + processVideoName(info);  //xuameng视轨信息
                 v.language = "";
                 v.trackId = index;
                 v.index = index;
@@ -263,33 +263,42 @@ public class IjkMediaPlayer extends IjkPlayer {
         return data;
     }
 
-    private String processVideoName(String rawName) {   //xuameng 转换视轨信息
-        if (rawName == null || rawName.isEmpty()) return "";
-    
-        String codec = "";
-        String resolution = "";
-    
-        // 提取编码（VIDEO, 后面第一个逗号前的部分）
-        String[] parts = rawName.replace("VIDEO,", "").replace("N/A,", "").split(",");
-        if (parts.length > 0) {
-            codec = parts[0].trim();
-        }
-    
-        // 提取分辨率：直接从原始串搜 "数字 x 数字"（不管split，不管空格）
-        Matcher matcher = Pattern.compile("(\\d+)\\s*[xX×*]\\s*(\\d+)").matcher(rawName);
-        if (matcher.find()) {
-            resolution = matcher.group(1) + " X " + matcher.group(2);
-        }
-    
-        if (TextUtils.isEmpty(codec)){  
-            codec = "未知";
-        }
-        // 拼成: 720x1280[h264视轨]
-        if (!resolution.isEmpty()) {
-            return resolution + "[" + codec + "视轨]";
-        }
+private String processVideoName(IjkTrackInfo info) {
+    if (info == null) return "未知视轨";
+
+    String rawName = info.getInfoInline();
+    if (rawName == null || rawName.isEmpty()) return "未知视轨";
+
+    String codec = "";
+    String resolution = "";
+
+    // 提取编码
+    String[] parts = rawName.replace("VIDEO,", "").replace("N/A,", "").split(",");
+    if (parts.length > 0) {
+        codec = parts[0].trim();
+    }
+
+    // 提取分辨率
+    Matcher matcher = Pattern.compile("(\\d+)\\s*[xX×*]\\s*(\\d+)").matcher(rawName);
+    if (matcher.find()) {
+        resolution = matcher.group(1) + " X " + matcher.group(2);
+    }
+
+    // 直接从 IjkStreamMeta 拿码率，格式统一、零解析
+    String bitrate = info.mStreamMeta != null ? info.mStreamMeta.getBitrateInline() : "";
+    if ("N/A".equals(bitrate)) bitrate = "";  // 无效码率不显示
+
+    if (TextUtils.isEmpty(codec)) {
+        codec = "未知";
+    }
+    if (TextUtils.isEmpty(resolution)) {
         return "[" + codec + "视轨]";
     }
+    if (!TextUtils.isEmpty(bitrate)) {
+        return resolution + "," + bitrate + "[" + codec + "视轨]";
+    }
+    return resolution + "[" + codec + "视轨]";
+}
 
     private boolean isAttachedPicture(IjkTrackInfo info) {
         IMediaFormat format = info.getFormat();
