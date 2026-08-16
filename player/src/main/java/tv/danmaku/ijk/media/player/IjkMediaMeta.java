@@ -370,11 +370,11 @@ public class IjkMediaMeta {
             if (mBitrate <= 0) {
                 return "N/A";
             } else if (mBitrate < 1000) {
-                return String.format(Locale.US, "%d bps", mBitrate);
+                return String.format(Locale.US, "%dbps", mBitrate);
             } else if (mBitrate > 1000000) {
-                return String.format(Locale.US, "%d Mbps",  mBitrate / 1000  / 1000);
+                return String.format(Locale.US, "%dMbps",  mBitrate / 1000  / 1000);
             }else {
-                return String.format(Locale.US, "%d Kbps", mBitrate / 1000);
+                return String.format(Locale.US, "%dKbps", mBitrate / 1000);
             }
         }
 
@@ -382,9 +382,9 @@ public class IjkMediaMeta {
         if (mSampleRate <= 0) {
             return "N/A";
         } else if (mSampleRate < 1000) {
-				return String.format(Locale.US, "%d Hz", mSampleRate);
+				return String.format(Locale.US, "%dHz", mSampleRate);
 	    } else {
-                return String.format(Locale.US, "%d KHz", mSampleRate / 1000);
+                return String.format(Locale.US, "%dKHz", mSampleRate / 1000);
         }
     }
 
