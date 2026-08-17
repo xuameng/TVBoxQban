@@ -34,6 +34,7 @@ import java.lang.Math;
  * 新增：初始位不显示滚动动画
  * 新增：不是相邻行不不显示滚动动画
  * 新增：播放进度到当前行的上行或多行不显示滚动动画
+ * 20260817 新增：高亮进度平滑滤波 解决最版exoplayer对mp3的升级后字幕卡顿问题
  */
 public class LrcView extends View {
 
@@ -63,6 +64,8 @@ public class LrcView extends View {
     private boolean mIsInitialPositioning = true;
     // 最大滚动距离（行数）
     private static final int MAX_SCROLL_DISTANCE = 1;
+    // 新增：高亮进度平滑滤波 =====
+    private float mSmoothedProgress = 0f;
 
 
 
@@ -231,6 +234,7 @@ public class LrcView extends View {
         mShouldShowLyrics = false;
         mCurrentLine = 0; // 总是从第0行开始
         mScrollOffset = 0f;
+        mSmoothedProgress = 0f;
         mCurrentPosition = 0;
         mIsInitialPositioning = true; // 新增：重置初始定位状态
         if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
@@ -276,7 +280,7 @@ public class LrcView extends View {
         if (lineDiff == 0) {
             return; // 无需滚动
         }
-
+        mSmoothedProgress = 0f;
         // 设置动画
         mScrollAnimator = ValueAnimator.ofFloat(0f, (float) lineDiff);
         mScrollAnimator.setDuration(mScrollDuration);
@@ -295,6 +299,7 @@ public class LrcView extends View {
                 // 动画结束后更新当前行
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
+                mSmoothedProgress = 0f; 
             }
 
             @Override
@@ -302,6 +307,7 @@ public class LrcView extends View {
                 // 动画取消时也更新当前行
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
+                mSmoothedProgress = 0f; 
             }
 
         });
@@ -325,6 +331,7 @@ public class LrcView extends View {
             mShouldShowLyrics = false;
             mCurrentLine = 0; // 确保强制重置到第一行
             mScrollOffset = 0f; // 重置滚动偏移
+            mSmoothedProgress = 0f;
             invalidate();
             return;
         }
@@ -359,6 +366,7 @@ public class LrcView extends View {
             // 初始定位阶段，直接跳转到目标行，不执行滚动动画
             mCurrentLine = targetLine;
             mScrollOffset = 0f;
+            mSmoothedProgress = 0f; 
             mIsInitialPositioning = false; // 定位完成，退出初始状态
             invalidate();
             return;
@@ -381,6 +389,7 @@ public class LrcView extends View {
                 // 直接跳转逻辑
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
+                mSmoothedProgress = 0f; 
                 invalidate();
             } else {
                 // 相邻行：只有向前滚动（到下一行）才执行平滑滚动
@@ -393,6 +402,7 @@ public class LrcView extends View {
                     }
                     mCurrentLine = targetLine;
                     mScrollOffset = 0f;
+                    mSmoothedProgress = 0f;
                     invalidate();
                 }
             }
@@ -431,6 +441,7 @@ public class LrcView extends View {
         mCurrentPosition = 0;
         mCurrentLine = 0;
         mScrollOffset = 0f;
+        mSmoothedProgress = 0f;  
         mIsInitialPositioning = true; // 新增：重置初始定位状态
         invalidate();
     }
@@ -480,16 +491,27 @@ public class LrcView extends View {
 
             if (actualIndex == mCurrentLine) {
                 // 当前行：卡拉OK高亮效果
-                float progress = 0f;
+                float targetProgress = 0f;
                 if (mCurrentPosition >= line.time) {
-                    long nextTime = (actualIndex + 1 < mLrcLines.size()) ? 
-                                   mLrcLines.get(actualIndex + 1).time : line.time + 5000;
+                    long nextTime = (actualIndex + 1 < mLrcLines.size())
+                        ? mLrcLines.get(actualIndex + 1).time
+                        : line.time + 5000;
                     long duration = nextTime - line.time;
                     if (duration > 0) {
-                        progress = (float) (mCurrentPosition - line.time) / duration;
+                        targetProgress = (float) (mCurrentPosition - line.time) / duration;
+                        targetProgress = Math.min(1.0f, Math.max(0f, targetProgress));
                     }
                 }
-                progress = Math.max(0, Math.min(1, progress));
+                targetProgress = Math.max(0f, Math.min(1f, targetProgress));
+
+                // ===== 平滑滤波：把 ExoPlayer 抖动的 progress 抹平 =====
+                // 行切换时 mSmoothedProgress 已经被 reset 为 0，这里自然从 0 开始跟
+                if (targetProgress >= 1.0f) {
+                    mSmoothedProgress = 1.0f;
+                } else {
+                    mSmoothedProgress += (targetProgress - mSmoothedProgress) * 0.1f;
+                }
+                float progress = mSmoothedProgress;
 
                 // 获取字体度量信息
                 Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
