@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Build;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -967,9 +968,13 @@ public class VideoActivity extends BaseActivity {
     }
 
     private String removeHtmlTag(String info) {
-        if (info == null)
+        if (TextUtils.isEmpty(info))
             return "";
-        return info.replaceAll("\\<.*?\\>", "").replaceAll("\\s", "");
+        String text = info.replaceAll("\\[a=cr:(?:\\{.*?\\}|\\[.*?\\])\\/](.*?)\\[\\/a]", "$1");
+        text = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                ? Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY).toString()
+                : Html.fromHtml(text).toString();
+        return text.replaceAll("\\s", "");
     }
 
     private void initViewModel() {
@@ -1014,8 +1019,8 @@ public class VideoActivity extends BaseActivity {
                     } else {
                         setTextShow(tvType, "类型：", mVideo.type);
                     }
-                    setTextShow(tvActor, "演员：", mVideo.actor);
-                    setTextShow(tvDirector, "导演：", mVideo.director);
+                    setTextShow(tvActor, "演员：", removeHtmlTag(mVideo.actor));
+                    setTextShow(tvDirector, "导演：", removeHtmlTag(mVideo.director));
                     setTextShow(tvDes, "内容简介：", removeHtmlTag(mVideo.des));
 
                     int radius = AutoSizeUtils.mm2px(mContext, 5);  //xuameng Base64 图片 圆角设置
@@ -1106,15 +1111,15 @@ public class VideoActivity extends BaseActivity {
                         safeRefreshList();   //xuameng返回键、长按播放刷新滚动到剧集
                         mGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                             @Override
-                                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                                    super.onScrollStateChanged(recyclerView, newState);
-                                    if (newState == mGridView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
-                                        // 滚动已经停止，执行你需要的操作
-                                        //	mGridView.requestFocus();
-                                        safeSelectMGridView(vodInfo.playIndex);
-                                        mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
-                                    }
+                            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                                super.onScrollStateChanged(recyclerView, newState);
+                                if (newState == mGridView.SCROLL_STATE_IDLE) {   //xuameng剧集滚动完成后焦点选择为剧集
+                                    // 滚动已经停止，执行你需要的操作
+                                    //	mGridView.requestFocus();
+                                    safeSelectMGridView(vodInfo.playIndex);
+                                    mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
                                 }
+                            }
                        });
                        safeSelectMGridView(vodInfo.playIndex);
 
