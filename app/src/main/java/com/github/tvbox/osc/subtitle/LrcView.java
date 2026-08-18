@@ -507,18 +507,12 @@ public class LrcView extends View {
                     targetProgress = 1.0f;
                 }
 
-                // 计算平滑系数：行越短，系数越大（跟得越快）
-                long lineDuration = (actualIndex + 1 < mLrcLines.size())
-                        ? mLrcLines.get(actualIndex + 1).time - line.time
-                        : 5000;
-
-                float smoothFactor = lineDuration < 3000 ? 0.35f : 0.1f;
                 // ===== 平滑滤波：把 ExoPlayer 抖动的 progress 抹平 =====
                 // 行切换时 mSmoothedProgress 已经被 reset 为 0，这里自然从 0 开始跟
                 if (targetProgress >= 1.0f) {
                     mSmoothedProgress = 1.0f;
                 } else {
-                    mSmoothedProgress += (targetProgress - mSmoothedProgress) * smoothFactor;
+                    mSmoothedProgress += (targetProgress - mSmoothedProgress) * 0.35f;
                 }
                 float progress = mSmoothedProgress;
 
