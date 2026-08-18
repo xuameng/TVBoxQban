@@ -366,7 +366,18 @@ public class LrcView extends View {
             // 初始定位阶段，直接跳转到目标行，不执行滚动动画
             mCurrentLine = targetLine;
             mScrollOffset = 0f;
-            mSmoothedProgress = 0f; 
+            // 初始化新行的进度，避免高亮从头开始
+            long newLineTime = mLrcLines.get(targetLine).time;
+            long nextTime = (targetLine + 1 < mLrcLines.size())
+                    ? mLrcLines.get(targetLine + 1).time
+                    : newLineTime + 5000;
+            long duration = nextTime - newLineTime;
+            if (duration > 0 && mCurrentPosition >= newLineTime) {
+                float initProgress = (float) (mCurrentPosition - newLineTime) / duration;
+                mSmoothedProgress = Math.max(0f, Math.min(1f, initProgress));
+            } else {
+                mSmoothedProgress = 0f;
+            }
             mIsInitialPositioning = false; // 定位完成，退出初始状态
             invalidate();
             return;
@@ -389,7 +400,18 @@ public class LrcView extends View {
                 // 直接跳转逻辑
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
-                mSmoothedProgress = 0f; 
+                // 初始化新行的进度，避免高亮从头开始
+                long newLineTime = mLrcLines.get(targetLine).time;
+                long nextTime = (targetLine + 1 < mLrcLines.size())
+                        ? mLrcLines.get(targetLine + 1).time
+                        : newLineTime + 5000;
+                long duration = nextTime - newLineTime;
+                if (duration > 0 && mCurrentPosition >= newLineTime) {
+                    float initProgress = (float) (mCurrentPosition - newLineTime) / duration;
+                    mSmoothedProgress = Math.max(0f, Math.min(1f, initProgress));
+                } else {
+                    mSmoothedProgress = 0f;
+                }
                 invalidate();
             } else {
                 // 相邻行：只有向前滚动（到下一行）才执行平滑滚动
@@ -400,9 +422,25 @@ public class LrcView extends View {
                     if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
                         mScrollAnimator.cancel();
                     }
+                    // 只有前三行向前才等铺满
+                    if (isForward && targetLine <= 3 && mSmoothedProgress < 1f) {
+                        invalidate();
+                        return;
+                    }
                     mCurrentLine = targetLine;
                     mScrollOffset = 0f;
-                    mSmoothedProgress = 0f;
+                    // 初始化新行的进度，避免高亮从头开始
+                    long newLineTime = mLrcLines.get(targetLine).time;
+                    long nextTime = (targetLine + 1 < mLrcLines.size())
+                            ? mLrcLines.get(targetLine + 1).time
+                            : newLineTime + 5000;
+                    long duration = nextTime - newLineTime;
+                    if (duration > 0 && mCurrentPosition >= newLineTime) {
+                        float initProgress = (float) (mCurrentPosition - newLineTime) / duration;
+                        mSmoothedProgress = Math.max(0f, Math.min(1f, initProgress));
+                    } else {
+                        mSmoothedProgress = 0f;
+                    }
                     invalidate();
                 }
             }
@@ -504,12 +542,15 @@ public class LrcView extends View {
                    }
                 }
 
-                // ===== 平滑滤波：把 ExoPlayer 抖动的 progress 抹平 =====
-                // 行切换时 mSmoothedProgress 已经被 reset 为 0，这里自然从 0 开始跟
+                if (targetProgress > 0.99f) {
+                    targetProgress = 1.0f;
+                }
+
+                // 平滑滤波
                 if (targetProgress >= 1.0f) {
                     mSmoothedProgress = 1.0f;
                 } else {
-                    mSmoothedProgress += (targetProgress - mSmoothedProgress) * 0.35f;
+                    mSmoothedProgress += (targetProgress - mSmoothedProgress) * 0.1f;
                 }
                 float progress = mSmoothedProgress;
 
@@ -523,6 +564,10 @@ public class LrcView extends View {
 
                 // 绘制高亮部分（渐变填充）
                 float highlightWidth = line.width * progress;
+                // 防止裁剪区域无效
+                if (highlightWidth < 1f) {
+                    highlightWidth = 1f;
+                }
                 canvas.save();
                 // 使用精确的裁剪区域
                 canvas.clipRect(getWidth() / 2 - line.width / 2, 
