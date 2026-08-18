@@ -497,20 +497,23 @@ public class LrcView extends View {
                         ? mLrcLines.get(actualIndex + 1).time
                         : line.time + 5000;
                     long duration = nextTime - line.time;
-                    if (duration > 0) {
-                        targetProgress = (float) (mCurrentPosition - line.time) / duration;
-                        targetProgress = Math.min(1.0f, Math.max(0f, targetProgress));
-                    }
-                }
-                targetProgress = Math.max(0f, Math.min(1f, targetProgress));
 
+                   if (duration > 0) {
+                       targetProgress = (float) (mCurrentPosition - line.time) / duration;
+                       targetProgress = Math.max(0f, Math.min(1f, targetProgress));
+                   }
+                }
+                if (targetProgress > 0.95f) {
+                    targetProgress = 1.0f;
+                }
+float smoothFactor = lineDuration < 3000 ? 0.35f : 0.1f;
                 // ===== 平滑滤波：把 ExoPlayer 抖动的 progress 抹平 =====
                 // 行切换时 mSmoothedProgress 已经被 reset 为 0，这里自然从 0 开始跟
-                if (targetProgress >= 1.0f) {
-                    mSmoothedProgress = 1.0f;
-                } else {
-                    mSmoothedProgress += (targetProgress - mSmoothedProgress) * 0.1f;
-                }
+if (targetProgress >= 1.0f) {
+    mSmoothedProgress = 1.0f;
+} else {
+    mSmoothedProgress += (targetProgress - mSmoothedProgress) * smoothFactor;
+}
                 float progress = mSmoothedProgress;
 
                 // 获取字体度量信息
