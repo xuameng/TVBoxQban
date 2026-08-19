@@ -786,8 +786,10 @@ public class ApiConfig {
         jarCache = DefaultConfig.safeJsonString(infoJson, "jarCache", "true");
         danmaku = DefaultConfig.safeJsonString(infoJson, "danmaku", ""); // xuameng 弹幕
         // wallpaper
-        wallpaper = DefaultConfig.safeJsonString(infoJson, "wallpaper", "");
-        musicwallpaper = DefaultConfig.safeJsonString(infoJson, "musicwallpaper", "");    // xuameng背景图
+        String defaultwallpaper = DefaultConfig.safeJsonString(infoJson, "wallpaper", ""); // xuameng背景图
+        wallpaper = DefaultConfig.checkReplaceProxy(defaultwallpaper); // xuameng代理转换后的背景图
+        String defaultmusicwallpaper = DefaultConfig.safeJsonString(infoJson, "musicwallpaper", "");    // xuameng音乐背景图
+        musicwallpaper = DefaultConfig.checkReplaceProxy(defaultmusicwallpaper);  // xuameng代理转换后的音乐背景图
         JvhuiWarning = DefaultConfig.safeJsonString(infoJson, "JvhuiWarning", "");  //xuameng警告
         // 自定义站点源
         SourceBean firstSite = null;
