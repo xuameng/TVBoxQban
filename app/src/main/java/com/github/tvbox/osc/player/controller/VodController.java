@@ -535,7 +535,7 @@ public class VodController extends BaseController {
                     mHandler.postDelayed(this, 15000);
                     return;
                 }
-                String Url = "https://api.miaomc.cn/image/get";
+                String Url = "https://www.dmoe.cc/random.php";
                 Picasso.get().load(Url)
                     //				.placeholder(R.drawable.xumusic)   //xuameng默认的站位图
                     .noPlaceholder() //不使用站位图，效果不好
