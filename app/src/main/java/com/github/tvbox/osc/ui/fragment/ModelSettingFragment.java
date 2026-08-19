@@ -40,7 +40,6 @@ import com.owen.tvrecyclerview.widget.V7LinearLayoutManager; //xuameng优化首�
 import androidx.constraintlayout.widget.ConstraintLayout;  //xuameng优化首页数据源列表
 import android.view.ViewGroup;   //xuameng优化首页数据源列表
 import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng优化首页数据源列表
-import com.github.tvbox.osc.util.DefaultConfig;  //xuameng 代理proxy://转换
 import com.github.tvbox.osc.base.App;  //xuameng showtoast
 import android.util.Pair;  //xuameng exo解码用
 import com.github.tvbox.osc.util.FastClickCheckUtil;
@@ -257,8 +256,6 @@ public class ModelSettingFragment extends BaseLazyFragment {
                 FastClickCheckUtil.check(v);  //xuameng 2秒
                 String wpUrl = ApiConfig.get().wallpaper;
                 if (!wpUrl.isEmpty()) {
-                    // xuameng  将proxy:// 转为 http://ip:port/proxy?
-                    wpUrl = DefaultConfig.checkReplaceProxy(wpUrl);
                     HawkConfig.isGetWp = true;  //xuameng下载壁纸
                     App.showToastShort(getContext(), "壁纸更换中！");
                     OkGo.<File>get(wpUrl).tag("wallpaperDown").execute(new FileCallback(requireActivity().getFilesDir().getAbsolutePath(), "wp") {  //xuameng增加tag以便打断下载
