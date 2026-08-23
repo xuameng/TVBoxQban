@@ -97,7 +97,7 @@ public final class ExoMediaSourceHelper {
         }
 
         if (errorCode == 3001 || errorCode == 3002 || errorCode == 3003 || errorCode == 3004 || errorCode == 2000) {               // xuameng当错误码为3003时，强制使用 HLS 源进行播放
-            return new HlsMediaSource.Factory(factory)
+            return new HlsMediaSource.Factory(mHttpDataSourceFactory)
                     .setLoadErrorHandlingPolicy(new HlsErrorHandlingPolicy())  // 设置自定义错误处理策略，跳过坏的切片
                     .createMediaSource(MediaItem.fromUri(contentUri));
         }
@@ -106,7 +106,7 @@ public final class ExoMediaSourceHelper {
             case C.TYPE_DASH:
                 return new DashMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
             case C.TYPE_HLS:
-                return new HlsMediaSource.Factory(factory)
+                return new HlsMediaSource.Factory(mHttpDataSourceFactory)
                         .setLoadErrorHandlingPolicy(new HlsErrorHandlingPolicy())  // 设置自定义错误处理策略，跳过坏的切片
                         .createMediaSource(MediaItem.fromUri(contentUri));
             default:
