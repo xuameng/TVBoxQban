@@ -107,13 +107,10 @@ if ( mTrackSelector == null){
 if (mLoadControl == null){
 	            mLoadControl = new DefaultLoadControl.Builder()
                 .setBufferDurationsMs(
-                    15000,    // minBufferMs - 减小最小缓冲时间
-                    30000,   // maxBufferMs - 减小最大缓冲时间
-                    1500,    // bufferForPlaybackMs - 减小播放前缓冲时间
-                    3000     // bufferForPlaybackAfterRebufferMs - 减小重新缓冲后缓冲时间
-                )
-                .setTargetBufferBytes(30 * 1024 * 1024)  // 设置目标缓冲字节数为30MB
-                .setPrioritizeTimeOverSizeThresholds(false)  // 优先考虑字节数阈值
+                        DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
+                        DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
+                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
+                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
                 .setBackBuffer(0, false)
                 .build();
 }
