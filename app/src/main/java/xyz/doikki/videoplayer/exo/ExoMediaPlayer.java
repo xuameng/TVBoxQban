@@ -6,7 +6,6 @@ import android.util.Log;  //xuameng 错误日志
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import androidx.annotation.NonNull;  //xuameng用于显示字幕等
-import android.app.ActivityManager;  //xuameng加载策略控制
 
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -70,7 +69,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void initPlayer() {
-
+        // xuameng释放旧实例
+        if (mMediaPlayer != null) {
+            mMediaPlayer.removeListener(this);
+            mMediaPlayer.release();
+        }
         // xuameng渲染器配置
         boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
@@ -88,33 +91,23 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
                 : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
         }
- if (mRenderersFactory == null){
-	         mRenderersFactory = new DefaultRenderersFactory(mAppContext)
+    
+        mRenderersFactory = new DefaultRenderersFactory(mAppContext)
             .setEnableDecoderFallback(true)
             .setExtensionRendererMode(rendererMode);
- }   
 
-if ( mTrackSelector == null){
-	        mTrackSelector = new DefaultTrackSelector(mAppContext);
-}        // xuameng轨道选择器配置
-
+        // xuameng轨道选择器配置
+        mTrackSelector = new DefaultTrackSelector(mAppContext);
 
         //xuameng加载策略控制  
-        ActivityManager activityManager = (ActivityManager) mAppContext.getSystemService(Context.ACTIVITY_SERVICE);
-        int memoryClass = activityManager.getMemoryClass();
-        
-        // 判断内存大小
-if (mLoadControl == null){
-	            mLoadControl = new DefaultLoadControl.Builder()
-                .setBufferDurationsMs(
-                        DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
-                        DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
-                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
-                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
-                .setBackBuffer(0, false)
-                .build();
-}
-
+        mLoadControl = new DefaultLoadControl.Builder()
+            .setBufferDurationsMs(
+                    DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
+                    DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
+                    DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
+                    DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
+            .setBackBuffer(0, false)
+            .build();
 
         mTrackSelector.setParameters(
         mTrackSelector.getParameters().buildUpon()
