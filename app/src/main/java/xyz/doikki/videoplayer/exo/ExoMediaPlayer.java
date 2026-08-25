@@ -104,7 +104,7 @@ if ( mTrackSelector == null){
         int memoryClass = activityManager.getMemoryClass();
         
         // 判断内存大小
-if (mLoadControl == null) {){
+if (mLoadControl == null){
 	            mLoadControl = new DefaultLoadControl.Builder()
                 .setBufferDurationsMs(
                     15000,    // minBufferMs - 减小最小缓冲时间
