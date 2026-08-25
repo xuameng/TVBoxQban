@@ -70,11 +70,7 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
 
     @Override
     public void initPlayer() {
-        // xuameng释放旧实例
-        if (mMediaPlayer != null) {
-            mMediaPlayer.removeListener(this);
-            mMediaPlayer.release();
-        }
+
         // xuameng渲染器配置
         boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
@@ -92,20 +88,24 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
                 : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
         }
-    
-        mRenderersFactory = new DefaultRenderersFactory(mAppContext)
+ if (mRenderersFactory == null){
+	         mRenderersFactory = new DefaultRenderersFactory(mAppContext)
             .setEnableDecoderFallback(true)
             .setExtensionRendererMode(rendererMode);
+ }   
 
-        // xuameng轨道选择器配置
-        mTrackSelector = new DefaultTrackSelector(mAppContext);
+if ( mTrackSelector == null){
+	        mTrackSelector = new DefaultTrackSelector(mAppContext);
+}        // xuameng轨道选择器配置
+
 
         //xuameng加载策略控制  
         ActivityManager activityManager = (ActivityManager) mAppContext.getSystemService(Context.ACTIVITY_SERVICE);
         int memoryClass = activityManager.getMemoryClass();
         
         // 判断内存大小
-            mLoadControl = new DefaultLoadControl.Builder()
+if (if (mLoadControl == null) {){
+	            mLoadControl = new DefaultLoadControl.Builder()
                 .setBufferDurationsMs(
                     15000,    // minBufferMs - 减小最小缓冲时间
                     30000,   // maxBufferMs - 减小最大缓冲时间
@@ -116,6 +116,8 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 .setPrioritizeTimeOverSizeThresholds(false)  // 优先考虑字节数阈值
                 .setBackBuffer(0, false)
                 .build();
+}
+
 
         mTrackSelector.setParameters(
         mTrackSelector.getParameters().buildUpon()
