@@ -91,8 +91,21 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
                 ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
                 : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
         }
-    
+
+// 判断是否为软解（跟你现有逻辑保持一致）
+boolean isSoftwareDecode =
+        (exoSelect == 2)
+        || (exoSelect == 0 && exoDecode);
+
+// 用自定义 MediaCodecSelector
+MediaCodecSelector mediaCodecSelector =
+        new DvFallbackMediaCodecSelector(isSoftwareDecode);
+
+
+
+
         mRenderersFactory = new DefaultRenderersFactory(mAppContext)
+.setMediaCodecSelector(mediaCodecSelector)  // ← 关键一行
             .setEnableDecoderFallback(true)
             .setExtensionRendererMode(rendererMode);
 
