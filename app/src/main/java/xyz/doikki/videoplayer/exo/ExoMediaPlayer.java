@@ -75,40 +75,41 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             mMediaPlayer.removeListener(this);
             mMediaPlayer.release();
         }
-        // xuameng渲染器配置
+
+        // xuameng渲染器配置  自动exoDecode=true为软解  false为硬解  手动exoSelect 0为没记录 1为硬解 2为软解。exoSelect优先
         boolean exoDecode = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
 
-        // ExoPlayer2 解码模式选择逻辑
-        int rendererMode;
+        // ExoPlayer 解码模式选择逻辑
+        boolean useSoftDecode;
+
         if (exoSelect > 0) {
-            // 选择器优先
-            rendererMode = (exoSelect == 1) 
-                ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF    // 硬解
-                : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER; // 软解
+            // 手动选择模式
+            useSoftDecode = (exoSelect == 2); // 1=硬解，2=软解
         } else {
-            // 使用exoDecode配置
-            rendererMode = exoDecode 
-                ? DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER // 软解
-                : DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;   // 硬解
+            // 自动模式：由 exoDecode 决定
+            useSoftDecode = exoDecode;
         }
 
-// 判断是否为软解（跟你现有逻辑保持一致）
-boolean isSoftwareDecode =
-        (exoSelect == 2)
-        || (exoSelect == 0 && exoDecode);
+        // 用自定义 MediaCodecSelector 主要用于 DV → HEVC转换 尽量可以显示出图像
+        MediaCodecSelector mediaCodecSelector =
+                new DvFallbackMediaCodecSelector(useSoftDecode);
 
-// 用自定义 MediaCodecSelector
-MediaCodecSelector mediaCodecSelector =
-        new DvFallbackMediaCodecSelector(isSoftwareDecode);
-
-
-
-
-        mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-.setMediaCodecSelector(mediaCodecSelector)  // ← 关键一行
-            .setEnableDecoderFallback(true)
-            .setExtensionRendererMode(rendererMode);
+        // 构建 RendererFactory
+        if (useSoftDecode) {
+            mRenderersFactory = new DefaultRenderersFactory(mAppContext)
+                    .setMediaCodecSelector(mediaCodecSelector)  // MediaCodecSelector
+                    .setEnableDecoderFallback(true)
+                    .setExtensionRendererMode(
+                            DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
+                    );
+        } else {
+            mRenderersFactory = new DefaultRenderersFactory(mAppContext)
+                    .setEnableDecoderFallback(true)
+                    .setExtensionRendererMode(
+                            DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
+                    );
+        }
 
         // xuameng轨道选择器配置
         mTrackSelector = new DefaultTrackSelector(mAppContext);
@@ -125,8 +126,8 @@ MediaCodecSelector mediaCodecSelector =
 
         mTrackSelector.setParameters(
         mTrackSelector.getParameters().buildUpon()
-        .setPreferredTextLanguages("ch", "chi", "zh", "zho", "en")           // 设置首选字幕语言为中文
-        .setPreferredAudioLanguages("ch", "chi", "zh", "zho", "en")                        // 设置首选音频语言为中文
+            .setPreferredTextLanguages("zh", "chi", "zh-CN", "zh-TW", "en")      // 设置首选字幕语言为中文
+            .setPreferredAudioLanguages("zh", "chi", "zh-CN", "zh-TW", "en")     // 设置首选音频语言为中文
         .build());                         // 必须调用build()完成构建
 
         mMediaPlayer = new SimpleExoPlayer.Builder(
@@ -358,17 +359,9 @@ MediaCodecSelector mediaCodecSelector =
         String progressKey = Hawk.get(HawkConfig.EXO_PROGRESS_KEY, "");
         errorCode = error.errorCode;
         Log.e("EXOPLAYER", "" + error.errorCode);      //xuameng音频出错后尝试重播
+
         if (errorCode == 5001 || errorCode == 5002 || errorCode == 4001 || errorCode == 4002 || errorCode == 4003){
-            boolean exoDecodeXu = Hawk.get(HawkConfig.EXO_PLAYER_DECODE, false);
-            int exoSelectXu = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);
-            if (exoSelectXu == 1) {
-                memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨  硬解
-            }
-            if (exoSelectXu == 0) {
-                if(!exoDecodeXu){
-                   memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨  硬解
-                }
-	        }
+            memory.getInstance(mAppContext).deleteExoTrack(progressKey);   //xuameng删除记忆音轨
         }
 
         // ====== xuameng 新增：处理 BehindLiveWindowException 错误======
