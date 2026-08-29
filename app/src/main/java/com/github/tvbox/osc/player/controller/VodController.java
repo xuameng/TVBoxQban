@@ -372,6 +372,7 @@ public class VodController extends BaseController {
     private boolean isBufferIng = false; //xuameng 判断是否进在缓冲视频
     private Visualizer mVisualizer;  //xuameng音乐播放动画
     private MusicVisualizerView customVisualizer; //xuameng播放音乐柱状图
+    public boolean noHaveVideo = false;   //xuameng 判断是否有视频
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
     private boolean musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);     //xuameng 音柱动画 加载设置
     public SubtitleView mExoSubtitleView;   // 用于显示ExoPlayer内置字幕
@@ -450,6 +451,7 @@ public class VodController extends BaseController {
                     }
                 }
                 if(width.length() > 1 && height.length() > 1) {
+                    noHaveVideo = false;   //xuameng 判断是否有视频
                     if(iv_circle_bg.getVisibility() == View.VISIBLE) { //xuameng音乐播放时图标
                         iv_circle_bg.setVisibility(GONE);
                     }
@@ -457,6 +459,7 @@ public class VodController extends BaseController {
                         MxuamengMusic.setVisibility(GONE);
                     }
                 } else {
+                    noHaveVideo = true;   //xuameng 判断是否有视频
                     if(MxuamengMusic.getVisibility() == View.GONE) { //xuameng播放音乐背景
                         MxuamengMusic.setVisibility(VISIBLE);
                     }
@@ -2074,6 +2077,11 @@ public class VodController extends BaseController {
                 listener.prepared();
                 String width = Integer.toString(mControlWrapper.getVideoSize()[0]);
                 String height = Integer.toString(mControlWrapper.getVideoSize()[1]);
+                if(width.length() <= 1 && height.length() <= 1) {
+                    noHaveVideo = true;   //xuameng 判断是否有视频
+                } else {
+                    noHaveVideo = false;   //xuameng 判断是否有视频
+                }
                 mVideoSize.setText("[ " + width + " X " + height + " ]");
                 initialVisualizer();
                 break;
@@ -2104,7 +2112,6 @@ public class VodController extends BaseController {
             case VideoView.STATE_PLAYBACK_COMPLETED:
                 imageHide();  //xuameng 隐藏图片
                 mHidePauseIng(); //xuameng 隐藏暂停图标
-                clearSubtitleCache();
                 releaseVisualizer();  //xuameng播放音乐背景
                 clearSubtitleCache();  //xuameng清除字幕缓存
                 isVideoPlay = false;
@@ -2134,6 +2141,7 @@ public class VodController extends BaseController {
         iv_circle_bg.setVisibility(GONE); //xuameng音乐播放时图标
         customVisualizer.setVisibility(GONE); //xuameng播放音乐柱状图
         mPlayLoadNetSpeed.setVisibility(View.GONE); //xuameng 网速显示
+        noHaveVideo = false;   //xuameng 判断是否有视频
     }
 
     boolean isBottomVisible() { //xuameng底部菜单是否显示
