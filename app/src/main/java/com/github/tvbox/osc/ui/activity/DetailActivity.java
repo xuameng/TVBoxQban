@@ -749,6 +749,7 @@ public class DetailActivity extends BaseActivity {
         }
         previewVodInfo.id = vodInfo.id;
         previewVodInfo.name = vodInfo.name;
+        previewVodInfo.pic = vodInfo.pic;
         previewVodInfo.sourceKey = vodInfo.sourceKey;
         previewVodInfo.playNote = vodInfo.playNote;
         previewVodInfo.seriesFlags = vodInfo.seriesFlags;
