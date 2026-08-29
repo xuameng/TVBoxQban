@@ -104,8 +104,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
     protected boolean mIsTinyScreen;//是否处于小屏状态
     protected int[] mTinyScreenSize = {0, 0};
 
-	private int duration = 0;  //xuameng获取视频时长
-	private int Progress = 0;  //xuameng获取进程
+    private int duration = 0;  //xuameng获取视频时长
+    private int Progress = 0;  //xuameng获取进程
 
     /**
      * 监听系统中音频焦点改变，见{@link #setEnableAudioFocus(boolean)}
@@ -316,10 +316,10 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             mPlayerContainer.removeView(mRenderView.getView());
             mRenderView.release();
         }
-		String cleanUrl = mUrl.split("\\?")[0];
-		if (cleanUrl.endsWith(".mp3") || cleanUrl.endsWith(".m4a") || cleanUrl.endsWith(".wma") || cleanUrl.endsWith(".wav") || cleanUrl.endsWith(".flac") || cleanUrl.endsWith(".aac") || cleanUrl.endsWith(".mid")) {
-			return;      //xuameng如果是上述音频文件执行
-		}
+        String cleanUrl = mUrl.split("\\?")[0];
+        if (cleanUrl.endsWith(".mp3") || cleanUrl.endsWith(".m4a") || cleanUrl.endsWith(".wma") || cleanUrl.endsWith(".wav") || cleanUrl.endsWith(".flac") || cleanUrl.endsWith(".aac") || cleanUrl.endsWith(".mid")) {
+            return;      //xuameng如果是上述音频文件执行
+        }
         mRenderView = mRenderViewFactory.createRenderView(getContext());
         mRenderView.attachToPlayer(mMediaPlayer);
         LayoutParams params = new LayoutParams(
@@ -339,8 +339,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             setOptions();
         }
         if (prepareDataSource()) {
-			mVideoSize[0] = 0;   //xuameng重要修复获取视频尺寸不刷新
-			mVideoSize[1] = 0;
+            mMediaPlayer.setStartPosition(mCurrentPosition);
+            mVideoSize[0] = 0;   //xuameng重要修复获取视频尺寸不刷新
+            mVideoSize[1] = 0;
             mMediaPlayer.prepareAsync();
             setPlayState(STATE_PREPARING);
             setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : isTinyScreen() ? PLAYER_TINY_SCREEN : PLAYER_NORMAL);
@@ -395,25 +396,24 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 继续播放
      */
     public void resume() {
-        if (isInPlaybackState()
-                && !mMediaPlayer.isPlaying()) {
-			if (HawkConfig.intSYSplayer){   //xuameng某些系统播放器黑屏处理
-				String width = Integer.toString(getVideoSize()[0]);
-				String height = Integer.toString(getVideoSize()[1]);
-				if (width.length() > 1 && height.length() > 1) {   //xuameng有视频才处理
-					int duration = (int) getDuration();
-					if(duration > 130000) {      //xuameng 系统播放器获取播放进度
-						Progress = (int) getCurrentPosition();
-					}
-					addDisplay();
-					startPrepare(true);
-					if (mAudioFocusHelper != null && !isMute()) {
-						mAudioFocusHelper.requestFocus();
-					}
-					mPlayerContainer.setKeepScreenOn(true);
-					return;
-				}       
-			}  //xuameng某些系统播放器黑屏处理完
+        if (isInPlaybackState() && !mMediaPlayer.isPlaying()) {
+            if (HawkConfig.intSYSplayer){   //xuameng某些系统播放器黑屏处理
+                String width = Integer.toString(getVideoSize()[0]);
+                String height = Integer.toString(getVideoSize()[1]);
+                if (width.length() > 1 && height.length() > 1) {   //xuameng有视频才处理
+                    int duration = (int) getDuration();
+                    if(duration > 130000) {      //xuameng 系统播放器获取播放进度
+                        Progress = (int) getCurrentPosition();
+                    }
+                    addDisplay();
+                    startPrepare(true);
+                    if (mAudioFocusHelper != null && !isMute()) {
+                        mAudioFocusHelper.requestFocus();
+                    }
+                    mPlayerContainer.setKeepScreenOn(true);
+                    return;
+                }       
+            }  //xuameng某些系统播放器黑屏处理完
             mMediaPlayer.start();
             setPlayState(STATE_PLAYING);
             if (mAudioFocusHelper != null && !isMute()) {
@@ -599,23 +599,25 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (!isMute() && mAudioFocusHelper != null) {
             mAudioFocusHelper.requestFocus();
         }
-		duration = (int) getDuration();   //xuameng获取视频时长
-        if (mCurrentPosition > 0 && duration > 0) {  //xuameng视频时长大于0时载入播放进度，防止系统播放器播放直播视频问题
-            seekTo(mCurrentPosition);
+        duration = (int) getDuration();   //xuameng获取视频时长
+        // Custom players may not implement the common start-position contract.
+        //xuameng视频时长大于0时载入播放进度，防止系统播放器播放直播视频问题
+        if (mCurrentPosition > 0 && duration > 0 && !mMediaPlayer.isStartPositionApplied()) {
+            mMediaPlayer.seekTo(mCurrentPosition);
         }
-		if (Progress > 0 && !HawkConfig.intVod && HawkConfig.intSYSplayer){   //xuameng系统播放器直播界面读取播放进度
-			seekTo(Progress);
-			Progress = 0;
+        if (Progress > 0 && !HawkConfig.intVod && HawkConfig.intSYSplayer){   //xuameng系统播放器直播界面读取播放进度
+            seekTo(Progress);
+            Progress = 0;
 		}
-		String width = Integer.toString(getVideoSize()[0]);
-		String height = Integer.toString(getVideoSize()[1]);
-		if (width.length() <= 1 && height.length() <= 1){
-			if (mRenderView != null) {
-				mPlayerContainer.removeView(mRenderView.getView());      //xuameng重要当视频为空时释放当前VIDEO VIEW
+        String width = Integer.toString(getVideoSize()[0]);
+        String height = Integer.toString(getVideoSize()[1]);
+        if (width.length() <= 1 && height.length() <= 1){
+            if (mRenderView != null) {
+                mPlayerContainer.removeView(mRenderView.getView());      //xuameng重要当视频为空时释放当前VIDEO VIEW
                 mRenderView.release();
                 mRenderView = null;
-			}
-		}
+            }
+        }
     }
 
     /**
@@ -973,10 +975,10 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
 
     @Override
     public void onVideoSizeChanged(int videoWidth, int videoHeight) {
-		String cleanUrl = mUrl.split("\\?")[0];
-		if (cleanUrl.endsWith(".mp3") || cleanUrl.endsWith(".m4a") || cleanUrl.endsWith(".wma") || cleanUrl.endsWith(".wav") || cleanUrl.endsWith(".flac") || cleanUrl.endsWith(".aac") || cleanUrl.endsWith(".mid")) {
-			mVideoSize[0] = 0;   //xuameng如果是上述音频文件执行
-			mVideoSize[1] = 0;
+        String cleanUrl = mUrl.split("\\?")[0];
+        if (cleanUrl.endsWith(".mp3") || cleanUrl.endsWith(".m4a") || cleanUrl.endsWith(".wma") || cleanUrl.endsWith(".wav") || cleanUrl.endsWith(".flac") || cleanUrl.endsWith(".aac") || cleanUrl.endsWith(".mid")) {
+            mVideoSize[0] = 0;   //xuameng如果是上述音频文件执行
+            mVideoSize[1] = 0;
         }else{
             mVideoSize[0] = videoWidth;
             mVideoSize[1] = videoHeight;
