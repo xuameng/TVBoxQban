@@ -880,12 +880,13 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         dismissHomeDialogs();
         mHandler.removeCallbacksAndMessages(null);
+        super.onDestroy();
         EventBus.getDefault().unregister(this);
-        AppManager.getInstance().appExit(0);
-        ControlManager.get().stopServer();
+        if (isFinishing()) {
+            ControlManager.get().stopServer();
+        }
     }
 
     private SelectDialog<SourceBean> mSiteSwitchDialog;
