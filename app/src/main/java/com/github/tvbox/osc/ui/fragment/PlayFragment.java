@@ -2491,7 +2491,7 @@ public class PlayFragment extends BaseLazyFragment {
         return mVideoView;
     }
 
-    public JsonObject getMediaInfo() {  //xuameng /media方法 如二小的弹幕
+    public JsonObject getMediaInfo() {  //xuameng /media方法
         JsonObject info = new JsonObject();
         if (mVideoView == null) return info;
         try {
