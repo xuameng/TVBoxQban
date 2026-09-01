@@ -1547,7 +1547,7 @@ public class VodController extends BaseController {
                     hideBottom();
                 }
                 boolean opened = listener.toggleDanmu();
-                Toast.makeText(getContext(), opened ? "弹幕已重载" : "弹幕已隐藏", Toast.LENGTH_SHORT).show();
+                App.showToastShort(getContext(), opened ? "弹幕已显示" : "弹幕已隐藏");
                 return true;
             }
         });
