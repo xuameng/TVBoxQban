@@ -63,7 +63,7 @@ public class DanmuLoadController {
             if (controller != null) controller.setHasDanmu(!TextUtils.isEmpty(danmuText));
             return;
         }
-        temporarilyClosed = false;
+        temporarilyClosed = false;  //xuameng 必须加 重置 临时弹幕状态判断
         HashMap<Integer, Integer> maxLines = new HashMap<>();
         int maxLine = DanmuHelper.getMaxLine();
         maxLines.put(BaseDanmaku.TYPE_FIX_TOP, maxLine);
