@@ -42,6 +42,7 @@ public class DanmuLoadController {
     private String danmuEpisode = "";
     private int startedSeq = -1;
     private boolean pendingPrepare;
+    private boolean temporarilyClosed;
     private LoadCallback loadCallback;
 
     public DanmuLoadController(MyVideoView videoView, VodController controller, DanmakuView danmuView) {
@@ -89,6 +90,7 @@ public class DanmuLoadController {
 
     public void check(String danmu, String title, String episode, LoadCallback callback) {
         loadCallback = callback;
+        temporarilyClosed = false;
         danmuText = TextUtils.isEmpty(danmu) ? "" : danmu.trim();
         danmuTitle = TextUtils.isEmpty(title) ? "" : title;
         danmuEpisode = TextUtils.isEmpty(episode) ? "" : episode;
@@ -118,6 +120,7 @@ public class DanmuLoadController {
 
     public void reset() {
         DanmakuApi.cancel();
+        temporarilyClosed = false;
         danmuText = "";
         danmuTitle = "";
         danmuEpisode = "";
@@ -137,7 +140,20 @@ public class DanmuLoadController {
         releaseView();
     }
 
+    public boolean toggle() {
+        if (temporarilyClosed) {
+            temporarilyClosed = false;
+            reloadForPlayback();
+            startIfReady();
+            return true;
+        }
+        temporarilyClosed = true;
+        close();
+        return false;
+    }
+
     public void reloadForPlayback() {
+        temporarilyClosed = false;
         loadSeq.incrementAndGet();
         startedSeq = -1;
         releaseView();
