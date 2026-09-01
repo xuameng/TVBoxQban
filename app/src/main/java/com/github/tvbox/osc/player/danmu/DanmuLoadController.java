@@ -63,6 +63,7 @@ public class DanmuLoadController {
             if (controller != null) controller.setHasDanmu(!TextUtils.isEmpty(danmuText));
             return;
         }
+        temporarilyClosed = false;
         HashMap<Integer, Integer> maxLines = new HashMap<>();
         int maxLine = DanmuHelper.getMaxLine();
         maxLines.put(BaseDanmaku.TYPE_FIX_TOP, maxLine);
