@@ -1729,7 +1729,7 @@ public class DetailActivity extends BaseActivity {
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE, subtitleTextSize));
     }
 
-    public PlayFragment getPlayFragment() {  //xuameng /media方法 如二小的弹幕
+    public PlayFragment getPlayFragment() {  //xuameng /media方法
         return playFragment;
     }
 
