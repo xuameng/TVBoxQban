@@ -198,7 +198,7 @@ public class RemoteServer extends NanoHTTPD {
                     return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, "ok");    
                 } else if (fileName.equals("/action")) {
                     return handleAction(session.getParms());
-                } else if (fileName.equals("/media")) {
+                } else if (fileName.equals("/media")) {   //xuameng /media方法 如二小的弹幕
                     return handleMedia();
                 } else if (fileName.startsWith("/proxyM3u8")) {
 //                    com.github.tvbox.osc.util.LOG.i("echo-proxyM3u8 length:" + (m3u8Content == null ? 0 : m3u8Content.length()));
@@ -347,7 +347,7 @@ public class RemoteServer extends NanoHTTPD {
         }
     }
 
-    private Response handleMedia() {
+    private Response handleMedia() {  //xuameng /media方法 如二小的弹幕
         try {
             android.app.Activity activity = App.getInstance().getCurrentActivity();
             if (activity == null) return createJSONResponse(Response.Status.OK, "{}");
