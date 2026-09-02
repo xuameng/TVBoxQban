@@ -38,7 +38,6 @@ import xyz.doikki.videoplayer.util.L;
 import xyz.doikki.videoplayer.util.PlayerUtils;
 import xyz.doikki.videoplayer.exo.ExoMediaPlayer;   //xuameng 修复EXO解码有时黑屏
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng surfaceview判断用
-import com.github.tvbox.osc.ui.fragment.PlayFragment;
 import com.orhanobut.hawk.Hawk;  //xuameng 修复EXO解码有时黑屏
 
 /**
@@ -135,8 +134,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * {@link #mPlayerContainer}背景色，默认黑色
      */
     private int mPlayerBackgroundColor;
-
-    private PlayFragment fragment;
 
     public VideoView(@NonNull Context context) {
         this(context, null);
@@ -614,10 +611,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         }
         String width = Integer.toString(getVideoSize()[0]);
         String height = Integer.toString(getVideoSize()[1]);
-        if (width.length() <= 1 && height.length() <= 1){
-			if (fragment.exoPlayerswitchPlayback){
-				return;
-			}
+        Boolean isLive = (Boolean) Hawk.get(HawkConfig.PLAYER_IS_LIVE, false);
+        if (width.length() <= 1 && height.length() <= 1 && isLive){
             if (mRenderView != null) {
                 mPlayerContainer.removeView(mRenderView.getView());      //xuameng重要当视频为空时释放当前VIDEO VIEW
                 mRenderView.release();
