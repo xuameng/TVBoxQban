@@ -216,6 +216,11 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
     }
 
     @Override
+    public boolean keepRenderViewOnReset() {
+        return true;
+    }
+
+    @Override
     public boolean isPlaying() {
         if (mMediaPlayer == null)
             return false;
