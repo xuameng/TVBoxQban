@@ -31,6 +31,7 @@ import com.github.tvbox.osc.ui.fragment.PlayFragment;
 import com.github.tvbox.osc.util.ImgUtilMusic;
 import com.github.tvbox.osc.util.ScreenUtils;
 import com.github.tvbox.osc.util.LOG;
+import com.github.tvbox.osc.base.App;
 
 import java.lang.ref.WeakReference;
 
@@ -132,8 +133,10 @@ public class MusicPlaybackService extends Service {
                 if (fragment != null) {
                     if (fragment.hasPre()){
                         pauseForSwitch();
+                        fragment.playPrevious();
+                    } else { 
+                        App.showToastShort(context, "已经是第一集了！");
                     }
-                    fragment.playPrevious();
                 }
             }
 
@@ -143,8 +146,10 @@ public class MusicPlaybackService extends Service {
                 if (fragment != null) {
                     if (fragment.hasNext()){
                         pauseForSwitch();
+                        fragment.playNext(false);
+                    } else { 
+                        App.showToastShort(context, "已经是最后一集了！");
                     }
-                    fragment.playNext(false);
                 }
             }
 
