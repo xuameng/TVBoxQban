@@ -15,9 +15,6 @@ import android.os.Looper;   //xuameng 修复EXO解码有时黑屏
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -336,20 +333,15 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
      * 开始准备播放（直接播放）
      */
     protected void startPrepare(boolean reset) {
-        startPrepare(reset, false);
-    }
-
-    protected void startPrepare(boolean reset, boolean rebindRenderView) {
         if (reset) {
             mMediaPlayer.reset();
             //重新设置option，media player reset之后，option会失效
             setOptions();
-            if (rebindRenderView && mRenderView != null) {
-                mRenderView.attachToPlayer(mMediaPlayer);
-            }
         }
         if (prepareDataSource()) {
             mMediaPlayer.setStartPosition(mCurrentPosition);
+            mVideoSize[0] = 0;   //xuameng重要修复获取视频尺寸不刷新
+            mVideoSize[1] = 0;
             mMediaPlayer.prepareAsync();
             setPlayState(STATE_PREPARING);
             setPlayerState(isFullScreen() ? PLAYER_FULL_SCREEN : isTinyScreen() ? PLAYER_TINY_SCREEN : PLAYER_NORMAL);
@@ -422,50 +414,13 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
                     return;
                 }       
             }  //xuameng某些系统播放器黑屏处理完
-            assert mRenderView != null;
-            View renderView = mRenderView.getView();
-            if (renderView instanceof SurfaceView) {
-                final SurfaceView surfaceView = (SurfaceView) renderView;
-                final SurfaceHolder holder = surfaceView.getHolder();
-                if (holder.getSurface() != null && holder.getSurface().isValid()) {
-                    mMediaPlayer.setDisplay(holder);
-                    resumePlay();
-                } else {
-                    holder.addCallback(new SurfaceHolder.Callback() {
-                        @Override
-                        public void surfaceCreated(SurfaceHolder holder) {
-                            if (mRenderView != null) {
-                                mRenderView.setScaleType(mCurrentScreenScaleType);
-                                mRenderView.setVideoSize(mVideoSize[0], mVideoSize[1]);
-                            }
-                            mMediaPlayer.setDisplay(holder);
-                            resumePlay();
-                            // 移除回调，避免重复调用
-                            holder.removeCallback(this);
-                        }
-
-                        @Override
-                        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                        }
-
-                        @Override
-                        public void surfaceDestroyed(SurfaceHolder holder) {
-                        }
-                    });
-                }
-            } else {
-                resumePlay();
+            mMediaPlayer.start();
+            setPlayState(STATE_PLAYING);
+            if (mAudioFocusHelper != null && !isMute()) {
+                mAudioFocusHelper.requestFocus();
             }
+            mPlayerContainer.setKeepScreenOn(true);
         }
-    }
-
-    private void resumePlay(){
-        mMediaPlayer.start();
-        setPlayState(STATE_PLAYING);
-        if (mAudioFocusHelper != null && !isMute()) {
-            mAudioFocusHelper.requestFocus();
-        }
-        mPlayerContainer.setKeepScreenOn(true);
     }
 
     /**
@@ -506,8 +461,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
             //切换转态
             setPlayState(STATE_IDLE);
         }
-        mVideoSize[0] = 0;
-        mVideoSize[1] = 0;
     }
 
     /**
@@ -556,18 +509,8 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (resetPosition) {
             mCurrentPosition = 0;
         }
-        if (mMediaPlayer == null) {
-            start();
-            return;
-        }
-        if (mMediaPlayer.keepRenderViewOnReset()) {
-            mMediaPlayer.reset();
-            setOptions();
-            mMediaPlayer.setOptions();
-            startPrepare(false);
-        } else {
-            startPrepare(true, true);
-        }
+        addDisplay();
+        startPrepare(true);
     }
 
     /**
@@ -779,8 +722,6 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         mAssetFileDescriptor = null;
         mUrl = url;
         mHeaders = headers;
-        mVideoSize[0] = 0;
-        mVideoSize[1] = 0;
     }
 
     /**
@@ -889,6 +830,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             uiOptions |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            uiOptions |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        }
         decorView.setSystemUiVisibility(uiOptions);
         getActivity().getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -932,6 +876,9 @@ public class VideoView<P extends AbstractPlayer> extends FrameLayout
         int uiOptions = decorView.getSystemUiVisibility();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             uiOptions &= ~View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            uiOptions &= ~View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         }
         decorView.setSystemUiVisibility(uiOptions);
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
