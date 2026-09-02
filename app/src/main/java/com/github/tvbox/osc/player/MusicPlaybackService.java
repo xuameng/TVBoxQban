@@ -135,7 +135,7 @@ public class MusicPlaybackService extends Service {
                         pauseForSwitch();
                         fragment.playPrevious();
                     } else { 
-                        App.showToastShort(context, "已经是第一集了！");
+                        App.showToastShort(MusicPlaybackService.this, "已经是第一集了！");
                     }
                 }
             }
@@ -148,7 +148,7 @@ public class MusicPlaybackService extends Service {
                         pauseForSwitch();
                         fragment.playNext(false);
                     } else { 
-                        App.showToastShort(context, "已经是最后一集了！");
+                        App.showToastShort(MusicPlaybackService.this, "已经是最后一集了！");
                     }
                 }
             }
