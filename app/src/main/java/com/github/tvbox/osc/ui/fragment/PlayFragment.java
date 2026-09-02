@@ -1717,6 +1717,17 @@ public class PlayFragment extends BaseLazyFragment {
     public void onResume() {
         super.onResume();
         exitingPreview = false;
+        TrackInfo trackInfo = null;
+        if (mVideoView == null) return;
+        AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
+        if (mediaPlayer instanceof EXOmPlayer) {
+            trackInfo = ((EXOmPlayer) mediaPlayer).getTrackInfo();
+            if (exoPlayerswitchPlayback && !trackInfo.getVideo().isEmpty()) {  //xuameng 音乐后台返回前台如果是视频的话解决无画面的BUG
+                exoPlayerswitchPlayback = false;
+                play(false);
+                return;
+            }
+        }
         mVideoView.resume();
     }
 
