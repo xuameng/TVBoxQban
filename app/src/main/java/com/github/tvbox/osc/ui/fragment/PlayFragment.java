@@ -156,7 +156,7 @@ public class PlayFragment extends BaseLazyFragment {
     private boolean audioPlayback;  //xuameng音乐小窗口
     private boolean switchingPlayback;  //xuameng音乐小窗口
     private String playArtwork;  //xuameng音乐小窗口
-    private boolean exoPlayerswitchPlayback;  //xuameng音乐小窗口 EXO进入后台小窗口
+    public boolean exoPlayerswitchPlayback;  //xuameng音乐小窗口 EXO进入后台小窗口
 
     private DanmakuView mDanmuView; //xuameng 弹幕
     private DanmuLoadController danmuLoadController; //xuameng 弹幕
@@ -1717,17 +1717,9 @@ public class PlayFragment extends BaseLazyFragment {
     public void onResume() {
         super.onResume();
         exitingPreview = false;
-        TrackInfo trackInfo = null;
-        if (mVideoView == null) return;
-        AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-        if (mediaPlayer instanceof EXOmPlayer) {
-            trackInfo = ((EXOmPlayer) mediaPlayer).getTrackInfo();
-            if (exoPlayerswitchPlayback && !trackInfo.getVideo().isEmpty()) {  //xuameng 音乐后台返回前台如果是视频的话解决无画面的BUG
+            if (exoPlayerswitchPlayback) {  //xuameng 音乐后台返回前台如果是视频的话解决无画面的BUG
                 exoPlayerswitchPlayback = false;
-                play(false);
-                return;
-            }
-        }
+			}
         mVideoView.resume();
     }
 
