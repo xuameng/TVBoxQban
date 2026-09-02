@@ -134,9 +134,8 @@ public class MusicPlaybackService extends Service {
                     if (fragment.hasPre()){
                         pauseForSwitch();
                         fragment.playPrevious();
-                        App.showToastShort(MusicPlaybackService.this, "222222222222222");
                     } else { 
-                        App.showToastShort(MusicPlaybackService.this, "1111111111111111");
+                        App.showToastShort(MusicPlaybackService.this, "已经是第一集了！");
                     }
                 }
             }
@@ -148,9 +147,8 @@ public class MusicPlaybackService extends Service {
                     if (fragment.hasNext()){
                         pauseForSwitch();
                         fragment.playNext(false);
-                        App.showToastShort(MusicPlaybackService.this, "3333333333333333");
                     } else { 
-                        App.showToastShort(MusicPlaybackService.this, "444444444444444");
+                        App.showToastShort(MusicPlaybackService.this, "已经是最后一集了！");
                     }
                 }
             }
@@ -204,16 +202,24 @@ public class MusicPlaybackService extends Service {
         if (ACTION_PREVIOUS.equals(action)) {
             PlayFragment fragment = getOwner();
             if (fragment != null) {
-                pauseForSwitch();
-                fragment.playPrevious();
+                    if (fragment.hasPre()){
+                        pauseForSwitch();
+                        fragment.playPrevious();
+                    } else { 
+                        App.showToastShort(MusicPlaybackService.this, "已经是第一集了！");
+                    }
             }
             return;
         }
         if (ACTION_NEXT.equals(action)) {
             PlayFragment fragment = getOwner();
             if (fragment != null) {
-                pauseForSwitch();
-                fragment.playNext(false);
+                    if (fragment.hasNext()){
+                        pauseForSwitch();
+                        fragment.playNext(false);
+                    } else { 
+                        App.showToastShort(MusicPlaybackService.this, "已经是最后一集了！");
+                    }
             }
             return;
         }
