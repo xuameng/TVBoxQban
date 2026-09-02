@@ -110,6 +110,11 @@ public class AndroidMediaPlayer extends AbstractPlayer implements MediaPlayer.On
     }
 
     @Override
+    public boolean keepRenderViewOnReset() {
+        return true;
+    }
+
+    @Override
     public boolean isPlaying() {
         return mMediaPlayer.isPlaying();
     }
