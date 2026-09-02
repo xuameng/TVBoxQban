@@ -1588,8 +1588,8 @@ public class PlayFragment extends BaseLazyFragment {
         this.exitingPreview = exitingPreview;
     }
 
-    boolean isStartedPlayState(int state) {  //xuameng音乐小窗口
-        return state == VideoView.STATE_PLAYING;
+    boolean isStartedPlayState(int state) {
+        return state == VideoView.STATE_PREPARED || state == VideoView.STATE_BUFFERED || state == VideoView.STATE_PLAYING;
     }
 
     private boolean hasAudioOnlyPlayback() {  //xuameng音乐小窗口
@@ -1701,17 +1701,6 @@ public class PlayFragment extends BaseLazyFragment {
     public void onResume() {
         super.onResume();
         exitingPreview = false;
-        TrackInfo trackInfo = null;
-        if (mVideoView == null) return;
-        AbstractPlayer mediaPlayer = mVideoView.getMediaPlayer();
-        if (mediaPlayer instanceof EXOmPlayer) {
-            trackInfo = ((EXOmPlayer) mediaPlayer).getTrackInfo();
-            if (exoPlayerswitchPlayback && !trackInfo.getVideo().isEmpty()) {  //xuameng 音乐后台返回前台如果是视频的话解决无画面的BUG
-                exoPlayerswitchPlayback = false;
-                play(false);
-                return;
-            }
-        }
         mVideoView.resume();
     }
 
