@@ -162,9 +162,6 @@ public class PlayFragment extends BaseLazyFragment {
     private DanmuLoadController danmuLoadController; //xuameng 弹幕
     private boolean reLoadDanmu  = false;  //xuameng 如果是解析嗅探地址重新下载弹幕
 
-    public boolean hasNext; //xuameng 判断是否是最后一集
-    public boolean hasPre;  //xuameng 判断是否是第一集
-
     @Override
     protected int getLayoutResID() {
         return R.layout.activity_play;
@@ -1664,6 +1661,22 @@ public class PlayFragment extends BaseLazyFragment {
             updateMusicSession();
         }
     }
+ 
+    public boolean hasNext() {  //xuameng音乐小窗口 是否是最后一集
+        if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
+            return false;
+        } else {
+            return mVodInfo.playIndex + 1 < mVodInfo.seriesMap.get(mVodInfo.playFlag).size();
+        }
+    }
+
+    public boolean hasPre() {  //xuameng音乐小窗口 是否是第一集
+        if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
+            return false;
+        } else {
+            return mVodInfo.playIndex - 1 >= 0;
+        }
+    }
 
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event != null) {
@@ -1765,6 +1778,7 @@ public class PlayFragment extends BaseLazyFragment {
     private SourceBean sourceBean;
 
     public void playNext(boolean isProgress) {
+        boolean hasNext;
         if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
             hasNext = false;
         } else {
@@ -1785,6 +1799,7 @@ public class PlayFragment extends BaseLazyFragment {
     }
 
     public void playPrevious() {
+        boolean hasPre = true;
         if (mVodInfo == null || mVodInfo.seriesMap.get(mVodInfo.playFlag) == null) {
             hasPre = false;
         } else {
