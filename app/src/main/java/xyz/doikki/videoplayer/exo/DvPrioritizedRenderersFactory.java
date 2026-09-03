@@ -9,6 +9,11 @@ import com.google.android.exoplayer2.video.MediaCodecVideoRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import java.util.ArrayList;
 
+/**
+ * xuameng TV ä¸“ç”¨ DvPrioritizedRenderersFactory:
+ * - å¼ºåˆ¶æŠŠ è§†é¢‘ç¡®è§£èƒ½æ’­DVç›´æ¥æ’­æ”¾ï¼Œä¸èƒ½æ’­æ”¾ æŠŠDV å½“æˆ HEVC å¤„ç†ï¼Œç»•è¿‡ DV ä¸“ç”¨è§£ç å™¨
+ */
+
 public class DvPrioritizedRenderersFactory extends DefaultRenderersFactory {
 
     public DvPrioritizedRenderersFactory(Context context) {
@@ -19,7 +24,7 @@ public class DvPrioritizedRenderersFactory extends DefaultRenderersFactory {
     protected void buildVideoRenderers(
             Context context,
             int extensionRendererMode,
-            MediaCodecSelector mediaCodecSelector, // Õâ¸ö²ÎÊıÎÒÃÇ²»ÓÃ£¬×Ô¼º¿ØÖÆ
+            MediaCodecSelector mediaCodecSelector, // è¿™ä¸ªå‚æ•°æˆ‘ä»¬ä¸ç”¨ï¼Œè‡ªå·±æ§åˆ¶
             boolean enableDecoderFallback,
             android.os.Handler eventHandler,
             VideoRendererEventListener eventListener,
@@ -27,24 +32,24 @@ public class DvPrioritizedRenderersFactory extends DefaultRenderersFactory {
             @NonNull ArrayList<Renderer> out) {
 
         // =========================================================
-        // 1. µÚÒ»ÓÅÏÈ¼¶£ºÔ­Éú DV Ó²½â£¨Ê¹ÓÃÏµÍ³Ä¬ÈÏ Selector£¬²»ĞŞ¸Ä mimeType£©
+        // 1. ç¬¬ä¸€ä¼˜å…ˆçº§ï¼šåŸç”Ÿ DV ç¡¬è§£ï¼ˆä½¿ç”¨ç³»ç»Ÿé»˜è®¤ Selectorï¼Œä¸ä¿®æ”¹ mimeTypeï¼‰
         // =========================================================
         out.add(new MediaCodecVideoRenderer(
                 context,
-                MediaCodecSelector.DEFAULT,      // ±£³ÖÔ­Ê¼ DV mimeType
+                MediaCodecSelector.DEFAULT,      // ä¿æŒåŸå§‹ DV mimeType
                 allowedVideoJoiningTimeMs,
-                true,                            // ¿ªÆô Fallback
+                true,                            // å¼€å¯ Fallback
                 eventHandler,
                 eventListener,
                 50                               // maxDroppedFramesToNotify
         ));
 
         // =========================================================
-        // 2. µÚ¶şÓÅÏÈ¼¶£ºHEVC Ó²½â¶µµ×£¨°Ñ DV µ± HEVC ´¦Àí£©
+        // 2. ç¬¬äºŒä¼˜å…ˆçº§ï¼šHEVC ç¡¬è§£å…œåº•ï¼ˆæŠŠ DV å½“ HEVC å¤„ç†ï¼‰
         // =========================================================
         out.add(new MediaCodecVideoRenderer(
                 context,
-                new HevcFallbackMediaCodecSelector(), // DV ¡ú HEVC
+                new HevcFallbackMediaCodecSelector(), // HevcFallbackMediaCodecSelector.java DV â†’ HEVC
                 allowedVideoJoiningTimeMs,
                 true,
                 eventHandler,
