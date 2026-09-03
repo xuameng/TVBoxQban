@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 /**
  * xuameng TV 专用 DvPrioritizedRenderersFactory:
- * - 强制把 视频确解能播DV直接播放，不能播放 把DV 当成 HEVC 处理，绕过 DV 专用解码器
+ * - 强制把 视频硬解能播DV直接播放，不能播放 把DV 当成 HEVC 处理，绕过 DV 专用解码器
  */
 
 public class DvPrioritizedRenderersFactory extends DefaultRenderersFactory {
