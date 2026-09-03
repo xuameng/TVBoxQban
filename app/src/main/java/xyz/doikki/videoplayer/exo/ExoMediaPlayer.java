@@ -90,9 +90,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             useSoftDecode = exoDecode;
         }
 
-        // 构建 RendererFactory
+        // 构建 RendererFactory 软解时：视频硬解能播DV直接播放，不能播放 把DV 当成 HEVC 处理，绕过 DV 专用解码器 用 自定义 DvPrioritizedRenderersFactory
         if (useSoftDecode) {
-            mRenderersFactory = new DvPrioritizedRenderersFactory(mAppContext);
+            mRenderersFactory = new DvPrioritizedRenderersFactory(mAppContext)
                     .setEnableDecoderFallback(true)
                     .setExtensionRendererMode(
                             DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
