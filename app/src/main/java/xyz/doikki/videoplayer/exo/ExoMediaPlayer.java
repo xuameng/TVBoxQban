@@ -27,7 +27,6 @@ import com.google.android.exoplayer2.video.VideoSize;
 import com.google.android.exoplayer2.ui.SubtitleView;  //xuameng用于显示字幕
 import com.google.android.exoplayer2.text.Cue;  //xuameng用于显示字幕
 import com.google.android.exoplayer2.ui.CaptionStyleCompat;  //xuameng用于显示字幕
-import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 
 import android.graphics.Color;     //xuameng用于显示字幕
 import com.github.tvbox.osc.util.HawkConfig;  //xuameng EXO解码
@@ -91,14 +90,9 @@ public class ExoMediaPlayer extends AbstractPlayer implements Player.Listener {
             useSoftDecode = exoDecode;
         }
 
-        // 用自定义 MediaCodecSelector 主要用于 DV → HEVC转换 尽量可以显示出图像
-        MediaCodecSelector mediaCodecSelector =
-                new DvFallbackMediaCodecSelector(useSoftDecode);
-
         // 构建 RendererFactory
         if (useSoftDecode) {
-            mRenderersFactory = new DefaultRenderersFactory(mAppContext)
-                    .setMediaCodecSelector(mediaCodecSelector)  // MediaCodecSelector
+            mRenderersFactory = new DvPrioritizedRenderersFactory(mAppContext);
                     .setEnableDecoderFallback(true)
                     .setExtensionRendererMode(
                             DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
