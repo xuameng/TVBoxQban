@@ -2202,8 +2202,10 @@ public class VodController extends BaseController {
     }
 
     public void mPauseIngXu() {        //xuameng 全屏时如果是暂停状态就显示暂停图标
+        int position = safeTimeMs(mControlWrapper.getCurrentPosition());
+        int duration = safeTimeMs(mControlWrapper.getDuration());
 		if(isInPlaybackState()){
-            if (!mControlWrapper.isPlaying() && mTvPausexu.getVisibility() == View.GONE){
+            if (!mControlWrapper.isPlaying() && position > 0 && duration > 0 && mTvPausexu.getVisibility() == View.GONE){
                 if(mBottomRoot.getVisibility() == View.VISIBLE) {
                     myHandle.removeCallbacks(myRunnable);
                     mBottomRoot.setVisibility(GONE);   //动画结束后隐藏下菜单
