@@ -90,7 +90,6 @@ public class SearchHelper {
         if (text == null || text.trim().isEmpty()) {
             return result;
         }
-        List<String> result = new ArrayList<>();
         result.add(text);
         String[] parts = text.split("\\W+");
         if (parts.length > 1) {
