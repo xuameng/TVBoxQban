@@ -339,39 +339,49 @@ public class HomeActivity extends BaseActivity {
 
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
-        sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
-            @Override
-            public void onChanged(AbsSortXml absXml) {
-                showSuccess();
-                if (skipNextUpdate) {
-                    skipNextUpdate = false;
-                    return;
-                }
-                if (!homeSortLoading && loadingSourceKey == null && !refreshHomeRec) {
-                    return;
-                }
-                if (absXml != null && absXml.sourceKey != null && loadingSourceKey != null && !loadingSourceKey.equals(absXml.sourceKey)) {
-                    return;
-                }
-                SourceBean home = ApiConfig.get().getHomeSourceBean();
-                clearHomePages();
-                List<MovieSort.SortData> newSortData;
-                if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
-                    newSortData = DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), absXml.classes.sortList, true);
-                } else {
-                    newSortData = DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true);
-                }
-                updateSortData(newSortData);
-                initViewPager(absXml);
-                updateHomeRec(absXml);
-                if (home != null && home.getName() != null && !home.getName().isEmpty()) tvName.setText(home.getName());
-                homeSortLoading = false;
-                loadingSourceKey = null;
-                previousHomeName = null;
-                previousHomeSource = null;
-                selectGridViewHome(); //xuameng主页焦点
-            }
+sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
+    @Override
+    public void onChanged(AbsSortXml absXml) {
+        showSuccess();
+        if (skipNextUpdate) {
+            skipNextUpdate = false;
+            return;
+        }
+        if (!homeSortLoading && loadingSourceKey == null && !refreshHomeRec) {
+            return;
+        }
+        if (absXml != null && absXml.sourceKey != null && loadingSourceKey != null && !loadingSourceKey.equals(absXml.sourceKey)) {
+            return;
+        }
+        SourceBean home = ApiConfig.get().getHomeSourceBean();
+
+        // ★★★ 原来这里直接调 clearHomePages() + initViewPager()
+        // ★★★ 现在改成 post 延迟一帧，让当前帧的 dispatchDraw 跑完
+
+        List<MovieSort.SortData> newSortData;
+        if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
+            newSortData = DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), absXml.classes.sortList, true);
+        } else {
+            newSortData = DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true);
+        }
+        updateSortData(newSortData);
+
+        // ★★★ 关键改动：post 到下一帧再清+重建 ★★★
+        mViewPager.post(() -> {
+            if (isActivityUnavailable()) return;
+            clearHomePages();
+            initViewPager(absXml);
         });
+
+        updateHomeRec(absXml);
+        if (home != null && home.getName() != null && !home.getName().isEmpty()) tvName.setText(home.getName());
+        homeSortLoading = false;
+        loadingSourceKey = null;
+        previousHomeName = null;
+        previousHomeSource = null;
+        selectGridViewHome();
+    }
+});
     }
 
     private boolean dataInitOk = false;
@@ -1045,10 +1055,14 @@ public class HomeActivity extends BaseActivity {
         dataInitOk = true;
         skipNextUpdate=true;
         cancelHomeSortLoading();
-        clearHomePages();
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
+
+    mViewPager.post(() -> {
+        if (isActivityUnavailable()) return;
+        clearHomePages();
         initViewPager(null);
+    });
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
     }
 
