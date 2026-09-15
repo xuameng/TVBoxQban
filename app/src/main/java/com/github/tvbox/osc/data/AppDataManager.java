@@ -19,12 +19,13 @@ import java.io.IOException;
 /**
  * 类描述:
  *
- * @author pj567
- * @since 2020/5/15
+ * @author xuameng
+ * @since 2026/9/15
+ * 历史列表专用：只查轻量字段，不碰 dataJson
  */
 public class AppDataManager {
-    private static final int DB_FILE_VERSION = 4;
-    private static final String DB_NAME = "tvbox";
+    private static final int DB_FILE_VERSION = 5;
+    private static final String DB_NAME = "jvhuiys";
     private static AppDataManager manager;   //xuameng搜索历史
     private static AppDataBase dbInstance;
 
@@ -86,30 +87,26 @@ public class AppDataManager {
         }
     };
 
-static final Migration MIGRATION_3_4 = new Migration(3, 4) {  // ← 替换原来的
-    @Override
-    public void migrate(SupportSQLiteDatabase database) {
-        try {
-            database.execSQL("ALTER TABLE vodRecord ADD COLUMN vodName TEXT");
-            database.execSQL("ALTER TABLE vodRecord ADD COLUMN vodPic TEXT");
-            database.execSQL("ALTER TABLE vodRecord ADD COLUMN playNote TEXT");
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-        }
-    }
-};
-
-
-    static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+    static final Migration MIGRATION_3_4 = new Migration(3, 4) {  //xuameng 列表用轻量字段
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             try {
-                database.execSQL("ALTER TABLE localSource ADD COLUMN type INTEGER NOT NULL DEFAULT 0");
+                database.execSQL("ALTER TABLE vodRecord ADD COLUMN vodName TEXT");
+                database.execSQL("ALTER TABLE vodRecord ADD COLUMN vodPic TEXT");
+                database.execSQL("ALTER TABLE vodRecord ADD COLUMN playNote TEXT");
             } catch (SQLiteException e) {
                 e.printStackTrace();
             }
         }
     };
+
+
+static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+    @Override
+    public void migrate(SupportSQLiteDatabase database) {
+        database.execSQL("ALTER TABLE vodRecord ADD COLUMN dataJsonPath TEXT");
+    }
+};
 
     static String dbPath() {
         return DB_NAME + ".v" + DB_FILE_VERSION + ".db";
@@ -124,8 +121,8 @@ static final Migration MIGRATION_3_4 = new Migration(3, 4) {  // ← 替换原�
                     .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
    //                 .addMigrations(MIGRATION_1_2)
                     .addMigrations(MIGRATION_2_3)     //xuameng搜索历史
-                    .addMigrations(MIGRATION_3_4)
-                    //.addMigrations(MIGRATION_4_5)
+                    .addMigrations(MIGRATION_3_4)     //xuameng 列表用轻量字段
+                    .addMigrations(MIGRATION_4_5)
                     .addCallback(new RoomDatabase.Callback() {
                         @Override
                         public void onCreate(@NonNull SupportSQLiteDatabase db) {
