@@ -92,15 +92,15 @@ public static void insertVodRecord(String sourceKey, VodInfo vodInfo) {
 
 public static VodInfo getVodInfo(String sourceKey, String vodId) {
     VodRecordDao dao = AppDataManager.get().getVodRecordDao();
-    VodRecord record = dao.getVodRecordPath(sourceKey, vodId);
+    VodRecordPath recordPath = dao.getVodRecordPath(sourceKey, vodId);
 
-    if (record == null) return null;
+    if (recordPath == null) return null;
 
     String json = null;
 
     // 优先从文件读
-    if (!TextUtils.isEmpty(record.dataJsonPath)) {
-        File jsonFile = new File(record.dataJsonPath);
+    if (!TextUtils.isEmpty(recordPath.dataJsonPath)) {
+        File jsonFile = new File(recordPath.dataJsonPath);
         if (jsonFile.exists()) {
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(jsonFile));
@@ -119,7 +119,7 @@ public static VodInfo getVodInfo(String sourceKey, String vodId) {
 
     // 兜底：从旧 dataJson 字段读（兼容老数据）
     if (TextUtils.isEmpty(json)) {
-        record = dao.getVodRecord(sourceKey, vodId); // 旧的 SELECT *
+        VodRecord record = dao.getVodRecord(sourceKey, vodId); // 旧的 SELECT *
         if (record != null) json = record.dataJson;
     }
 
@@ -138,16 +138,14 @@ public static VodInfo getVodInfo(String sourceKey, String vodId) {
 public static void deleteVodRecord(String sourceKey, VodInfo vodInfo) {
     VodRecordDao dao = AppDataManager.get().getVodRecordDao();
     
-    // 先查路径，准备删文件
-    VodRecord record = dao.getVodRecordPath(sourceKey, vodInfo.id);
-    if (record != null && !TextUtils.isEmpty(record.dataJsonPath)) {
-        File jsonFile = new File(record.dataJsonPath);
+    VodRecordPath recordPath = dao.getVodRecordPath(sourceKey, vodInfo.id);
+    if (recordPath != null && !TextUtils.isEmpty(recordPath.dataJsonPath)) {
+        File jsonFile = new File(recordPath.dataJsonPath);
         if (jsonFile.exists()) {
             jsonFile.delete();
         }
     }
     
-    // 再删数据库行
     dao.deleteBySourceAndVodId(sourceKey, vodInfo.id);
 }
 
