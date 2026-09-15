@@ -19,21 +19,17 @@ public interface VodRecordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(VodRecord record);
 
-    // 详情页用（单行，安全）
-    @Query("SELECT * FROM vodRecord WHERE `sourceKey`=:sourceKey AND `vodId`=:vodId")
-    VodRecord getVodRecord(String sourceKey, String vodId);
-
     // 只查 id，不读 dataJson
     @Query("SELECT id FROM vodRecord WHERE `sourceKey`=:sourceKey AND `vodId`=:vodId LIMIT 1")
     Integer getVodRecordId(String sourceKey, String vodId);
 
-    // 历史列表用，不碰 dataJson
-    @Query("SELECT id, vodId, updateTime, sourceKey, vodName, vodPic, playNote FROM vodRecord ORDER BY updateTime DESC LIMIT :size")
-    List<VodRecordSummary> getHistorySummary(int size);
-
-    // 只查 id + 文件路径，不碰 dataJson 大字段
+    // 只查 id + 文件路径
     @Query("SELECT id, dataJsonPath FROM vodRecord WHERE `sourceKey`=:sourceKey AND `vodId`=:vodId LIMIT 1")
     VodRecordPath getVodRecordPath(String sourceKey, String vodId);
+
+    // 历史列表用
+    @Query("SELECT id, vodId, updateTime, sourceKey, vodName, vodPic, playNote FROM vodRecord ORDER BY updateTime DESC LIMIT :size")
+    List<VodRecordSummary> getHistorySummary(int size);
 
     @Query("SELECT count(*) FROM vodRecord")
     int getCount();
@@ -47,7 +43,6 @@ public interface VodRecordDao {
     @Query("DELETE FROM vodRecord WHERE `sourceKey`=:sourceKey")
     void deleteBySourceKey(String sourceKey);
 
-    // 替代 @Delete，不读 dataJson
     @Query("DELETE FROM vodRecord WHERE `sourceKey`=:sourceKey AND `vodId`=:vodId")
     void deleteBySourceAndVodId(String sourceKey, String vodId);
 }
