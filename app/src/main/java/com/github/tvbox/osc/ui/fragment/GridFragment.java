@@ -187,12 +187,7 @@ public class GridFragment extends BaseLazyFragment {
     public boolean restoreView(){
         if(mGrids.empty()) return false;
         this.showSuccess();
-      //  ((ViewGroup) mGridView.getParent()).removeView(this.mGridView); // 重父窗口移除当前控件
-mGridView.post(() -> {
-    if (mGridView == null || mGridView.getParent() == null) return;
-    ViewGroup parent = (ViewGroup) mGridView.getParent();
-    parent.removeView(mGridView);
-});
+        ((ViewGroup) mGridView.getParent()).removeView(this.mGridView); // 重父窗口移除当前控件
         GridInfo info = mGrids.pop();// 还原上次保存的控件
         this.sortData.id = info.sortID;
         this.mGridView = info.mGridView;
@@ -223,15 +218,10 @@ mGridView.post(() -> {
             v3.setLayoutParams(mGridView.getLayoutParams());
             v3.setPadding(mGridView.getPaddingLeft(), mGridView.getPaddingTop(), mGridView.getPaddingRight(), mGridView.getPaddingBottom());
             v3.setClipToPadding(mGridView.getClipToPadding());
-mGridView.post(() -> {
-    if (mGridView == null || mGridView.getParent() == null) return;
-
-    ViewGroup parent = (ViewGroup) mGridView.getParent();
-    parent.addView(v3);
-    mGridView.setVisibility(View.GONE);
-    mGridView = v3;
-    mGridView.setVisibility(View.VISIBLE);
-});
+            ((ViewGroup) mGridView.getParent()).addView(v3);
+            mGridView.setVisibility(View.GONE);
+            mGridView = v3;
+            mGridView.setVisibility(View.VISIBLE);
         }
         mGridView.setHasFixedSize(true);
         style=ImgUtil.initStyle();
