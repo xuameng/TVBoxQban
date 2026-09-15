@@ -25,13 +25,13 @@ public interface VodRecordDao {
     @Query("SELECT id, dataJsonPath FROM vodRecord WHERE `sourceKey`=:sourceKey AND `vodId`=:vodId LIMIT 1")
     VodRecordPath getVodRecordPath(String sourceKey, String vodId);
 
-    // ===== 新增：带播放状态的摘要查询 =====
+    // 播放状态摘要（带 currentPlayFlag 等）
     @Query("SELECT id, vodId, updateTime, sourceKey, vodName, vodPic, playNote, currentPlayFlag, currentPlayIndex, playerCfg, reverseSort FROM vodRecord WHERE `sourceKey`=:sourceKey AND `vodId`=:vodId LIMIT 1")
     VodRecordSummary getVodRecordSummary(String sourceKey, String vodId);
-    // ===== 新增结束 =====
 
+    // 历史列表用（只查轻量字段，返回列表专用 POJO）
     @Query("SELECT id, vodId, updateTime, sourceKey, vodName, vodPic, playNote FROM vodRecord ORDER BY updateTime DESC LIMIT :size")
-    List<VodRecordSummary> getHistorySummary(int size);
+    List<VodRecordListSummary> getHistorySummary(int size);
 
     @Query("SELECT count(*) FROM vodRecord")
     int getCount();
