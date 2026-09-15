@@ -24,7 +24,7 @@ import java.io.IOException;
  * 历史列表专用：只查轻量字段，不碰 dataJson
  */
 public class AppDataManager {
-    private static final int DB_FILE_VERSION = 5;
+    private static final int DB_FILE_VERSION = 6;
     private static final String DB_NAME = "jvhuiys";
     private static AppDataManager manager;   //xuameng搜索历史
     private static AppDataBase dbInstance;
@@ -108,6 +108,20 @@ public class AppDataManager {
         }
     };
 
+static final Migration MIGRATION_5_6 = new Migration(5, 6) {
+    @Override
+    public void migrate(SupportSQLiteDatabase database) {
+        try {
+            database.execSQL("ALTER TABLE vodRecord ADD COLUMN currentPlayFlag TEXT");
+            database.execSQL("ALTER TABLE vodRecord ADD COLUMN currentPlayIndex INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("ALTER TABLE vodRecord ADD COLUMN playerCfg TEXT");
+            database.execSQL("ALTER TABLE vodRecord ADD COLUMN reverseSort INTEGER NOT NULL DEFAULT 0");
+        } catch (SQLiteException e) {
+            e.printStackTrace();
+        }
+    }
+};
+
     static String dbPath() {
         return DB_NAME + ".v" + DB_FILE_VERSION + ".db";
     }
@@ -123,6 +137,7 @@ public class AppDataManager {
                     .addMigrations(MIGRATION_2_3)     //xuameng搜索历史
                     .addMigrations(MIGRATION_3_4)     //xuameng 列表用轻量字段
                     .addMigrations(MIGRATION_4_5)     //xuameng 文件路径 dataJsonPath
+                    .addMigrations(MIGRATION_5_6)
                     .addCallback(new RoomDatabase.Callback() {
                         @Override
                         public void onCreate(@NonNull SupportSQLiteDatabase db) {
