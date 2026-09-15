@@ -71,7 +71,14 @@ public static void insertVodRecord(String sourceKey, VodInfo vodInfo) {
     record.vodPic = vodInfo.pic;
     record.playNote = vodInfo.playNote;
 
-    // ✅ JSON 写文件，路径存库
+    // ===== 新增：写播放状态 =====
+    record.currentPlayFlag = vodInfo.currentPlayFlag;
+    record.currentPlayIndex = vodInfo.currentPlayIndex;
+    record.playerCfg = vodInfo.playerCfg != null ? vodInfo.playerCfg : "";
+    record.reverseSort = vodInfo.reverseSort ? 1 : 0;
+    // ===== 新增结束 =====
+
+    // JSON 写文件，路径存库
     String json = getVodInfoGson().toJson(vodInfo);
     String fileName = sourceKey + "_" + vodInfo.id + ".json";
     File dir = new File(App.getInstance().getFilesDir(), "vod_record");
@@ -84,8 +91,7 @@ public static void insertVodRecord(String sourceKey, VodInfo vodInfo) {
         record.dataJsonPath = jsonFile.getAbsolutePath();
     } catch (IOException e) {
         e.printStackTrace();
-        // 兜底：还存 dataJson（旧逻辑）
-        record.dataJson = json;
+        record.dataJson = json; // 兜底
     }
 
     dao.insert(record);
