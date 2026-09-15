@@ -339,49 +339,39 @@ public class HomeActivity extends BaseActivity {
 
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
-sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
-    @Override
-    public void onChanged(AbsSortXml absXml) {
-        showSuccess();
-        if (skipNextUpdate) {
-            skipNextUpdate = false;
-            return;
-        }
-        if (!homeSortLoading && loadingSourceKey == null && !refreshHomeRec) {
-            return;
-        }
-        if (absXml != null && absXml.sourceKey != null && loadingSourceKey != null && !loadingSourceKey.equals(absXml.sourceKey)) {
-            return;
-        }
-        SourceBean home = ApiConfig.get().getHomeSourceBean();
-
-        // ★★★ 原来这里直接调 clearHomePages() + initViewPager()
-        // ★★★ 现在改成 post 延迟一帧，让当前帧的 dispatchDraw 跑完
-
-        List<MovieSort.SortData> newSortData;
-        if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
-            newSortData = DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), absXml.classes.sortList, true);
-        } else {
-            newSortData = DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true);
-        }
-        updateSortData(newSortData);
-
-        // ★★★ 关键改动：post 到下一帧再清+重建 ★★★
-        mViewPager.post(() -> {
-            if (isActivityUnavailable()) return;
-            clearHomePages();
-            initViewPager(absXml);
+        sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
+            @Override
+            public void onChanged(AbsSortXml absXml) {
+                showSuccess();
+                if (skipNextUpdate) {
+                    skipNextUpdate = false;
+                    return;
+                }
+                if (!homeSortLoading && loadingSourceKey == null && !refreshHomeRec) {
+                    return;
+                }
+                if (absXml != null && absXml.sourceKey != null && loadingSourceKey != null && !loadingSourceKey.equals(absXml.sourceKey)) {
+                    return;
+                }
+                SourceBean home = ApiConfig.get().getHomeSourceBean();
+                clearHomePages();
+                List<MovieSort.SortData> newSortData;
+                if (absXml != null && absXml.classes != null && absXml.classes.sortList != null) {
+                    newSortData = DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), absXml.classes.sortList, true);
+                } else {
+                    newSortData = DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true);
+                }
+                updateSortData(newSortData);
+                initViewPager(absXml);
+                updateHomeRec(absXml);
+                if (home != null && home.getName() != null && !home.getName().isEmpty()) tvName.setText(home.getName());
+                homeSortLoading = false;
+                loadingSourceKey = null;
+                previousHomeName = null;
+                previousHomeSource = null;
+                selectGridViewHome(); //xuameng主页焦点
+            }
         });
-
-        updateHomeRec(absXml);
-        if (home != null && home.getName() != null && !home.getName().isEmpty()) tvName.setText(home.getName());
-        homeSortLoading = false;
-        loadingSourceKey = null;
-        previousHomeName = null;
-        previousHomeSource = null;
-        selectGridViewHome();
-    }
-});
     }
 
     private boolean dataInitOk = false;
@@ -601,21 +591,33 @@ sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
         }
     }
 
-    private void clearHomePages() {   //xuameng 清理主页
-        mHandler.removeCallbacks(mDataRunnable);
-        currentSelected = 0;
-        sortFocused = 0;
-        sortChange = false;
-        sortFocusView = null;
-        currentView = null;
-        if (pageAdapter != null) {
-            mViewPager.setAdapter(null);
-            pageAdapter.removeAll();
-            pageAdapter = null;
-        } else if (!fragments.isEmpty()) {
-            fragments.clear();
-        }
+private void clearHomePages() {
+    mHandler.removeCallbacks(mDataRunnable);
+    currentSelected = 0;
+    sortFocused = 0;
+    sortChange = false;
+    sortFocusView = null;
+    currentView = null;
+    
+    // ★ 停掉 topLayout 的动画，防止 layout 参数在 draw 时被改
+    if (topLayout != null) {
+        topLayout.clearAnimation();
+        topLayout.animate().cancel();
     }
+    
+    // ★ 强制 ConstraintLayout 重新计算
+    if (contentLayout != null) {
+        contentLayout.requestLayout();
+    }
+    
+    if (pageAdapter != null) {
+        mViewPager.setAdapter(null);
+        pageAdapter.removeAll();
+        pageAdapter = null;
+    } else if (!fragments.isEmpty()) {
+        fragments.clear();
+    }
+}
 
     private void updateSortData(List<MovieSort.SortData> newSortData) {  //xuameng 更新分类数据
         if (newSortData == null) {
@@ -829,7 +831,11 @@ sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
 
     byte topHide = 0;
 
+private boolean topAnimating = false;
     private void changeTop(boolean hide) {
+    if (topAnimating) return; // ★ 防止重复触发
+    topAnimating = true;
+
         ViewObj viewObj = new ViewObj(topLayout, (ViewGroup.MarginLayoutParams) topLayout.getLayoutParams());
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.addListener(new Animator.AnimatorListener() {
@@ -840,6 +846,7 @@ sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 topHide = (byte) (hide ? 1 : 0);
+            topAnimating = false; // ★ 动画结束才解锁
             }
 
             @Override
@@ -1055,14 +1062,10 @@ sourceViewModel.sortResult.observe(this, new Observer<AbsSortXml>() {
         dataInitOk = true;
         skipNextUpdate=true;
         cancelHomeSortLoading();
+        clearHomePages();
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
-
-    mViewPager.post(() -> {
-        if (isActivityUnavailable()) return;
-        clearHomePages();
         initViewPager(null);
-    });
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
     }
 
