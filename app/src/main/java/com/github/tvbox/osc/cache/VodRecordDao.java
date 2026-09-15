@@ -34,12 +34,7 @@ public interface VodRecordDao {
     int reserver(int size);
 
     // ✅ 历史列表专用：只查轻量字段，不碰 dataJson
-    @Query("""
-        SELECT id, vodId, updateTime, sourceKey, vodName, vodPic, playNote
-        FROM vodRecord
-        ORDER BY updateTime DESC
-        LIMIT :size
-    """)
+    @Query("SELECT id, vodId, updateTime, sourceKey, vodName, vodPic, playNote FROM vodRecord ORDER BY updateTime DESC LIMIT :size")
     List<VodRecordSummary> getHistorySummary(int size);
 
     @Query("DELETE FROM vodRecord WHERE sourceKey = :sourceKey")
