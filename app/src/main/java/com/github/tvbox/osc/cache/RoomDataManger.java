@@ -87,10 +87,7 @@ public class RoomDataManger {
     }
 
     public static void deleteVodRecord(String sourceKey, VodInfo vodInfo) {
-        VodRecord record = AppDataManager.get().getVodRecordDao().getVodRecord(sourceKey, vodInfo.id);
-        if (record != null) {
-            AppDataManager.get().getVodRecordDao().delete(record);
-        }
+        AppDataManager.get().getVodRecordDao().deleteBySourceAndVodId(sourceKey, vodInfo.id);
     }
 
     // ✅ 改：历史列表用摘要查询，不反序列化 dataJson
