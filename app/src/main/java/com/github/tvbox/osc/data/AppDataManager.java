@@ -23,7 +23,7 @@ import java.io.IOException;
  * @since 2020/5/15
  */
 public class AppDataManager {
-    private static final int DB_FILE_VERSION = 3;
+    private static final int DB_FILE_VERSION = 4;
     private static final String DB_NAME = "tvbox";
     private static AppDataManager manager;   //xuameng搜索历史
     private static AppDataBase dbInstance;
@@ -86,16 +86,19 @@ public class AppDataManager {
         }
     };
 
-    static final Migration MIGRATION_3_4 = new Migration(3, 4) {
-        @Override
-        public void migrate(SupportSQLiteDatabase database) {
-            try {
-                database.execSQL("ALTER TABLE vodRecord ADD COLUMN dataJson TEXT");
-            } catch (SQLiteException e) {
-                e.printStackTrace();
-            }
+static final Migration MIGRATION_3_4 = new Migration(3, 4) {  // ← 替换原来的
+    @Override
+    public void migrate(SupportSQLiteDatabase database) {
+        try {
+            database.execSQL("ALTER TABLE vodRecord ADD COLUMN vodName TEXT");
+            database.execSQL("ALTER TABLE vodRecord ADD COLUMN vodPic TEXT");
+            database.execSQL("ALTER TABLE vodRecord ADD COLUMN playNote TEXT");
+        } catch (SQLiteException e) {
+            e.printStackTrace();
         }
-    };
+    }
+};
+
 
     static final Migration MIGRATION_4_5 = new Migration(4, 5) {
         @Override
@@ -121,7 +124,7 @@ public class AppDataManager {
                     .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
    //                 .addMigrations(MIGRATION_1_2)
                     .addMigrations(MIGRATION_2_3)     //xuameng搜索历史
-                    //.addMigrations(MIGRATION_3_4)
+                    .addMigrations(MIGRATION_3_4)
                     //.addMigrations(MIGRATION_4_5)
                     .addCallback(new RoomDatabase.Callback() {
                         @Override
