@@ -34,9 +34,6 @@ public interface VodRecordDao {
     // 只查 id + 文件路径，不碰 dataJson 大字段
     @Query("SELECT id, dataJsonPath FROM vodRecord WHERE `sourceKey`=:sourceKey AND `vodId`=:vodId LIMIT 1")
     VodRecordPath getVodRecordPath(String sourceKey, String vodId);
-    // 迁移用：查旧的大字段
-    @Query("SELECT id, dataJson FROM vodRecord WHERE dataJson IS NOT NULL AND dataJson != ''")
-    List<VodRecordMigrationItem> getRecordsWithDataJson();
 
     @Query("SELECT count(*) FROM vodRecord")
     int getCount();
