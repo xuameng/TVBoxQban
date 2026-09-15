@@ -792,12 +792,8 @@ private boolean viewPagerReady = false; // ★ 加这个字段
         public void run() {
             if (sortChange) {
                 sortChange = false;
-           // ★★★ 加守卫：Fragment 还没 ready 就不切 ★★★
-            if (!isResumed() || isActivityUnavailable()) {
-                return;
-            }
             // ★★★ ViewPager 还在 layout 过程中就不切 ★★★
-            if (mViewPager == null || mViewPager.getWidth() == 0 || mViewPager.getHeight() == 0 || !viewPagerReady) {
+            if (mViewPager == null || mViewPager.getWidth() == 0 || mViewPager.getHeight() == 0 || !viewPagerReady  || isActivityUnavailable()) {
                 // 还没 layout 完，再延迟一帧
                 mHandler.postDelayed(mDataRunnable, 100);
                 return;
