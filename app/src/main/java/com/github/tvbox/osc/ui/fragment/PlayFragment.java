@@ -758,6 +758,7 @@ public class PlayFragment extends BaseLazyFragment {
                         @Override
                         public void run() {
                             mediaPlayer.seekTo(progress);
+                            mediaPlayer.start();
                         }
                     }, 200);
                     dialog.dismiss();
