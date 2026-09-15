@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author pj567
- * @date :2021/1/7
- * @description:
+ * @author xuameng
+ * @since 2026/9/15
+ * 历史列表专用：只查轻量字段，不碰 dataJson
  */
 
 public class RoomDataManger {
@@ -49,23 +49,25 @@ public class RoomDataManger {
 
     // ✅ 改：写入时存轻量字段
     public static void insertVodRecord(String sourceKey, VodInfo vodInfo) {
-        VodRecord record = AppDataManager.get().getVodRecordDao().getVodRecord(sourceKey, vodInfo.id);
-        if (record == null) {
-            record = new VodRecord();
+        VodRecordDao dao = AppDataManager.get().getVodRecordDao();
+
+        // ✅ 只查 id，不读 dataJson
+        Integer existingId = dao.getVodRecordId(sourceKey, vodInfo.id);
+
+        VodRecord record = new VodRecord();
+        if (existingId != null) {
+            record.setId(existingId);  // 设了 id → REPLACE 更新旧行
         }
+
         record.sourceKey = sourceKey;
         record.vodId = vodInfo.id;
         record.updateTime = System.currentTimeMillis();
-
-        // ✅ 列表字段
         record.vodName = vodInfo.name;
         record.vodPic = vodInfo.pic;
         record.playNote = vodInfo.playNote;
-
-        // ✅ 大字段保留（详情页用）
         record.dataJson = getVodInfoGson().toJson(vodInfo);
 
-        AppDataManager.get().getVodRecordDao().insert(record);
+        dao.insert(record);
     }
 
     public static VodInfo getVodInfo(String sourceKey, String vodId) {
