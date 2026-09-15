@@ -101,12 +101,12 @@ public class AppDataManager {
     };
 
 
-static final Migration MIGRATION_4_5 = new Migration(4, 5) {
-    @Override
-    public void migrate(SupportSQLiteDatabase database) {
-        database.execSQL("ALTER TABLE vodRecord ADD COLUMN dataJsonPath TEXT");
-    }
-};
+    static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE vodRecord ADD COLUMN dataJsonPath TEXT");
+        }
+    };
 
     static String dbPath() {
         return DB_NAME + ".v" + DB_FILE_VERSION + ".db";
@@ -122,7 +122,7 @@ static final Migration MIGRATION_4_5 = new Migration(4, 5) {
    //                 .addMigrations(MIGRATION_1_2)
                     .addMigrations(MIGRATION_2_3)     //xuameng搜索历史
                     .addMigrations(MIGRATION_3_4)     //xuameng 列表用轻量字段
-                    .addMigrations(MIGRATION_4_5)
+                    .addMigrations(MIGRATION_4_5)     //xuameng 文件路径 dataJsonPath
                     .addCallback(new RoomDatabase.Callback() {
                         @Override
                         public void onCreate(@NonNull SupportSQLiteDatabase db) {
