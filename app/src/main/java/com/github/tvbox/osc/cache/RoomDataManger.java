@@ -9,6 +9,7 @@ import com.github.tvbox.osc.data.AppDataManager;
 import com.google.gson.ExclusionStrategy;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.HistoryHelper;
+import com.github.tvbox.osc.base.App;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
