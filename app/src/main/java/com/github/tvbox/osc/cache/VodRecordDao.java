@@ -21,6 +21,9 @@ public interface VodRecordDao {
     long insert(VodRecord record);
 
     // 详情页还在用，保留
+    @Query("select * from vodRecord order by updateTime desc limit :size")
+    List<VodRecord> getAll(int size);
+
     @Query("select * from vodRecord where `sourceKey`=:sourceKey and `vodId`=:vodId")
     VodRecord getVodRecord(String sourceKey, String vodId);
 
@@ -45,4 +48,8 @@ public interface VodRecordDao {
 
     @Query("DELETE FROM vodRecord WHERE sourceKey = :sourceKey")
     void deleteBySourceKey(String sourceKey);
+
+    // ✅ 替代 @Delete，不读 dataJson
+    @Query("DELETE FROM vodRecord WHERE `sourceKey`=:sourceKey AND `vodId`=:vodId")
+    void deleteBySourceAndVodId(String sourceKey, String vodId);
 }
