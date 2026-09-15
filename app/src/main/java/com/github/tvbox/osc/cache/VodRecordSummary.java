@@ -15,4 +15,11 @@ public class VodRecordSummary {
     public String vodName;
     public String vodPic;
     public String playNote;
+
+    // ===== 新增：播放状态 =====
+    public String currentPlayFlag;
+    public int currentPlayIndex;
+    public String playerCfg;
+    public int reverseSort;
+    // ===== 新增结束 =====
 }
