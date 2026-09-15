@@ -19,15 +19,17 @@ public interface VodRecordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(VodRecord record);
 
-    // 只查 id，不读 dataJson
     @Query("SELECT id FROM vodRecord WHERE `sourceKey`=:sourceKey AND `vodId`=:vodId LIMIT 1")
     Integer getVodRecordId(String sourceKey, String vodId);
 
-    // 只查 id + 文件路径
     @Query("SELECT id, dataJsonPath FROM vodRecord WHERE `sourceKey`=:sourceKey AND `vodId`=:vodId LIMIT 1")
     VodRecordPath getVodRecordPath(String sourceKey, String vodId);
 
-    // 历史列表用
+    // ===== 新增：带播放状态的摘要查询 =====
+    @Query("SELECT id, vodId, updateTime, sourceKey, vodName, vodPic, playNote, currentPlayFlag, currentPlayIndex, playerCfg, reverseSort FROM vodRecord WHERE `sourceKey`=:sourceKey AND `vodId`=:vodId LIMIT 1")
+    VodRecordSummary getVodRecordSummary(String sourceKey, String vodId);
+    // ===== 新增结束 =====
+
     @Query("SELECT id, vodId, updateTime, sourceKey, vodName, vodPic, playNote FROM vodRecord ORDER BY updateTime DESC LIMIT :size")
     List<VodRecordSummary> getHistorySummary(int size);
 
