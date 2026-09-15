@@ -92,42 +92,26 @@ public static void insertVodRecord(String sourceKey, VodInfo vodInfo) {
 }
 
 public static VodInfo getVodInfo(String sourceKey, String vodId) {
-    VodRecordDao dao = AppDataManager.get().getVodRecordDao();
-    VodRecordPath recordPath = dao.getVodRecordPath(sourceKey, vodId);
-
-    if (recordPath == null) return null;
-
-    String json = null;
-
-    // 优先从文件读
-    if (!TextUtils.isEmpty(recordPath.dataJsonPath)) {
-        File jsonFile = new File(recordPath.dataJsonPath);
-        if (jsonFile.exists()) {
-            try {
-                BufferedReader reader = new BufferedReader(new FileReader(jsonFile));
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line);
-                }
-                reader.close();
-                json = sb.toString();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    VodRecordPath recordPath = AppDataManager.get().getVodRecordDao().getVodRecordPath(sourceKey, vodId);
+    if (recordPath == null || TextUtils.isEmpty(recordPath.dataJsonPath)) {
+        return null;
     }
 
-    // 兜底：从旧 dataJson 字段读（兼容老数据）
-    if (TextUtils.isEmpty(json)) {
-        VodRecord record = dao.getVodRecord(sourceKey, vodId); // 旧的 SELECT *
-        if (record != null) json = record.dataJson;
+    File jsonFile = new File(recordPath.dataJsonPath);
+    if (!jsonFile.exists()) {
+        return null;
     }
-
-    if (TextUtils.isEmpty(json)) return null;
 
     try {
-        VodInfo vodInfo = getVodInfoGson().fromJson(json, new TypeToken<VodInfo>() {}.getType());
+        BufferedReader reader = new BufferedReader(new FileReader(jsonFile));
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line);
+        }
+        reader.close();
+
+        VodInfo vodInfo = getVodInfoGson().fromJson(sb.toString(), new TypeToken<VodInfo>() {}.getType());
         if (vodInfo.name == null) return null;
         return vodInfo;
     } catch (Exception e) {
