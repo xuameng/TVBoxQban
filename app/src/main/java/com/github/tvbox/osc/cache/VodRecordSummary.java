@@ -3,7 +3,7 @@ package com.github.tvbox.osc.cache;
 import androidx.room.ColumnInfo;
 
 /**
- * 历史列表专用轻量 POJO，不映射到表
+ * 鍘嗗彶鍒楄〃涓撶敤杞婚噺 POJO锛屼笉鏄犲皠鍒拌〃
  */
 public class VodRecordSummary {
     @ColumnInfo(name = "id")
