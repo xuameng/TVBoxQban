@@ -7,6 +7,9 @@ import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
@@ -15,8 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
-import com.github.tvbox.osc.base.App;  //xuameng toast
 
+import com.github.tvbox.osc.base.App;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.github.tvbox.osc.R;
 import com.github.tvbox.osc.api.ApiConfig;
@@ -42,26 +45,22 @@ import com.orhanobut.hawk.Hawk;
 import com.owen.tvrecyclerview.widget.TvRecyclerView;
 import com.owen.tvrecyclerview.widget.V7GridLayoutManager;
 import com.owen.tvrecyclerview.widget.V7LinearLayoutManager;
-import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng像素转换
+import me.jessyan.autosize.utils.AutoSizeUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.json.JSONObject;
+
+import android.text.TextUtils;
+import com.github.catvod.crawler.Spider;
 
 import java.util.ArrayList;
 import java.util.Stack;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.text.TextUtils;  //xuameng 接口action方法判断
-import com.github.catvod.crawler.Spider;  //xuameng 接口action方法判断
 import java.util.List;
 
 /**
- * @author xuameng
- * @date :2026/05/27
- * @description:  焦点状态全面修复，list判断 folder文件夹判断等修复   mContext判空  加action判断
+ * @author xuameng (modified for draw-crash fix)
+ * @description: 修复 ViewGroup.dispatchDraw → ArrayIndexOutOfBoundsException
+ *              核心改动：不再 removeView，只做 visibility 切换 + 生命周期守卫
  */
 public class GridFragment extends BaseLazyFragment {
     private MovieSort.SortData sortData = null;
@@ -83,17 +82,17 @@ public class GridFragment extends BaseLazyFragment {
     private int pullRefreshThreshold = 0;
     private View loadSirView = null;
 
-    private static class GridInfo{
-        public String sortID="";
+    private static class GridInfo {
+        public String sortID = "";
         public TvRecyclerView mGridView;
         public GridAdapter gridAdapter;
         public int page = 1;
         public int maxPage = 1;
         public boolean isLoad = false;
         public boolean hasActionItems = false;
-        public View focusedView= null;
+        public View focusedView = null;
     }
-    Stack<GridInfo> mGrids = new Stack<GridInfo>(); //ui栈
+    Stack<GridInfo> mGrids = new Stack<GridInfo>();
 
     public static GridFragment newInstance(MovieSort.SortData sortData) {
         return new GridFragment().setArguments(sortData);
@@ -112,11 +111,14 @@ public class GridFragment extends BaseLazyFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // 生命周期守卫：只在 attached 时操作
+        if (!isAdded() || isDetached()) return;
+
         TvRecyclerView gridView = view.findViewById(R.id.mGridView);
         if (gridView != null && gridView.getLayoutManager() == null) {
-            if(isFolederMode()){
+            if (isFolederMode()) {
                 gridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-            }else{
+            } else {
                 int spanCount = isBaseOnWidth() ? 5 : 6;
                 if (style != null) {
                     spanCount = ImgUtil.spanCountByStyle(style, spanCount);
@@ -137,41 +139,34 @@ public class GridFragment extends BaseLazyFragment {
         initData();
     }
 
-    private void changeView(String id){
-        this.sortData.flag = "1"; // xuameng修改成1不判断style 直接显示文件夹样式
+    private void changeView(String id) {
+        this.sortData.flag = "1";
         initView();
-        this.sortData.id =id; // 修改sortData.id为新的ID
+        this.sortData.id = id;
         initViewModel();
         initData();
     }
 
-    public boolean isFolederMode(){ return (getUITag() =='1'); }
-    // xuameng获取当前页面UI的显示模式 ‘0’ 正常模式 '1' 文件夹模式  取消 2缩略图模式 没用
-    //return (sortData == null || sortData.flag == null || sortData.flag.length() ==0 || style!=null) ?  '0' : sortData.flag.charAt(0);
-    // xuameng完全移除 style!=null 的条件判断  如有flag  直接显示文件夹样式   style 为 list，直接显示文件夹样式
+    public boolean isFolederMode() { return (getUITag() == '1'); }
+
     public char getUITag() {
-        // 1. style 为 list，直接返回 1
         if (style != null && "list".equals(style.type)) {
-            return '1';   //文件夹模式 
+            return '1';
         }
-
-        // 2. 基础校验
         if (sortData == null || sortData.flag == null || sortData.flag.length() == 0) {
-            return '0';  //正常模式
+            return '0';
         }
-
-        // 3. flag 第一个字符
         char flagChar = sortData.flag.charAt(0);
-
-        // 4. 非 '0' 直接返回 1  文件夹模式 
         return flagChar != '0' ? '1' : flagChar;
     }
 
-    // 是否允许聚合搜索 sortData.flag的第二个字符为‘1’时允许聚搜
-    public boolean enableFastSearch(){  return sortData.flag == null || sortData.flag.length() < 2 || (sortData.flag.charAt(1) == '1'); }
+    public boolean enableFastSearch() {
+        return sortData.flag == null || sortData.flag.length() < 2 || (sortData.flag.charAt(1) == '1');
+    }
+
     // 保存当前页面
-    private void saveCurrentView(){
-        if(this.mGridView == null) return;
+    private void saveCurrentView() {
+        if (this.mGridView == null) return;
         GridInfo info = new GridInfo();
         info.sortID = this.sortData.id;
         info.mGridView = this.mGridView;
@@ -183,12 +178,20 @@ public class GridFragment extends BaseLazyFragment {
         info.focusedView = this.focusedView;
         this.mGrids.push(info);
     }
-    // 丢弃当前页面，将页面还原成上一个保存的页面
-    public boolean restoreView(){
-        if(mGrids.empty()) return false;
+
+    // ★★★ 核心修复：不再 removeView，只 hide + 恢复旧引用 ★★★
+    public boolean restoreView() {
+        if (mGrids.empty()) return false;
+        if (!isAdded() || isDetached() || isRemoving()) return false;
+
         this.showSuccess();
-        ((ViewGroup) mGridView.getParent()).removeView(this.mGridView); // 重父窗口移除当前控件
-        GridInfo info = mGrids.pop();// 还原上次保存的控件
+
+        // 把当前 mGridView 标记为废弃（GONE），但不 remove
+        if (mGridView != null && mGridView.getParent() != null) {
+            mGridView.setVisibility(View.GONE);
+        }
+
+        GridInfo info = mGrids.pop();
         this.sortData.id = info.sortID;
         this.mGridView = info.mGridView;
         this.gridAdapter = info.gridAdapter;
@@ -197,45 +200,68 @@ public class GridFragment extends BaseLazyFragment {
         this.isLoad = info.isLoad;
         this.hasActionItems = info.hasActionItems;
         this.focusedView = info.focusedView;
-        this.mGridView.setVisibility(View.VISIBLE);
-//        if(this.focusedView != null){ this.focusedView.requestFocus(); }
-        if(mGridView != null) mGridView.requestFocus();
+
+        // 恢复旧 View：确保 VISIBLE + bringToFront
+        if (this.mGridView != null) {
+            this.mGridView.setVisibility(View.VISIBLE);
+            ViewGroup parent = (ViewGroup) this.mGridView.getParent();
+            if (parent != null) {
+                parent.bringChildToFront(this.mGridView);
+            }
+            this.mGridView.requestFocus();
+        }
         return true;
     }
 
     private ImgUtil.Style style;
-    // 更改当前页面
-    private void createView(){
-        this.saveCurrentView(); // 保存当前页面
-        if(mGridView == null){ // 从layout中拿view
+
+    // ★★★ 核心修复：createView 只 add + hide，不 remove ★★★
+    private void createView() {
+        if (!isAdded() || isDetached()) return;
+
+        this.saveCurrentView();
+
+        if (mGridView == null) {
             mGridView = findViewById(R.id.mGridView);
-        }else{ // 复制当前view
-            int horizontal = AutoSizeUtils.dp2px(mContext, 20); //xuameng dp dip转成px像素 
-            int vertical = AutoSizeUtils.mm2px(mContext, 10); //xuameng mm转成px像素 
+        } else {
+            // 隐藏旧的，不 remove
+            mGridView.setVisibility(View.GONE);
+
+            int horizontal = AutoSizeUtils.dp2px(mContext, 20);
+            int vertical = AutoSizeUtils.mm2px(mContext, 10);
 
             TvRecyclerView v3 = new TvRecyclerView(this.mContext);
-            v3.setSpacingWithMargins(vertical,horizontal);
+            v3.setSpacingWithMargins(vertical, horizontal);
             v3.setLayoutParams(mGridView.getLayoutParams());
-            v3.setPadding(mGridView.getPaddingLeft(), mGridView.getPaddingTop(), mGridView.getPaddingRight(), mGridView.getPaddingBottom());
+            v3.setPadding(mGridView.getPaddingLeft(), mGridView.getPaddingTop(),
+                    mGridView.getPaddingRight(), mGridView.getPaddingBottom());
             v3.setClipToPadding(mGridView.getClipToPadding());
-            ((ViewGroup) mGridView.getParent()).addView(v3);
-            mGridView.setVisibility(View.GONE);
+
+            // add 到父布局，但不 remove 旧的
+            ViewGroup parent = (ViewGroup) mGridView.getParent();
+            if (parent != null) {
+                parent.addView(v3);
+            }
             mGridView = v3;
             mGridView.setVisibility(View.VISIBLE);
         }
+
         mGridView.setHasFixedSize(true);
-        style=ImgUtil.initStyle();
+        style = ImgUtil.initStyle();
         gridAdapter = new GridAdapter(isFolederMode(), style);
-        this.page =1;
-        this.maxPage =1;
+        this.page = 1;
+        this.maxPage = 1;
         this.isLoad = false;
     }
 
     private void initView() {
+        // 生命周期守卫
+        if (!isAdded() || isDetached()) return;
+
         this.createView();
-        if(isFolederMode()){
+        if (isFolederMode()) {
             mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
-        }else{
+        } else {
             int spanCount = isBaseOnWidth() ? 5 : 6;
             if (style != null) {
                 spanCount = ImgUtil.spanCountByStyle(style, spanCount);
@@ -255,6 +281,7 @@ public class GridFragment extends BaseLazyFragment {
                 sourceViewModel.getList(sortData, page);
             }
         }, mGridView);
+
         mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
@@ -268,68 +295,62 @@ public class GridFragment extends BaseLazyFragment {
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-
             }
         });
+
         mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
             @Override
             public boolean onInBorderKeyEvent(int direction, View focused) {
-                if (direction == View.FOCUS_UP) {
-                }
                 return false;
             }
         });
+
         gridAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (!isAdded()) return; // ★ 守卫
                 FastClickCheckUtil.check(view);
                 Movie.Video video = gridAdapter.getData().get(position);
                 if (video != null) {
-
-                    //xuameng 接口action方法判断 必须放在线程中执行
                     if (!TextUtils.isEmpty(video.action)) {
                         sourceViewModel.action(video.sourceKey, video.action);
                         return;
                     }
-                    //xuameng 接口action方法判断 必须放在线程中执行完
 
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
                     bundle.putString("title", video.name);
-                    if( video.tag !=null && (video.tag.equals("folder") || video.tag.equals("cover"))){
+                    if (video.tag != null && (video.tag.equals("folder") || video.tag.equals("cover"))) {
                         focusedView = view;
-                        changeView(video.id);  //xuameng移除多余判断 有folder或cover就进入video.id(文件夹下一级)
-                    }
-                    else{
-                        if(TextUtils.isEmpty(video.id) || video.id.startsWith("msearch:")){
-                            if(Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) && enableFastSearch()){
+                        changeView(video.id);
+                    } else {
+                        if (TextUtils.isEmpty(video.id) || video.id.startsWith("msearch:")) {
+                            if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, false) && enableFastSearch()) {
                                 jumpActivity(FastSearchActivity.class, bundle);
-                            }else {
+                            } else {
                                 jumpActivity(SearchActivity.class, bundle);
                             }
-                        }else {
-                            bundle.putString("picture", video.pic);   //xuameng某些网站图片部显示
+                        } else {
+                            bundle.putString("picture", video.pic);
                             jumpActivity(DetailActivity.class, bundle);
                         }
                     }
-
                 }
             }
         });
+
         gridAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(BaseQuickAdapter adapter, View view, int position) {
+                if (!isAdded()) return true;
                 FastClickCheckUtil.check(view);
                 Movie.Video video = gridAdapter.getData().get(position);
                 if (video != null) {
-                    //xuameng 接口action方法判断 必须放在线程中执行
                     if (!TextUtils.isEmpty(video.action)) {
                         sourceViewModel.action(video.sourceKey, video.action);
                         return true;
                     }
-                    //xuameng 接口action方法判断 必须放在线程中执行完
-
                     Bundle bundle = new Bundle();
                     bundle.putString("id", video.id);
                     bundle.putString("sourceKey", video.sourceKey);
@@ -339,12 +360,14 @@ public class GridFragment extends BaseLazyFragment {
                 return true;
             }
         });
+
         gridAdapter.setLoadMoreView(new LoadMoreView());
         setLoadSir2(mGridView);
         initPullRefresh();
     }
 
     private void initPullRefresh() {
+        if (!isAdded()) return;
         pullRefreshThreshold = ViewConfiguration.get(mContext).getScaledTouchSlop() * 6;
         mGridView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
@@ -422,11 +445,12 @@ public class GridFragment extends BaseLazyFragment {
     }
 
     private void initViewModel() {
-        if(sourceViewModel != null) { return;}
+        if (sourceViewModel != null) return;
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
         sourceViewModel.listResult.observe(this, new Observer<AbsXml>() {
             @Override
             public void onChanged(AbsXml absXml) {
+                if (!isAdded() || isDetached()) return; // ★ 守卫
                 isRequesting = false;
                 if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                     if (page == 1) {
@@ -440,11 +464,11 @@ public class GridFragment extends BaseLazyFragment {
                     }
                     page++;
                     maxPage = absXml.movie.pagecount;
-                    if (maxPage>0 && page > maxPage) {
+                    if (maxPage > 0 && page > maxPage) {
                         gridAdapter.loadMoreEnd();
                         gridAdapter.setEnableLoadMore(false);
-                        if(page>2)App.showToastShort(getContext(), "没有更多了！");
-                    }else {
+                        if (page > 2) App.showToastShort(getContext(), "没有更多了！");
+                    } else {
                         gridAdapter.loadMoreComplete();
                         gridAdapter.setEnableLoadMore(true);
                     }
@@ -452,7 +476,7 @@ public class GridFragment extends BaseLazyFragment {
                     if (page == 1) {
                         hasActionItems = false;
                         showEmpty();
-                    } else if(page > 2){// 只有一页数据时不提示
+                    } else if (page > 2) {
                         App.showToastShort(getContext(), "没有更多了！");
                     }
                     gridAdapter.loadMoreEnd();
@@ -461,9 +485,10 @@ public class GridFragment extends BaseLazyFragment {
             }
         });
 
-        sourceViewModel.actionResult.observe(this, new Observer<JSONObject>() {   //xuameng 接口action方法判断
+        sourceViewModel.actionResult.observe(this, new Observer<JSONObject>() {
             @Override
             public void onChanged(JSONObject jsonObject) {
+                if (!isAdded()) return;
                 if (jsonObject == null) return;
                 String msg = jsonObject.optString("msg");
                 if (!msg.isEmpty()) App.showToastShort(getContext(), msg);
@@ -476,10 +501,11 @@ public class GridFragment extends BaseLazyFragment {
     }
 
     public boolean isLoad() {
-        return isLoad || !mGrids.empty(); //如果有缓存页的话也可以认为是加载了数据的
+        return isLoad || !mGrids.empty();
     }
 
     private void initData() {
+        if (!isAdded()) return;
         showLoading();
         isRequesting = true;
         isLoad = false;
@@ -507,27 +533,15 @@ public class GridFragment extends BaseLazyFragment {
     }
 
     public void showFilter() {
-        // xuameng增加 Context 的有效性检查
-        if (mContext == null) {
-            return;
-        }
+        if (mContext == null || !isAdded()) return;
         if (!sortData.filters.isEmpty() && gridFilterDialog == null) {
             gridFilterDialog = new GridFilterDialog(mContext);
-//            gridFilterDialog.setData(sortData);
-//            gridFilterDialog.setOnDismiss(new GridFilterDialog.Callback() {
-//                @Override
-//                public void change() {
-//                    page = 1;
-//                    initData();
-//                }
-//            });
-            setFilterDialogData();
         }
         if (gridFilterDialog != null)
             gridFilterDialog.show();
     }
 
-    private View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {     //xuameng触碰变大
+    private View.OnFocusChangeListener focusChangeListener = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if (hasFocus)
@@ -537,62 +551,52 @@ public class GridFragment extends BaseLazyFragment {
         }
     };
 
-    public void setFilterDialogData() {        //xuameng修复分类筛选时同一行多个item被选中变色的问题
+    public void setFilterDialogData() {
+        if (!isAdded()) return;
         Context context = getContext();
+        if (context == null) return;
         LayoutInflater inflater = LayoutInflater.from(context);
-        assert context != null;
         final int defaultColor = ContextCompat.getColor(context, R.color.color_FFFFFF);
         final int selectedColor = ContextCompat.getColor(context, R.color.color_02F8E1);
-    
-        // 遍历过滤条件数据
+
         for (MovieSort.SortFilter filter : sortData.filters) {
             View line = inflater.inflate(R.layout.item_grid_filter, gridFilterDialog.filterRoot, false);
             TextView filterNameTv = line.findViewById(R.id.filterName);
             filterNameTv.setText(filter.name);
             TvRecyclerView gridView = line.findViewById(R.id.mFilterKv);
-            gridView.setId(View.generateViewId());   //xuameng设置唯一ID
+            gridView.setId(View.generateViewId());
             gridView.setHasFixedSize(true);
             gridView.setLayoutManager(new V7LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-        
+
             final String key = filter.key;
             final ArrayList<String> values = new ArrayList<>(filter.values.keySet());
             final ArrayList<String> keys = new ArrayList<>(filter.values.values());
-        
-            // 修正：传入颜色参数
-            GridFilterKVAdapter adapter = new GridFilterKVAdapter(defaultColor, selectedColor);    //xuameng 在GridFilterKVAdapter中传入颜色参数
-        
-            // 设置当前选中项
+
+            GridFilterKVAdapter adapter = new GridFilterKVAdapter(defaultColor, selectedColor);
             String currentSelected = sortData.filterSelect.get(key);
             int selectedPosition = -1;
             if (currentSelected != null) {
                 selectedPosition = keys.indexOf(currentSelected);
             }
             adapter.setSelectedPosition(selectedPosition);
-        
+
             gridView.setAdapter(adapter);
             adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    if (!isAdded()) return;
                     GridFilterKVAdapter kvAdapter = (GridFilterKVAdapter) adapter;
                     String currentSelection = sortData.filterSelect.get(key);
                     String newSelection = keys.get(position);
-                
+
                     if (currentSelection == null || !currentSelection.equals(newSelection)) {
-                        // 更新选中状态
                         sortData.filterSelect.put(key, newSelection);
                         kvAdapter.setSelectedPosition(position);
-                        // xuameng 新增：通知首页刷新筛选状态
-                        EventBus.getDefault().post(
-                            new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE)
-                        );
+                        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE));
                     } else {
-                        // 取消选中
                         sortData.filterSelect.remove(key);
                         kvAdapter.setSelectedPosition(-1);
-                        // xuameng 新增：通知首页刷新筛选状态
-                        EventBus.getDefault().post(
-                            new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE)
-                        );
+                        EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_FILTER_CHANGE));
                     }
                     forceRefresh();
                 }
@@ -604,11 +608,11 @@ public class GridFragment extends BaseLazyFragment {
 
     public void forceRefresh() {
         if (mGridView == null || gridAdapter == null || sourceViewModel == null) return;
+        if (!isAdded() || isDetached()) return; // ★ 守卫
         if (isRequesting) {
             App.showToastShort(getContext(), "数据加载中，请稍候！");
             return;
         }
-        // xuameng关键：已经在 LoadSir 托管状态下，不要再 showLoading
         if (!isLoad) {
             showLoading();
         }
@@ -620,4 +624,22 @@ public class GridFragment extends BaseLazyFragment {
         sourceViewModel.getList(sortData, page);
     }
 
+    // ★★★ 关键：Fragment 销毁时统一清理，防止悬空引用 ★★★
+    @Override
+    public void onDestroyView() {
+        // 把所有栈里的 View 也标记为 GONE，防止父布局持有
+        for (GridInfo info : mGrids) {
+            if (info.mGridView != null && info.mGridView.getParent() != null) {
+                info.mGridView.setVisibility(View.GONE);
+            }
+        }
+        mGrids.clear();
+        if (mGridView != null && mGridView.getParent() != null) {
+            mGridView.setVisibility(View.GONE);
+            // 注意：这里不 removeView，让父布局自然回收
+            mGridView = null;
+        }
+        gridAdapter = null;
+        super.onDestroyView();
+    }
 }
