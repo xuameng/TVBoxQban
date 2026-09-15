@@ -141,33 +141,33 @@ public static void deleteVodRecord(String sourceKey, VodInfo vodInfo) {
 }
 
     //xuameng 改：历史列表用摘要查询，不反序列化 dataJson
-    public static List<VodInfo> getAllVodRecord(int limit) {
-        int count = AppDataManager.get().getVodRecordDao().getCount();
-        Integer index = Hawk.get(HawkConfig.HISTORY_NUM, 0);
-        int hisNum = HistoryHelper.getHisNum(index);
-        if (count > hisNum) {
-            AppDataManager.get().getVodRecordDao().reserver(hisNum);
-        }
-
-        List<VodRecordSummary> summaryList =
-                AppDataManager.get().getVodRecordDao().getHistorySummary(limit);
-
-        List<VodInfo> vodInfoList = new ArrayList<>();
-        for (VodRecordSummary s : summaryList) {
-            VodInfo info = new VodInfo();
-            info.id = s.vodId;
-            info.name = s.vodName;
-            info.pic = s.vodPic;
-            info.sourceKey = s.sourceKey;
-            info.playNote = s.playNote;   //xuameng直接有，不用从 dataJson 读
-
-            SourceBean sourceBean = ApiConfig.get().getSource(info.sourceKey);
-            if (sourceBean != null && info.name != null) {
-                vodInfoList.add(info);
-            }
-        }
-        return vodInfoList;
+public static List<VodInfo> getAllVodRecord(int limit) {
+    int count = AppDataManager.get().getVodRecordDao().getCount();
+    Integer index = Hawk.get(HawkConfig.HISTORY_NUM, 0);
+    int hisNum = HistoryHelper.getHisNum(index);
+    if (count > hisNum) {
+        AppDataManager.get().getVodRecordDao().reserver(hisNum);
     }
+
+    List<VodRecordListSummary> summaryList =
+            AppDataManager.get().getVodRecordDao().getHistorySummary(limit);
+
+    List<VodInfo> vodInfoList = new ArrayList<>();
+    for (VodRecordListSummary s : summaryList) {
+        VodInfo info = new VodInfo();
+        info.id = s.vodId;
+        info.name = s.vodName;
+        info.pic = s.vodPic;
+        info.sourceKey = s.sourceKey;
+        info.playNote = s.playNote;
+
+        SourceBean sourceBean = ApiConfig.get().getSource(info.sourceKey);
+        if (sourceBean != null && info.name != null) {
+            vodInfoList.add(info);
+        }
+    }
+    return vodInfoList;
+}
 
     public static void insertVodCollect(String sourceKey, VodInfo vodInfo) {
         VodCollect record = AppDataManager.get().getVodCollectDao().getVodCollect(sourceKey, vodInfo.id);
