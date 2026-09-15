@@ -26,7 +26,6 @@ public class VodRecord implements Serializable {
     @ColumnInfo(name = "sourceKey")
     public String sourceKey;
 
-    // 列表用轻量字段
     @ColumnInfo(name = "vodName")
     public String vodName;
 
@@ -36,10 +35,22 @@ public class VodRecord implements Serializable {
     @ColumnInfo(name = "playNote")
     public String playNote;
 
-    // 大字段，详情页按需读取
+    // ===== 新增：播放状态轻量字段 =====
+    @ColumnInfo(name = "currentPlayFlag")
+    public String currentPlayFlag;
+
+    @ColumnInfo(name = "currentPlayIndex")
+    public int currentPlayIndex;
+
+    @ColumnInfo(name = "playerCfg")
+    public String playerCfg;
+
+    @ColumnInfo(name = "reverseSort")
+    public int reverseSort; // boolean 用 int 存，0=false, 1=true
+    // ===== 新增结束 =====
+
     public String dataJson;
 
-    // 大字段存文件，这里只存路径
     @ColumnInfo(name = "dataJsonPath")
     public String dataJsonPath;
 
