@@ -6,6 +6,12 @@ import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 
+/**
+ * @author xuameng
+ * @since 2026/9/15
+ * 历史列表专用：只查轻量字段，不碰 dataJson
+ */
+
 @Entity(tableName = "vodRecord")
 public class VodRecord implements Serializable {
     @PrimaryKey(autoGenerate = true)
@@ -20,7 +26,7 @@ public class VodRecord implements Serializable {
     @ColumnInfo(name = "sourceKey")
     public String sourceKey;
 
-    // ✅ 列表用轻量字段
+    // 列表用轻量字段
     @ColumnInfo(name = "vodName")
     public String vodName;
 
@@ -32,6 +38,10 @@ public class VodRecord implements Serializable {
 
     // 大字段，详情页按需读取
     public String dataJson;
+
+// 大字段存文件，这里只存路径
+@ColumnInfo(name = "dataJsonPath")
+public String dataJsonPath;
 
     public int getId() {
         return id;
