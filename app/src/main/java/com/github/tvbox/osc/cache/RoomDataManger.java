@@ -23,6 +23,7 @@ import java.util.List;
  * @date :2021/1/7
  * @description:
  */
+
 public class RoomDataManger {
     static ExclusionStrategy vodInfoStrategy = new ExclusionStrategy() {
         @Override
@@ -46,6 +47,7 @@ public class RoomDataManger {
         return new GsonBuilder().addSerializationExclusionStrategy(vodInfoStrategy).create();
     }
 
+    // ✅ 改：写入时存轻量字段
     public static void insertVodRecord(String sourceKey, VodInfo vodInfo) {
         VodRecord record = AppDataManager.get().getVodRecordDao().getVodRecord(sourceKey, vodInfo.id);
         if (record == null) {
@@ -54,7 +56,15 @@ public class RoomDataManger {
         record.sourceKey = sourceKey;
         record.vodId = vodInfo.id;
         record.updateTime = System.currentTimeMillis();
+
+        // ✅ 列表字段
+        record.vodName = vodInfo.name;
+        record.vodPic = vodInfo.pic;
+        record.playNote = vodInfo.playNote;
+
+        // ✅ 大字段保留（详情页用）
         record.dataJson = getVodInfoGson().toJson(vodInfo);
+
         AppDataManager.get().getVodRecordDao().insert(record);
     }
 
@@ -81,37 +91,36 @@ public class RoomDataManger {
         }
     }
 
+    // ✅ 改：历史列表用摘要查询，不反序列化 dataJson
     public static List<VodInfo> getAllVodRecord(int limit) {
         int count = AppDataManager.get().getVodRecordDao().getCount();
         Integer index = Hawk.get(HawkConfig.HISTORY_NUM, 0);
-        Integer hisNum = HistoryHelper.getHisNum(index);   
-        if ( count > hisNum ) {
+        int hisNum = HistoryHelper.getHisNum(index);
+        if (count > hisNum) {
             AppDataManager.get().getVodRecordDao().reserver(hisNum);
         }
-        List<VodRecord> recordList = AppDataManager.get().getVodRecordDao().getAll(limit);
+
+        List<VodRecordSummary> summaryList =
+                AppDataManager.get().getVodRecordDao().getHistorySummary(limit);
+
         List<VodInfo> vodInfoList = new ArrayList<>();
-        if (recordList != null) {
-            for (VodRecord record : recordList) {
-                VodInfo info = null;
-                try {
-                    if (record.dataJson != null && !TextUtils.isEmpty(record.dataJson)) {
-                        info = getVodInfoGson().fromJson(record.dataJson, new TypeToken<VodInfo>() {
-                        }.getType());
-                        info.sourceKey = record.sourceKey;
-                        SourceBean sourceBean = ApiConfig.get().getSource(info.sourceKey);
-                        if (sourceBean == null || info.name == null)
-                            info = null;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (info != null)
-                    vodInfoList.add(info);
+        for (VodRecordSummary s : summaryList) {
+            VodInfo info = new VodInfo();
+            info.id = s.vodId;
+            info.name = s.vodName;
+            info.pic = s.vodPic;
+            info.sourceKey = s.sourceKey;
+            info.playNote = s.playNote;   // ✅ 直接有，不用从 dataJson 读
+
+            SourceBean sourceBean = ApiConfig.get().getSource(info.sourceKey);
+            if (sourceBean != null && info.name != null) {
+                vodInfoList.add(info);
             }
         }
         return vodInfoList;
     }
 
+    // ===== 以下方法完全没动 =====
     public static void insertVodCollect(String sourceKey, VodInfo vodInfo) {
         VodCollect record = AppDataManager.get().getVodCollectDao().getVodCollect(sourceKey, vodInfo.id);
         if (record != null) {
