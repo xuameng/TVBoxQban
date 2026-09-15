@@ -233,6 +233,8 @@ public class HomeActivity extends BaseActivity {
             }
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
+    // ★★★ 换源中 / ViewPager 还没 ready → 直接忽略这次选中 ★★★
+    if (homeSortLoading) return;
                 if (view != null && position >= 0) {
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.sortChange = true;
@@ -591,33 +593,21 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-private void clearHomePages() {
-    mHandler.removeCallbacks(mDataRunnable);
-    currentSelected = 0;
-    sortFocused = 0;
-    sortChange = false;
-    sortFocusView = null;
-    currentView = null;
-    
-    // ★ 停掉 topLayout 的动画，防止 layout 参数在 draw 时被改
-    if (topLayout != null) {
-        topLayout.clearAnimation();
-        topLayout.animate().cancel();
+    private void clearHomePages() {   //xuameng 清理主页
+        mHandler.removeCallbacks(mDataRunnable);
+        currentSelected = 0;
+        sortFocused = 0;
+        sortChange = false;
+        sortFocusView = null;
+        currentView = null;
+        if (pageAdapter != null) {
+            mViewPager.setAdapter(null);
+            pageAdapter.removeAll();
+            pageAdapter = null;
+        } else if (!fragments.isEmpty()) {
+            fragments.clear();
+        }
     }
-    
-    // ★ 强制 ConstraintLayout 重新计算
-    if (contentLayout != null) {
-        contentLayout.requestLayout();
-    }
-    
-    if (pageAdapter != null) {
-        mViewPager.setAdapter(null);
-        pageAdapter.removeAll();
-        pageAdapter = null;
-    } else if (!fragments.isEmpty()) {
-        fragments.clear();
-    }
-}
 
     private void updateSortData(List<MovieSort.SortData> newSortData) {  //xuameng 更新分类数据
         if (newSortData == null) {
@@ -831,11 +821,7 @@ private void clearHomePages() {
 
     byte topHide = 0;
 
-private boolean topAnimating = false;
     private void changeTop(boolean hide) {
-    if (topAnimating) return; // ★ 防止重复触发
-    topAnimating = true;
-
         ViewObj viewObj = new ViewObj(topLayout, (ViewGroup.MarginLayoutParams) topLayout.getLayoutParams());
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.addListener(new Animator.AnimatorListener() {
@@ -846,7 +832,6 @@ private boolean topAnimating = false;
             @Override
             public void onAnimationEnd(Animator animation) {
                 topHide = (byte) (hide ? 1 : 0);
-            topAnimating = false; // ★ 动画结束才解锁
             }
 
             @Override
