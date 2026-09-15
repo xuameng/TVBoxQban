@@ -1037,31 +1037,30 @@ public class DetailActivity extends BaseActivity {
                         mEmptyPlayList.setVisibility(View.GONE);
 
                         VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
-                        // xuameng读取历史记录
-// xuameng读取历史记录：从摘要表读播放状态（不读大字段）
-VodRecordSummary recordSummary = AppDataManager.get().getVodRecordDao().getVodRecordSummary(sourceKey, vodId);
-if (recordSummary != null) {
-    if (recordSummary.currentPlayFlag != null && recordSummary.currentPlayIndex >= 0) {
-        vodInfo.playIndex = recordSummary.currentPlayIndex;
-        vodInfo.playFlag = recordSummary.currentPlayFlag;
-        vodInfo.currentPlayFlag = recordSummary.currentPlayFlag;
-        vodInfo.currentPlayIndex = recordSummary.currentPlayIndex;
-    } else {
-        vodInfo.playIndex = 0;
-        vodInfo.playFlag = null;
-        vodInfo.currentPlayFlag = null;
-        vodInfo.currentPlayIndex = 0;
-    }
-    vodInfo.playerCfg = recordSummary.playerCfg != null ? recordSummary.playerCfg : "";
-    vodInfo.reverseSort = recordSummary.reverseSort == 1;
-} else {
-    vodInfo.playIndex = 0;
-    vodInfo.playFlag = null;
-    vodInfo.currentPlayFlag = null;
-    vodInfo.currentPlayIndex = 0;
-    vodInfo.playerCfg = "";
-    vodInfo.reverseSort = false;
-}
+                        // xuameng读取历史记录：从摘要表读播放状态（不读大字段）
+                        VodRecordSummary recordSummary = AppDataManager.get().getVodRecordDao().getVodRecordSummary(sourceKey, vodId);
+                        if (recordSummary != null) {
+                            if (recordSummary.currentPlayFlag != null && recordSummary.currentPlayIndex >= 0) {
+                                vodInfo.playIndex = recordSummary.currentPlayIndex;
+                                vodInfo.playFlag = recordSummary.currentPlayFlag;
+                                vodInfo.currentPlayFlag = recordSummary.currentPlayFlag;
+                                vodInfo.currentPlayIndex = recordSummary.currentPlayIndex;
+                            } else {
+                                vodInfo.playIndex = 0;
+                                vodInfo.playFlag = null;
+                                vodInfo.currentPlayFlag = null;
+                                vodInfo.currentPlayIndex = 0;
+                            }
+                            vodInfo.playerCfg = recordSummary.playerCfg != null ? recordSummary.playerCfg : "";
+                            vodInfo.reverseSort = recordSummary.reverseSort == 1;
+                        } else {
+                            vodInfo.playIndex = 0;
+                            vodInfo.playFlag = null;
+                            vodInfo.currentPlayFlag = null;
+                            vodInfo.currentPlayIndex = 0;
+                            vodInfo.playerCfg = "";
+                            vodInfo.reverseSort = false;
+                        }
 
                         if (vodInfo.reverseSort) {      //XUAMENG读取记录后显示BUG
                             vodInfo.reverse();
