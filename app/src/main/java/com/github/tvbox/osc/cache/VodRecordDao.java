@@ -8,16 +8,13 @@ import androidx.room.Query;
 
 import java.util.List;
 
-/**
- * @author pj567
- * @date :2021/1/7
- * @description:
- */
 @Dao
 public interface VodRecordDao {
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(VodRecord record);
 
+    // 旧方法保留（详情页还在用）
     @Query("select * from vodRecord order by updateTime desc limit :size")
     List<VodRecord> getAll(int size);
 
@@ -33,11 +30,18 @@ public interface VodRecordDao {
     @Query("DELETE FROM vodRecord")
     void deleteAll();
 
-    /**
-     * 保留最新指定条数, 其他删除.
-     * @param size 保留条数
-     * @return
-     */
     @Query("DELETE FROM vodRecord where id NOT IN (SELECT id FROM vodRecord ORDER BY updateTime desc LIMIT :size)")
     int reserver(int size);
+
+    // ✅ 历史列表专用：只查轻量字段，不碰 dataJson
+    @Query("""
+        SELECT id, vodId, updateTime, sourceKey, vodName, vodPic, playNote
+        FROM vodRecord
+        ORDER BY updateTime DESC
+        LIMIT :size
+    """)
+    List<VodRecordSummary> getHistorySummary(int size);
+
+    @Query("DELETE FROM vodRecord WHERE sourceKey = :sourceKey")
+    void deleteBySourceKey(String sourceKey);
 }
