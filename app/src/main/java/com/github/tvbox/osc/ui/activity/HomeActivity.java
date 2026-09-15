@@ -129,9 +129,6 @@ public class HomeActivity extends BaseActivity {
     private static final String TAG = "PermissionHelper";//xuameng获取音频权限
     private static final int MARSHMALLOW = Build.VERSION_CODES.M;  //xuameng获取音频权限
     private static final String PREF_PERMISSION_DIALOG = "permission_prefs";   //xuameng获取音频权限
-
-private boolean viewPagerReady = false; // ★ 加这个字段
-
     private static final String KEY_DIALOG_SHOWN = "dialog_shown";  //xuameng获取音频权限
     private final Runnable mRunnable = new Runnable() {
         @SuppressLint("SetTextI18n")
@@ -591,16 +588,10 @@ private boolean viewPagerReady = false; // ★ 加这个字段
             mViewPager.setPageTransformer(true, new DefaultTransformer());
             mViewPager.setAdapter(pageAdapter);
             mViewPager.setCurrentItem(currentSelected, false);  
-    // ★★★ 延迟一帧再允许菜单切换 ★★★
-    viewPagerReady = false;
-    mViewPager.post(() -> {
-        viewPagerReady = true;
-    });
         }
     }
 
     private void clearHomePages() {   //xuameng 清理主页
- viewPagerReady = false; // ★ 加这行
         mHandler.removeCallbacks(mDataRunnable);
         currentSelected = 0;
         sortFocused = 0;
@@ -792,12 +783,6 @@ private boolean viewPagerReady = false; // ★ 加这个字段
         public void run() {
             if (sortChange) {
                 sortChange = false;
-            // ★★★ ViewPager 还在 layout 过程中就不切 ★★★
-            if (mViewPager == null || mViewPager.getWidth() == 0 || mViewPager.getHeight() == 0 || !viewPagerReady  || isActivityUnavailable()) {
-                // 还没 layout 完，再延迟一帧
-                mHandler.postDelayed(mDataRunnable, 100);
-                return;
-            }
                 BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
                 if (sortFocused != currentSelected) {
                     currentSelected = sortFocused;
