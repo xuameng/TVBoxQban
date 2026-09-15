@@ -18,6 +18,12 @@ import com.orhanobut.hawk.Hawk;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 /**
  * @author xuameng
  * @since 2026/9/15
@@ -47,50 +53,105 @@ public class RoomDataManger {
         return new GsonBuilder().addSerializationExclusionStrategy(vodInfoStrategy).create();
     }
 
-    // ✅ 改：写入时存轻量字段
-    public static void insertVodRecord(String sourceKey, VodInfo vodInfo) {
-        VodRecordDao dao = AppDataManager.get().getVodRecordDao();
+    //xuameng改：写入时存轻量字段
+public static void insertVodRecord(String sourceKey, VodInfo vodInfo) {
+    VodRecordDao dao = AppDataManager.get().getVodRecordDao();
+    Integer existingId = dao.getVodRecordId(sourceKey, vodInfo.id);
 
-        // ✅ 只查 id，不读 dataJson
-        Integer existingId = dao.getVodRecordId(sourceKey, vodInfo.id);
-
-        VodRecord record = new VodRecord();
-        if (existingId != null) {
-            record.setId(existingId);  // 设了 id → REPLACE 更新旧行
-        }
-
-        record.sourceKey = sourceKey;
-        record.vodId = vodInfo.id;
-        record.updateTime = System.currentTimeMillis();
-        record.vodName = vodInfo.name;
-        record.vodPic = vodInfo.pic;
-        record.playNote = vodInfo.playNote;
-        record.dataJson = getVodInfoGson().toJson(vodInfo);
-
-        dao.insert(record);
+    VodRecord record = new VodRecord();
+    if (existingId != null) {
+        record.setId(existingId);
     }
 
-    public static VodInfo getVodInfo(String sourceKey, String vodId) {
-        VodRecord record = AppDataManager.get().getVodRecordDao().getVodRecord(sourceKey, vodId);
-        try {
-            if (record != null && record.dataJson != null && !TextUtils.isEmpty(record.dataJson)) {
-                VodInfo vodInfo = getVodInfoGson().fromJson(record.dataJson, new TypeToken<VodInfo>() {
-                }.getType());
-                if (vodInfo.name == null)
-                    return null;
-                return vodInfo;
+    record.sourceKey = sourceKey;
+    record.vodId = vodInfo.id;
+    record.updateTime = System.currentTimeMillis();
+    record.vodName = vodInfo.name;
+    record.vodPic = vodInfo.pic;
+    record.playNote = vodInfo.playNote;
+
+    // ✅ JSON 写文件，路径存库
+    String json = getVodInfoGson().toJson(vodInfo);
+    String fileName = sourceKey + "_" + vodInfo.id + ".json";
+    File dir = new File(App.getInstance().getFilesDir(), "vod_record");
+    if (!dir.exists()) dir.mkdirs();
+    File jsonFile = new File(dir, fileName);
+    try {
+        FileWriter writer = new FileWriter(jsonFile);
+        writer.write(json);
+        writer.close();
+        record.dataJsonPath = jsonFile.getAbsolutePath();
+    } catch (IOException e) {
+        e.printStackTrace();
+        // 兜底：还存 dataJson（旧逻辑）
+        record.dataJson = json;
+    }
+
+    dao.insert(record);
+}
+
+public static VodInfo getVodInfo(String sourceKey, String vodId) {
+    VodRecordDao dao = AppDataManager.get().getVodRecordDao();
+    VodRecord record = dao.getVodRecordPath(sourceKey, vodId);
+
+    if (record == null) return null;
+
+    String json = null;
+
+    // 优先从文件读
+    if (!TextUtils.isEmpty(record.dataJsonPath)) {
+        File jsonFile = new File(record.dataJsonPath);
+        if (jsonFile.exists()) {
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(jsonFile));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
+                reader.close();
+                json = sb.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-        return null;
     }
 
-    public static void deleteVodRecord(String sourceKey, VodInfo vodInfo) {
-        AppDataManager.get().getVodRecordDao().deleteBySourceAndVodId(sourceKey, vodInfo.id);
+    // 兜底：从旧 dataJson 字段读（兼容老数据）
+    if (TextUtils.isEmpty(json)) {
+        record = dao.getVodRecord(sourceKey, vodId); // 旧的 SELECT *
+        if (record != null) json = record.dataJson;
     }
 
-    // ✅ 改：历史列表用摘要查询，不反序列化 dataJson
+    if (TextUtils.isEmpty(json)) return null;
+
+    try {
+        VodInfo vodInfo = getVodInfoGson().fromJson(json, new TypeToken<VodInfo>() {}.getType());
+        if (vodInfo.name == null) return null;
+        return vodInfo;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
+public static void deleteVodRecord(String sourceKey, VodInfo vodInfo) {
+    VodRecordDao dao = AppDataManager.get().getVodRecordDao();
+    
+    // 先查路径，准备删文件
+    VodRecord record = dao.getVodRecordPath(sourceKey, vodInfo.id);
+    if (record != null && !TextUtils.isEmpty(record.dataJsonPath)) {
+        File jsonFile = new File(record.dataJsonPath);
+        if (jsonFile.exists()) {
+            jsonFile.delete();
+        }
+    }
+    
+    // 再删数据库行
+    dao.deleteBySourceAndVodId(sourceKey, vodInfo.id);
+}
+
+    //xuameng 改：历史列表用摘要查询，不反序列化 dataJson
     public static List<VodInfo> getAllVodRecord(int limit) {
         int count = AppDataManager.get().getVodRecordDao().getCount();
         Integer index = Hawk.get(HawkConfig.HISTORY_NUM, 0);
@@ -109,7 +170,7 @@ public class RoomDataManger {
             info.name = s.vodName;
             info.pic = s.vodPic;
             info.sourceKey = s.sourceKey;
-            info.playNote = s.playNote;   // ✅ 直接有，不用从 dataJson 读
+            info.playNote = s.playNote;   //xuameng直接有，不用从 dataJson 读
 
             SourceBean sourceBean = ApiConfig.get().getSource(info.sourceKey);
             if (sourceBean != null && info.name != null) {
@@ -119,7 +180,6 @@ public class RoomDataManger {
         return vodInfoList;
     }
 
-    // ===== 以下方法完全没动 =====
     public static void insertVodCollect(String sourceKey, VodInfo vodInfo) {
         VodCollect record = AppDataManager.get().getVodCollectDao().getVodCollect(sourceKey, vodInfo.id);
         if (record != null) {
