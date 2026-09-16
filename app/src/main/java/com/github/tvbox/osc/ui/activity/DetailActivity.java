@@ -1035,7 +1035,7 @@ public class DetailActivity extends BaseActivity {
                         tvPlay.setVisibility(View.VISIBLE);
                         tvSort.setVisibility(View.VISIBLE);  //xuameng修复无播放数据倒序空指针
                         mEmptyPlayList.setVisibility(View.GONE);
-
+mGridView.requestFocus();
                         VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
                         // xuameng读取历史记录：从摘要表读播放状态（不读大字段）
                         VodRecordSummary recordSummary = AppDataManager.get().getVodRecordDao().getVodRecordSummary(sourceKey, vodId);
@@ -1099,16 +1099,16 @@ public class DetailActivity extends BaseActivity {
                                     mGridView.removeOnScrollListener(this);    //xuameng删除滚动监听
                                 }
                             }
-                       });
-                       safeSelectMGridView(vodInfo.playIndex);
+                        });
+                        safeSelectMGridView(vodInfo.playIndex);
 
-                       tvPlay.setNextFocusUpId(R.id.mGridView);   //xuameng上面焦点是选剧集
-                       tvQuickSearch.setNextFocusUpId(R.id.mGridView); 
-                       tvSort.setNextFocusUpId(R.id.mGridView); 
-                       tvCollect.setNextFocusUpId(R.id.mGridView); 
-                       tvDesc.setNextFocusUpId(R.id.mGridView); 
-                       tvPush.setNextFocusUpId(R.id.mGridView); 
-                       //llPlayerFragmentContainerBlock.setNextFocusUpId(R.id.mGridView); 
+                        tvPlay.setNextFocusUpId(R.id.mGridView);   //xuameng上面焦点是选剧集
+                        tvQuickSearch.setNextFocusUpId(R.id.mGridView); 
+                        tvSort.setNextFocusUpId(R.id.mGridView); 
+                        tvCollect.setNextFocusUpId(R.id.mGridView); 
+                        tvDesc.setNextFocusUpId(R.id.mGridView); 
+                        tvPush.setNextFocusUpId(R.id.mGridView); 
+                        //llPlayerFragmentContainerBlock.setNextFocusUpId(R.id.mGridView); 
 
                         if (showPreview) {
                             jumpToPlay();
@@ -1595,6 +1595,7 @@ public class DetailActivity extends BaseActivity {
         if (fullWindows) {
             if (playFragment != null && playFragment.onBackPressed()) return;//xuameng上一级交给VODController控制
             exitFullPreview();
+			mGridView.requestFocus();
             switchToPlayingSourceAndScroll();   //xuameng滚动到当前剧集
             return;
         }
