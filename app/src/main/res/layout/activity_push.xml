@@ -50,7 +50,7 @@
                 android:id="@+id/tvTransfer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/vs_16"
+                android:layout_marginStart="@dimen/vs_20"
                 android:background="@drawable/shape_user_focus"
                 android:focusable="true"
                 android:gravity="center"
