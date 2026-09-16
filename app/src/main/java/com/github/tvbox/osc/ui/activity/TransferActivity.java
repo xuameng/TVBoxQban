@@ -114,7 +114,7 @@ public class TransferActivity extends BaseActivity {
         name.setId(View.generateViewId());
         name.setText(file.getName() + "  " + readable(file.length())); name.setTextColor(0xffffffff); name.setTextSize(20); name.setSingleLine(true); name.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE); name.setGravity(android.view.Gravity.CENTER_VERTICAL); name.setFocusable(true); name.setClickable(true); name.setBackgroundResource(R.drawable.shape_setting_model_focus); name.setPadding(12, 4, 12, 4);
         row.addView(name, new LinearLayout.LayoutParams(0, getResources().getDimensionPixelSize(R.dimen.vs_60), 1));
-        Button delete = new Button(this); delete.setId(View.generateViewId()); delete.setText("删除"); delete.setTextSize(18); delete.setTextColor(0xffffffff); delete.setBackgroundResource(R.drawable.button_dialog_main); delete.setFocusable(true); delete.setContentDescription("删除 " + file.getName());
+        Button delete = new Button(this); delete.setId(View.generateViewId()); delete.setText("删除"); delete.setTextSize(20); delete.setTextColor(0xffffffff); delete.setBackgroundResource(R.drawable.button_dialog_main); delete.setFocusable(true); delete.setContentDescription("删除 " + file.getName());
         LinearLayout.LayoutParams deleteParams = new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.vs_100), getResources().getDimensionPixelSize(R.dimen.vs_60)); deleteParams.leftMargin = getResources().getDimensionPixelSize(R.dimen.vs_8); row.addView(delete, deleteParams);
         name.setNextFocusRightId(delete.getId()); delete.setNextFocusLeftId(name.getId());
         name.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { openFile(file); } });
