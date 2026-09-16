@@ -1035,7 +1035,7 @@ public class DetailActivity extends BaseActivity {
                         tvPlay.setVisibility(View.VISIBLE);
                         tvSort.setVisibility(View.VISIBLE);  //xuameng修复无播放数据倒序空指针
                         mEmptyPlayList.setVisibility(View.GONE);
-mGridView.requestFocus();
+
                         VodInfo vodInfoRecord = RoomDataManger.getVodInfo(sourceKey, vodId);
                         // xuameng读取历史记录：从摘要表读播放状态（不读大字段）
                         VodRecordSummary recordSummary = AppDataManager.get().getVodRecordDao().getVodRecordSummary(sourceKey, vodId);
@@ -1595,7 +1595,6 @@ mGridView.requestFocus();
         if (fullWindows) {
             if (playFragment != null && playFragment.onBackPressed()) return;//xuameng上一级交给VODController控制
             exitFullPreview();
-			mGridView.requestFocus();
             switchToPlayingSourceAndScroll();   //xuameng滚动到当前剧集
             return;
         }
@@ -1690,7 +1689,9 @@ mGridView.requestFocus();
         mGridView.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
         mGridViewFlag.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
         mSeriesGroupView.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
-
+if (!fullWindows && mGridView != null && mGridView.getVisibility() == View.VISIBLE){
+	mGridView.requestFocus();
+}
         //全屏下禁用详情页几个按键的焦点 防止上键跑过来
         tvPlay.setFocusable(!fullWindows);
         tvSort.setFocusable(!fullWindows);
