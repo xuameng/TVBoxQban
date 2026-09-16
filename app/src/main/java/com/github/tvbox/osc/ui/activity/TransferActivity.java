@@ -102,7 +102,7 @@ public class TransferActivity extends BaseActivity {
         fileList.removeAllViews();
         if (fs == null || fs.length == 0) {
             TextView empty = new TextView(this);
-            empty.setText("暂无文件"); empty.setTextColor(0xffb0bec5); setTextSizeMM(empty, R.dimen.vs_20); empty.setPadding(15, 15, 15, 15);
+            empty.setText("暂无文件"); empty.setTextColor(0xffb0bec5); setTextSizeMM(empty, R.dimen.vs_22); empty.setPadding(15, 15, 15, 15);
             fileList.addView(empty); return;
         }
         for (final File f : fs) if (f.isFile()) addFileRow(f);
@@ -119,10 +119,10 @@ public class TransferActivity extends BaseActivity {
         row.setOrientation(LinearLayout.HORIZONTAL); row.setGravity(android.view.Gravity.CENTER_VERTICAL); row.setPadding(8, 5, 8, 5);
         TextView name = new TextView(this);
         name.setId(View.generateViewId());
-        name.setText(file.getName() + "  " + readable(file.length())); name.setTextColor(0xffffffff); setTextSizeMM(name, R.dimen.vs_20); name.setSingleLine(true); name.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE); name.setGravity(android.view.Gravity.CENTER_VERTICAL); name.setFocusable(true); name.setClickable(true); name.setBackgroundResource(R.drawable.shape_setting_model_focus); name.setPadding(12, 4, 12, 4);
+        name.setText(file.getName() + "  " + readable(file.length())); name.setTextColor(0xffffffff); setTextSizeMM(name, R.dimen.vs_22); name.setSingleLine(true); name.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE); name.setGravity(android.view.Gravity.CENTER_VERTICAL); name.setFocusable(true); name.setClickable(true); name.setBackgroundResource(R.drawable.shape_setting_model_focus); name.setPadding(12, 4, 12, 4);
         row.addView(name, new LinearLayout.LayoutParams(0, getResources().getDimensionPixelSize(R.dimen.vs_50), 1));
-        Button delete = new Button(this); delete.setId(View.generateViewId()); setTextSizeMM(delete, R.dimen.vs_20); delete.setTextColor(0xffffffff); delete.setBackgroundResource(R.drawable.button_dialog_main); delete.setFocusable(true); delete.setContentDescription("删除 " + file.getName());
-        LinearLayout.LayoutParams deleteParams = new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.vs_100), getResources().getDimensionPixelSize(R.dimen.vs_60)); deleteParams.leftMargin = getResources().getDimensionPixelSize(R.dimen.vs_8); row.addView(delete, deleteParams);
+        Button delete = new Button(this); delete.setId(View.generateViewId()); setTextSizeMM(delete, R.dimen.vs_22); delete.setTextColor(0xffffffff); delete.setBackgroundResource(R.drawable.button_dialog_main); delete.setFocusable(true); delete.setContentDescription("删除 " + file.getName());
+        LinearLayout.LayoutParams deleteParams = new LinearLayout.LayoutParams(getResources().getDimensionPixelSize(R.dimen.vs_100), getResources().getDimensionPixelSize(R.dimen.vs_50)); deleteParams.leftMargin = getResources().getDimensionPixelSize(R.dimen.vs_8); row.addView(delete, deleteParams);
         name.setNextFocusRightId(delete.getId()); delete.setNextFocusLeftId(name.getId());
         name.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { openFile(file); } });
         delete.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { if (file.delete()) loadFiles(); } });
