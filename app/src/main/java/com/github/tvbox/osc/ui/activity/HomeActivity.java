@@ -369,6 +369,7 @@ public class HomeActivity extends BaseActivity {
                 loadingSourceKey = null;
                 previousHomeName = null;
                 previousHomeSource = null;
+HawkConfig.refreshHomeIng = false; 
                 selectGridViewHome(); //xuameng主页焦点
             }
         });
@@ -892,7 +893,7 @@ public class HomeActivity extends BaseActivity {
     private SelectDialog<SourceBean> mSiteSwitchDialog;
 
     void showSiteSwitch() {
-        if (isActivityUnavailable()) return;
+        if (isActivityUnavailable() || HawkConfig.refreshHomeIng) return;
         List<SourceBean> sites = ApiConfig.get().getSwitchSourceBeanList();
         if (!sites.isEmpty()){
             int select = sites.indexOf(ApiConfig.get().getHomeSourceBean());
@@ -924,6 +925,7 @@ public class HomeActivity extends BaseActivity {
                     previousHomeSource = ApiConfig.get().getHomeSourceBean();
                     ApiConfig.get().setSourceBean(value);
                     refreshHome(false);
+					HawkConfig.refreshHomeIng = true; 
                 }
                 @Override
                 public String getDisplay(SourceBean val) {
@@ -1049,6 +1051,7 @@ public class HomeActivity extends BaseActivity {
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
         initViewPager(null);
+  HawkConfig.refreshHomeIng = false; 
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
     }
 
@@ -1064,6 +1067,7 @@ public class HomeActivity extends BaseActivity {
         }
         previousHomeSource = null;
         previousHomeName = null;
+  HawkConfig.refreshHomeIng = false; 
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
         selectGridViewHome(); //xuameng主页焦点
     }
