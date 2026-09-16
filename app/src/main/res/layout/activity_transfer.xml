@@ -77,12 +77,13 @@
                 android:layout_marginLeft="@dimen/vs_30"
                 android:layout_weight="3"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/vs_10"
+                android:paddingTop="@dimen/vs_0"
                 android:paddingBottom="@dimen/vs_0">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/vs_1"
                     android:layout_marginBottom="@dimen/vs_12"
                     android:text="已上传文件"
                     android:textColor="@color/color_FFFFFF"
