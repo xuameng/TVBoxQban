@@ -386,7 +386,6 @@ public class SearchActivity extends BaseActivity {
         tvSearchCheckboxBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-        initCheckedSourcesForSearch(); 
                 List<SourceBean> searchAbleSource = ApiConfig.get().getSearchSourceBeanList();
                 if (mSearchCheckboxDialog == null) {
                     mSearchCheckboxDialog = new SearchCheckboxDialog(SearchActivity.this, searchAbleSource, mCheckSources);
@@ -394,8 +393,6 @@ public class SearchActivity extends BaseActivity {
                     if(searchAbleSource.size()!=mSearchCheckboxDialog.mSourceList.size()){
                         mSearchCheckboxDialog.setMSourceList(searchAbleSource);
                     }
-
-            mSearchCheckboxDialog.refresh(mCheckSources, searchAbleSource);
                 }
                 mSearchCheckboxDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
@@ -637,7 +634,6 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void search(String title) {
-    initCheckedSourcesForSearch();
         if (TextUtils.isEmpty(title)){
             App.showToastShort(SearchActivity.this, "输入内容不能为空！");
             return;
