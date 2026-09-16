@@ -1689,7 +1689,7 @@ public class DetailActivity extends BaseActivity {
         mGridView.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
         mGridViewFlag.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
         mSeriesGroupView.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
-
+mGridView.requestFocus();
         //全屏下禁用详情页几个按键的焦点 防止上键跑过来
         tvPlay.setFocusable(!fullWindows);
         tvSort.setFocusable(!fullWindows);
