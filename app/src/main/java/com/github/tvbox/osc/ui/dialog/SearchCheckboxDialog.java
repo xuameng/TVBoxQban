@@ -125,12 +125,4 @@ public class SearchCheckboxDialog extends BaseDialog{
         mSourceList = SourceBeanList;
         checkboxSearchAdapter.setData(mSourceList, mCheckSourcees);
     }
-
-public void setCheckedSources(HashMap<String, String> checkedSources) {
-    this.mCheckSourcees = checkedSources;
-    if (checkboxSearchAdapter != null) {
-        checkboxSearchAdapter.setData(mSourceList, mCheckSourcees);
-    }
-}
-
 }
