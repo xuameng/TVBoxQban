@@ -37,11 +37,7 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
     }
 
     private void setCheckedSource(HashMap<String, String> checkedSources) {
-        if (checkedSources == null) {
-            mCheckedSources = new HashMap<>();
-        } else {
-            mCheckedSources = checkedSources;
-        }
+        mCheckedSources = checkedSources;
     }
 
     private ArrayList<SourceBean> data = new ArrayList<>();
@@ -51,7 +47,7 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
     public void setData(List<SourceBean> newData, HashMap<String, String> checkedSources) {
         data.clear();
         data.addAll(newData);
-        setCheckedSource(checkedSources != null ? checkedSources : new HashMap<>());
+        setCheckedSource(checkedSources);
         notifyDataSetChanged();
     }
 
@@ -70,22 +66,17 @@ public class CheckboxSearchAdapter extends ListAdapter<SourceBean, CheckboxSearc
         int pos = holder.getAdapterPosition();
         SourceBean sourceBean = data.get(pos);
         holder.oneSearchSource.setText(sourceBean.getName());
-        holder.oneSearchSource.setOnCheckedChangeListener(null);
-        if (mCheckedSources != null) {
-            holder.oneSearchSource.setChecked(mCheckedSources.containsKey(sourceBean.getKey()));
-        }
-        holder.oneSearchSource.setTag(sourceBean);
-        holder.oneSearchSource.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    mCheckedSources.put(sourceBean.getKey(), "1");
-                } else {
-                    mCheckedSources.remove(sourceBean.getKey());
-                }
-                notifyItemChanged(pos);
-            }
-        });
+holder.oneSearchSource.setOnCheckedChangeListener(null);
+holder.oneSearchSource.setChecked(mCheckedSources != null && mCheckedSources.containsKey(sourceBean.getKey()));
+holder.oneSearchSource.setTag(sourceBean);
+holder.oneSearchSource.setOnCheckedChangeListener((buttonView, isChecked) -> {
+    if (mCheckedSources == null) return;
+    if (isChecked) {
+        mCheckedSources.put(sourceBean.getKey(), "1");
+    } else {
+        mCheckedSources.remove(sourceBean.getKey());
+    }
+});
 
     }
 
