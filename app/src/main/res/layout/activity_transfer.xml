@@ -65,7 +65,7 @@
                     android:gravity="center"
                     android:text="请在扫码后的网页查看上传进度"
                     android:textColor="@color/color_CCFFFFFF"
-                    android:textSize="@dimen/ts_18" />
+                    android:textSize="@dimen/ts_20" />
             </LinearLayout>
 
             <View
