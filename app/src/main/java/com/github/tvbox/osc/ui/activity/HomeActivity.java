@@ -369,7 +369,7 @@ public class HomeActivity extends BaseActivity {
                 loadingSourceKey = null;
                 previousHomeName = null;
                 previousHomeSource = null;
-HawkConfig.refreshHomeIng = false; 
+                HawkConfig.refreshHomeIng = false; 
                 selectGridViewHome(); //xuameng主页焦点
             }
         });
@@ -893,7 +893,11 @@ HawkConfig.refreshHomeIng = false;
     private SelectDialog<SourceBean> mSiteSwitchDialog;
 
     void showSiteSwitch() {
-        if (isActivityUnavailable() || HawkConfig.refreshHomeIng) return;
+        if (isActivityUnavailable()) return;
+        if (HawkConfig.refreshHomeIng){
+            App.showToastShort(HomeActivity.this, "聚汇影视提示：数据加载中请稍后！");
+            return;
+        }
         List<SourceBean> sites = ApiConfig.get().getSwitchSourceBeanList();
         if (!sites.isEmpty()){
             int select = sites.indexOf(ApiConfig.get().getHomeSourceBean());
@@ -925,7 +929,7 @@ HawkConfig.refreshHomeIng = false;
                     previousHomeSource = ApiConfig.get().getHomeSourceBean();
                     ApiConfig.get().setSourceBean(value);
                     refreshHome(false);
-					HawkConfig.refreshHomeIng = true; 
+                    HawkConfig.refreshHomeIng = true; 
                 }
                 @Override
                 public String getDisplay(SourceBean val) {
@@ -1051,7 +1055,7 @@ HawkConfig.refreshHomeIng = false;
         showSuccess();
         sortAdapter.setNewData(DefaultConfig.adjustSort(ApiConfig.get().getHomeSourceBean().getKey(), new ArrayList<>(), true));
         initViewPager(null);
-  HawkConfig.refreshHomeIng = false; 
+        HawkConfig.refreshHomeIng = false; 
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
     }
 
@@ -1067,7 +1071,7 @@ HawkConfig.refreshHomeIng = false;
         }
         previousHomeSource = null;
         previousHomeName = null;
-  HawkConfig.refreshHomeIng = false; 
+        HawkConfig.refreshHomeIng = false; 
         App.showToastShort(HomeActivity.this, "聚汇影视提示：已打断当前源加载！");
         selectGridViewHome(); //xuameng主页焦点
     }
