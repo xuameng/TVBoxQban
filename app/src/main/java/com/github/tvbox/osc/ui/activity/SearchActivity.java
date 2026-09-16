@@ -634,6 +634,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void search(String title) {
+    initCheckedSourcesForSearch(); 
         if (TextUtils.isEmpty(title)){
             App.showToastShort(SearchActivity.this, "输入内容不能为空！");
             return;
