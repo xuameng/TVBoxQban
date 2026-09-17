@@ -97,6 +97,7 @@ public class TransferActivity extends BaseActivity {
     }
 
     private void loadFiles() {
+
         if (!XXPermissions.isGranted(this, Permission.Group.STORAGE)) {
             fileList.removeAllViews();
             TextView tip = new TextView(this);
@@ -107,7 +108,20 @@ public class TransferActivity extends BaseActivity {
         }
 
         File dir = RemoteServer.getTransferDirectory();
+        if (dir == null || !dir.exists() || !dir.isDirectory()) {
+            fileList.removeAllViews();
+            TextView empty = new TextView(this);
+            empty.setText("暂无文件");
+            empty.setTextColor(0xffb0bec5);
+            setTextSizeMM(empty, R.dimen.ts_22);
+            empty.setPadding(15, 15, 15, 15);
+            fileList.addView(empty);
+            return;
+        }
+
         File[] fs = dir.listFiles();
+
+        // ====== 上传完成检测（提前）======
         if (progress.getProgress() > 0 && progressName != null && !progressName.isEmpty() && fs != null) {
             for (File f : fs) {
                 if (f.isFile() && progressName.equals(f.getName())) {
@@ -118,17 +132,43 @@ public class TransferActivity extends BaseActivity {
                 }
             }
         }
-        StringBuilder signature = new StringBuilder();
-        if (fs != null) for (File f : fs) if (f.isFile()) signature.append(f.getName()).append(':').append(f.length()).append(';');
-        if (fileSignature != null && signature.toString().equals(fileSignature)) return;
-        fileSignature = signature.toString();
-        fileList.removeAllViews();
-        if (fs == null || fs.length == 0) {
-            TextView empty = new TextView(this);
-            empty.setText("暂无文件"); empty.setTextColor(0xffb0bec5); setTextSizeMM(empty, R.dimen.ts_22); empty.setPadding(15, 15, 15, 15);
-            fileList.addView(empty); return;
+
+        // ====== 只统计根目录文件，忽略目录 ======
+        List<File> rootFiles = new ArrayList<>();
+        if (fs != null) {
+            for (File f : fs) {
+                if (f.isFile()) {
+                    rootFiles.add(f);
+                }
+            }
         }
-        for (final File f : fs) if (f.isFile()) addFileRow(f);
+
+        // 文件签名（只关心根目录文件）
+        StringBuilder signature = new StringBuilder();
+        for (File f : rootFiles) {
+            signature.append(f.getName()).append(':').append(f.length()).append(';');
+        }
+
+        if (fileSignature != null && signature.toString().equals(fileSignature)) {
+            return;
+        }
+        fileSignature = signature.toString();
+
+        fileList.removeAllViews();
+
+        if (rootFiles.isEmpty()) {
+            TextView empty = new TextView(this);
+            empty.setText("暂无文件");
+            empty.setTextColor(0xffb0bec5);
+            setTextSizeMM(empty, R.dimen.ts_22);
+            empty.setPadding(15, 15, 15, 15);
+            fileList.addView(empty);
+            return;
+        }
+
+        for (final File f : rootFiles) {
+            addFileRow(f);
+        }
     }
 
     //xuameng 统一用mm单位
