@@ -369,7 +369,6 @@ public class PlayFragment extends BaseLazyFragment {
                 autoRetryCount = 0;
                 mRetryCountExo = 0;  //xuameng播放出错计数器重置
                 mRetryCountIjk = 0;
-                mRetryCountSys = 0;
                 mRetryCountJP = 0;
                 reLoadDanmu  = true;  //xuameng 如果是解析嗅探地址重新下载弹幕
                 doParse(pb);
@@ -386,7 +385,6 @@ public class PlayFragment extends BaseLazyFragment {
                 autoRetryCount = 0;
                 mRetryCountExo = 0;  //xuameng播放出错计数器重置
                 mRetryCountIjk = 0;
-                mRetryCountSys = 0;
                 mRetryCountJP = 0;
                 if(replay){  //xuameng新增
                     play(true);
@@ -1818,8 +1816,6 @@ public class PlayFragment extends BaseLazyFragment {
 
     private int autoRetryCount = 0;
     private long lastRetryTime = 0; // 记录上次调用时间（毫秒）  //xuameng新增
-    private int mRetryCountSys = 0;   // xuameng 系统播放器重试计数
-    private static final int MAX_RETRIES_SYS = 2;  // xuameng 系统播放器重试两次
 
     boolean autoRetry() {
         if (mVodPlayerCfg == null || mVodInfo == null) {
@@ -1832,47 +1828,10 @@ public class PlayFragment extends BaseLazyFragment {
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
         long currentTime = System.currentTimeMillis();
         int playerType = 0;   //xuameng默认播放器类型
-
-        // ===== 系统播放器：最多重试 2 次 =====
-        try {
-            if (mVodPlayerCfg.has("pl")) {
-                playerType = mVodPlayerCfg.getInt("pl");
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        if (playerType == 0) {
-            // 超过 60 秒重置
-            if (currentTime - lastRetryTime > 60_000) {
-                LOG.i("echo-reset mRetryCountSys");
-                mRetryCountSys = 0;
-            }
-            lastRetryTime = currentTime;
-
-            if (mRetryCountSys < MAX_RETRIES_SYS) {
-                mRetryCountSys++;
-                LOG.i("echo-system player auto retry: " + mRetryCountSys);
-                play(false);
-                return true;
-            } else {
-                LOG.i("echo-system player retry exhausted");
-                mRetryCountSys = 0;
-                autoRetryCount = 0;
-                mRetryCountExo = 0;
-                mRetryCountIjk = 0;
-                mRetryCountJP = 0;
-                showSuccess();
-                return false;   // 不再重试，显示错误
-            }
-        }
-        // ===== 系统播放器逻辑 END =====
-
         if (selectExoTrack){    //xuameng如果是EXO在选择音轨就重置次数
             autoRetryCount = 0;
             mRetryCountExo = 0;  //xuameng播放出错计数器重置
             mRetryCountIjk = 0;
-            mRetryCountSys = 0;
             selectExoTrack = false;
         }
         try {
@@ -1919,7 +1878,6 @@ public class PlayFragment extends BaseLazyFragment {
             if (isJianpian && mRetryCountJP >= MAX_RETRIES){
                 App.showToastShort(mContext, "荐片播放地址获取失败！");
                 mRetryCountJP = 0;
-                showSuccess();
                 return false;
             }
             if (playerType == 1 && mRetryCountIjk < MAX_RETRIES && switchCode) {     //xuameng播放出错计数器  是否开启解码切换
@@ -2014,8 +1972,6 @@ public class PlayFragment extends BaseLazyFragment {
             mRetryCountExo = 0;  //xuameng播放出错计数器重置
             mRetryCountIjk = 0;
             autoRetryCount = 0;
-            mRetryCountSys = 0;
-            showSuccess();
             return false;
         }
     }
