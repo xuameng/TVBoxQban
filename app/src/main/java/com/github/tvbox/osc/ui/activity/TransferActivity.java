@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import org.json.JSONObject;
 
 import com.hjq.permissions.OnPermissionCallback;
@@ -96,14 +97,15 @@ public class TransferActivity extends BaseActivity {
     }
 
     private void loadFiles() {
-if (!XXPermissions.isGranted(this, Permission.Group.STORAGE)) {
-    fileList.removeAllViews();
-    TextView tip = new TextView(this);
-    tip.setText("请先授予存储权限");
-    tip.setTextColor(0xffef5350);
-    fileList.addView(tip);
-    return;
-}
+        if (!XXPermissions.isGranted(this, Permission.Group.STORAGE)) {
+            fileList.removeAllViews();
+            TextView tip = new TextView(this);
+            tip.setText("请先授予存储权限");
+            tip.setTextColor(0xffef5350);
+            fileList.addView(tip);
+            return;
+        }
+
         File dir = RemoteServer.getTransferDirectory();
         File[] fs = dir.listFiles();
         if (progress.getProgress() > 0 && progressName != null && !progressName.isEmpty() && fs != null) {
