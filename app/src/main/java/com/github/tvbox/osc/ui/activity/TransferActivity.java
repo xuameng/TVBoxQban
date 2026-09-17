@@ -21,7 +21,7 @@ import com.github.tvbox.osc.base.BaseActivity;
 import com.github.tvbox.osc.server.ControlManager;
 import com.github.tvbox.osc.server.RemoteServer;
 import com.github.tvbox.osc.ui.tv.QRCodeGen;
-import android.widget.Toast;
+import com.github.tvbox.osc.base.App;
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -144,7 +144,7 @@ public class TransferActivity extends BaseActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW); Uri uri;
         if (android.os.Build.VERSION.SDK_INT >= 24) { uri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", file); intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); } else uri = Uri.fromFile(file);
         intent.setDataAndType(uri, mimeType(file.getName()));
-        try { startActivity(intent); } catch (ActivityNotFoundException e) { Toast.makeText(this, "没有找到可以打开此文件的应用", Toast.LENGTH_SHORT).show(); }
+        try { startActivity(intent); } catch (ActivityNotFoundException e) { App.showToastShort(this, "没有找到可以打开此文件的应用！"); }
     }
 
     private String mimeType(String name) {
