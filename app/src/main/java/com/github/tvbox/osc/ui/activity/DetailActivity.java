@@ -884,6 +884,7 @@ public class DetailActivity extends BaseActivity {
             return;
         }
         mGridView.setSelection(i);
+        enableFocusable();
     }
 
     private void safeSelectMGridViewFlag(int i) {     //xuameng 修复我的收藏滚动闪退   频道高亮
@@ -1102,7 +1103,6 @@ public class DetailActivity extends BaseActivity {
                             }
                         });
                         safeSelectMGridView(vodInfo.playIndex);
-                        enableFocusable();
 
                         tvPlay.setNextFocusUpId(R.id.mGridView);   //xuameng上面焦点是选剧集
                         tvQuickSearch.setNextFocusUpId(R.id.mGridView); 
@@ -1826,7 +1826,6 @@ public class DetailActivity extends BaseActivity {
         // 4. 立即检查是否需要直接执行选择（避免滚动不触发）
         safeSelectMGridView(vodInfo.playIndex); 
         App.showToastShort(DetailActivity.this, "已滚动到当前播放剧集！");
-        enableFocusable();
     }
 
     private void switchTomGridViewFlag() {  //xuameng 自动滚动到当前播放源
