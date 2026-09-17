@@ -29,6 +29,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import org.json.JSONObject;
 
+import com.hjq.permissions.OnPermissionCallback;
+import com.hjq.permissions.Permission;
+import com.hjq.permissions.XXPermissions;
+
 /**
  * @author xuameng
  * @date :2026/9/16
@@ -49,6 +53,8 @@ public class TransferActivity extends BaseActivity {
     @Override protected int getLayoutResID() { return R.layout.activity_transfer; }
 
     @Override protected void init() {
+        // xuameng进入页面先判断存储权限
+        checkStoragePermission();
         ImageView qr = findViewById(R.id.ivTransferQr);
         TextView addressView = findViewById(R.id.tvTransferAddress);
         fileList = findViewById(R.id.transferFileList);
@@ -90,6 +96,14 @@ public class TransferActivity extends BaseActivity {
     }
 
     private void loadFiles() {
+if (!XXPermissions.isGranted(this, Permission.Group.STORAGE)) {
+    fileList.removeAllViews();
+    TextView tip = new TextView(this);
+    tip.setText("请先授予存储权限");
+    tip.setTextColor(0xffef5350);
+    fileList.addView(tip);
+    return;
+}
         File dir = RemoteServer.getTransferDirectory();
         File[] fs = dir.listFiles();
         if (progress.getProgress() > 0 && progressName != null && !progressName.isEmpty() && fs != null) {
@@ -157,5 +171,47 @@ public class TransferActivity extends BaseActivity {
     }
 
     private String readable(long n) { return n < 1024 ? n + " B" : n < 1048576 ? (n / 1024) + " KB" : (n / 1048576) + " MB"; }
+
+    /**
+     * xuameng 进入页面先检查存储权限
+     */
+    private void checkStoragePermission() {
+        if (XXPermissions.isGranted(this, Permission.Group.STORAGE)) {
+            // 已有权限，什么都不做
+            return;
+        }
+
+        XXPermissions.with(this)
+                .permission(Permission.Group.STORAGE)
+                .request(new OnPermissionCallback() {
+                    @Override
+                    public void onGranted(List<String> permissions, boolean all) {
+                        if (all) {
+                            App.showToastShort(TransferActivity.this, "已获得存储权限！");
+                            // 权限拿到后，重新加载文件列表
+                            loadFiles();
+                        }
+                    }
+
+                    @Override
+                    public void onDenied(List<String> permissions, boolean never) {
+                        if (never) {
+                            App.showToastShort(
+                                    TransferActivity.this,
+                                    "获取存储权限失败，请在系统设置中开启！"
+                            );
+                            XXPermissions.startPermissionActivity(
+                                    TransferActivity.this,
+                                    permissions
+                            );
+                        } else {
+                            App.showToastShort(
+                                    TransferActivity.this,
+                                    "获取存储权限失败！"
+                            );
+                        }
+                    }
+                });
+    }
 
 }
