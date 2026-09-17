@@ -884,7 +884,6 @@ public class DetailActivity extends BaseActivity {
             return;
         }
         mGridView.setSelection(i);
-        enableFocusable();
     }
 
     private void safeSelectMGridViewFlag(int i) {     //xuameng 修复我的收藏滚动闪退   频道高亮
@@ -958,7 +957,6 @@ public class DetailActivity extends BaseActivity {
     }
 
     private void initViewModel() {
-        disabledFocusable();
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
         sourceViewModel.detailResult.observe(this, new Observer<AbsXml>() {
             @Override
@@ -1132,7 +1130,6 @@ public class DetailActivity extends BaseActivity {
                         if (fullWindows) {
                             exitFullPreview();
                         }
-                        enableFocusable();
                         mGridViewFlag.setVisibility(View.GONE);
                         mGridView.setVisibility(View.GONE);
                         mSeriesGroupView.setVisibility(View.GONE);
@@ -1671,7 +1668,6 @@ public class DetailActivity extends BaseActivity {
     void enterFullPreview() {
         setFullPreview(true);
         playFragment.isFullPreview(true);   //xuameng 非小窗口模式返回后播放BUG
-        disabledFocusable();
     }
 
     void exitFullPreview() {
@@ -1694,6 +1690,14 @@ public class DetailActivity extends BaseActivity {
         mGridViewFlag.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
         mSeriesGroupView.setVisibility(fullWindows ? View.GONE : View.VISIBLE);
 
+        //全屏下禁用详情页几个按键的焦点 防止上键跑过来
+        tvPlay.setFocusable(!fullWindows);
+        tvSort.setFocusable(!fullWindows);
+        tvCollect.setFocusable(!fullWindows);
+        tvQuickSearch.setFocusable(!fullWindows);
+        tvDesc.setFocusable(!fullWindows);      //xuameng 内容简介
+        tvPush.setFocusable(!fullWindows);    //xuameng 远程推送
+        llPlayerFragmentContainerBlock.setFocusable(!fullWindows);
         if (!showPreview && !fullWindows && playFragment != null) {    //xuameng如果显示小窗口播放就释放视频，修复退出还显示暂停图标等图标的BUG
             try {
                 playFragment.pauseForHidden();
@@ -1937,27 +1941,5 @@ public class DetailActivity extends BaseActivity {
             isPushUrl = false;
         }
     };
-
-    private void disabledFocusable() {
-        tvPlay.setFocusable(false);
-        tvSort.setFocusable(false);
-        tvCollect.setFocusable(false);
-        tvQuickSearch.setFocusable(false);
-        tvDesc.setFocusable(false); 
-        tvPush.setFocusable(false);
-        llPlayerFragmentContainerBlock.setFocusable(false);
-        ivThumb.setFocusable(false);
-    }
-
-    private void enableFocusable() {
-        tvPlay.setFocusable(!fullWindows);
-        tvSort.setFocusable(!fullWindows);
-        tvCollect.setFocusable(!fullWindows);
-        tvQuickSearch.setFocusable(!fullWindows);
-        tvDesc.setFocusable(!fullWindows);      //xuameng 内容简介
-        tvPush.setFocusable(!fullWindows);    //xuameng 远程推送
-        ivThumb.setFocusable(!fullWindows);    //xuameng 影片图片
-        llPlayerFragmentContainerBlock.setFocusable(!fullWindows);
-	}
 
 }
