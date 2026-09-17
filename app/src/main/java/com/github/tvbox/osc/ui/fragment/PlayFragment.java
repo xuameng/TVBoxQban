@@ -1828,6 +1828,21 @@ public class PlayFragment extends BaseLazyFragment {
         int exoSelect = Hawk.get(HawkConfig.EXO_PLAY_SELECTCODE, 0);  //xuameng exo解码动态选择
         long currentTime = System.currentTimeMillis();
         int playerType = 0;   //xuameng默认播放器类型
+    try {
+            if (mVodPlayerCfg.has("pl")) {
+                playerType = mVodPlayerCfg.getInt("pl");     //xuameng 获取播放器类型
+            }
+    } catch (JSONException e) {
+        e.printStackTrace();
+    }
+    if (playerType == 0) {
+        LOG.i("echo-system player: disable auto retry");
+        autoRetryCount = 0;
+        mRetryCountExo = 0;
+        mRetryCountIjk = 0;
+        mRetryCountJP = 0;
+        return false;
+    }
         if (selectExoTrack){    //xuameng如果是EXO在选择音轨就重置次数
             autoRetryCount = 0;
             mRetryCountExo = 0;  //xuameng播放出错计数器重置
