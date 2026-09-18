@@ -1971,7 +1971,7 @@ public class PlayFragment extends BaseLazyFragment {
         } else {
             mRetryCountExo = 0;  //xuameng播放出错计数器重置
             mRetryCountIjk = 0;
-           // autoRetryCount = 0;
+            autoRetryCount = 0;
             return false;
         }
     }
