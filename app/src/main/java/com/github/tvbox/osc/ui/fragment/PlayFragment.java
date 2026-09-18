@@ -382,7 +382,7 @@ public class PlayFragment extends BaseLazyFragment {
 
             @Override
             public void replay(boolean replay) {
-                autoRetryCount = 0;
+              //  autoRetryCount = 0;
                 mRetryCountExo = 0;  //xuameng播放出错计数器重置
                 mRetryCountIjk = 0;
                 mRetryCountJP = 0;
@@ -1829,7 +1829,7 @@ public class PlayFragment extends BaseLazyFragment {
         long currentTime = System.currentTimeMillis();
         int playerType = 0;   //xuameng默认播放器类型
         if (selectExoTrack){    //xuameng如果是EXO在选择音轨就重置次数
-            autoRetryCount = 0;
+         //   autoRetryCount = 0;
             mRetryCountExo = 0;  //xuameng播放出错计数器重置
             mRetryCountIjk = 0;
             selectExoTrack = false;
@@ -1844,7 +1844,7 @@ public class PlayFragment extends BaseLazyFragment {
         // 如果距离上次重试超过 60 秒（60000 毫秒），重置重试次数
         if (currentTime - lastRetryTime > 60_000) {
             LOG.i("echo-reset-autoRetryCount");
-            autoRetryCount = 0;
+          //  autoRetryCount = 0;
             mRetryCountExo = 0;  //xuameng播放出错计数器重置
             mRetryCountIjk = 0;
             mRetryCountJP = 0;
@@ -1971,7 +1971,7 @@ public class PlayFragment extends BaseLazyFragment {
         } else {
             mRetryCountExo = 0;  //xuameng播放出错计数器重置
             mRetryCountIjk = 0;
-            autoRetryCount = 0;
+           // autoRetryCount = 0;
             return false;
         }
     }
