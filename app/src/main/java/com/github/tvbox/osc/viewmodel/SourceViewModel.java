@@ -174,7 +174,12 @@ public class SourceViewModel extends ViewModel {
 
     private static boolean isFirstSource(String sourceKey) {
         List<SourceBean> sources = ApiConfig.get().getSourceBeanList();
-        return !sources.isEmpty() && sources.get(0) != null && sourceKey.equals(sources.get(0).getKey());
+        for (SourceBean bean : sources) {
+            if (bean != null && bean.getType() != -1) {  // 跳过推送源
+                return sourceKey != null && sourceKey.equals(bean.getKey());
+            }
+        }
+        return false;
     }
 
     private static boolean isDoubanSource(SourceBean sourceBean) {
