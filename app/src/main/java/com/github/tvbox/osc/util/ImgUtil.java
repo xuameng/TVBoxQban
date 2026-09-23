@@ -101,7 +101,7 @@ public class ImgUtil {
 
     public static int getStyleDefaultWidth(Style style) {
         // 1. style 为空，回退默认
-        if (style == null && !HawkConfig.isShowList) {
+        if (style == null && !HawkConfig.isShowList) {  //xuameng判断是否显示列表
             return defaultWidth;
         }
 
