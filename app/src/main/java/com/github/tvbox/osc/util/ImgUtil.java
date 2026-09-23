@@ -12,6 +12,7 @@ import android.util.Base64;
 
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.api.ApiConfig;
+import com.github.tvbox.osc.util.HawkConfig;
 
 import java.util.HashMap;
 import java.util.Map;
