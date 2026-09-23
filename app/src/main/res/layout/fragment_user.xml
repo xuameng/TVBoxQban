@@ -333,20 +333,33 @@
             app:tv_layoutManager="V7LinearLayoutManager"
             app:tv_selectedItemIsCentered="true"
             app:tv_verticalSpacingWithMargins="@dimen/vs_10"/>
-    <FrameLayout
-        android:id="@+id/hotEmptyLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <FrameLayout
+            android:id="@+id/hotEmptyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
             android:layout_gravity="center"
-            android:text="暂无推荐数据"
-            android:textSize="20sp"
-            android:textColor="#FFFFFF"/>
-    </FrameLayout>
+            android:orientation="vertical"
+            android:clickable="false"
+            android:focusable="false"
+            android:visibility="gone">
+            <ImageView
+                android:layout_width="@dimen/vs_120"
+                android:layout_height="@dimen/vs_120"
+                android:src="@drawable/icon_empty"/>
+            <TextView
+                android:textSize="@dimen/ts_24"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/vs_0"
+                android:layout_marginBottom="@dimen/vs_10"
+                android:text="没有找到数据"
+                android:shadowColor="#ff000000"
+                android:shadowDx="2.0"
+                android:shadowDy="2.0"
+                android:shadowRadius="1.0"/>
+        </FrameLayout>
     </RelativeLayout>
 </RelativeLayout>
