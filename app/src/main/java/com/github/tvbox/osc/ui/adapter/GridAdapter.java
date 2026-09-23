@@ -105,7 +105,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
             newWidth = ImgUtil.defaultWidth;
             newHeight = ImgUtil.defaultHeight;
         }
-        if (style != null && !HawkConfig.isShowList) {
+        if (style != null && !HawkConfig.isShowList) {  //xuameng判断是否显示列表
             newWidth = defaultWidth;
             float safeRatio = ImgUtil.normalizeRatio(style.ratio);  //xuameng normalizeRatio强行指定ratio值防止用户乱写
             newHeight = (int) (newWidth / safeRatio);
