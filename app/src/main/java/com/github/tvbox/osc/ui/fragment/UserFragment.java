@@ -782,4 +782,12 @@ private void updateHotListView(HomeHotVodAdapter adapter,
     }
 }
 
+private void updateHotListView(HomeHotVodAdapter adapter) {
+    updateHotListView(adapter, null);
+}
+
+private void updateHotListView(HomeHotVodAdapterXu adapterXu) {
+    updateHotListView(null, adapterXu);
+}
+
 }
