@@ -91,6 +91,8 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     private boolean pullRefreshReady = false;  //xuameng 手机滑动刷新页面
     private int pullRefreshThreshold = 0;  //xuameng 手机滑动刷新页面
 
+private View hotEmptyLayout;
+
     public static UserFragment newInstance() {
         return new UserFragment();
     }
@@ -147,6 +149,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
             } else {
                 homeHotVodAdapter.setNewData(vodList); //xuameng首页单行
             }
+        updateHotListView(homeHotVodAdapter, homeHotVodAdapterxu);
         }
     }
 
@@ -194,6 +197,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         tvCollect = findViewById(R.id.tvFavorite);
         tvHistory = findViewById(R.id.tvHistory);
         tvPush = findViewById(R.id.tvPush);
+hotEmptyLayout = findViewById(R.id.hotEmptyLayout);
         tvLive.setOnClickListener(this);
         tvSearch.setOnClickListener(this);
         tvSetting.setOnClickListener(this);
@@ -528,6 +532,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         if (Hawk.get(HawkConfig.HOME_REC, HawkConfig.DEFAULT_HOME_REC) == 1) {
             if (homeSourceRec != null) {
                 adapter.setNewData(homeSourceRec);
+            updateHotListView(adapter, null); 
                 return;
             }
         } else if (Hawk.get(HawkConfig.HOME_REC, HawkConfig.DEFAULT_HOME_REC) == 2) {
@@ -540,6 +545,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
         if (Hawk.get(HawkConfig.HOME_REC, HawkConfig.DEFAULT_HOME_REC) == 1) {
             if (homeSourceRec != null) {
                 adapter.setNewData(homeSourceRec);
+            updateHotListView(adapter, null); 
                 return;
             }
         } else if (Hawk.get(HawkConfig.HOME_REC, HawkConfig.DEFAULT_HOME_REC) == 2) {
@@ -562,6 +568,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     ArrayList<Movie.Video> hotMovies = loadHots(json);
                     if (hotMovies != null && hotMovies.size() > 0) {
                         adapter.setNewData(hotMovies);
+updateHotListView(adapter, null);
                         return;
                     }
                 }
@@ -579,6 +586,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                                 @Override
                                 public void run() {
                                     adapter.setNewData(loadHots(netJson));
+        updateHotListView(adapter, null); 
                                 }
                             });
                         }
@@ -607,6 +615,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                     ArrayList<Movie.Video> hotMovies = loadHots(json);
                     if (hotMovies != null && hotMovies.size() > 0) {
                         adapter.setNewData(hotMovies);
+updateHotListView(adapter, null);
                         return;
                     }
                 }
@@ -624,6 +633,7 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
                                 @Override
                                 public void run() {
                                     adapter.setNewData(loadHots(netJson));
+        updateHotListView(adapter, null); 
                                 }
                             });
                         }
@@ -748,5 +758,28 @@ public class UserFragment extends BaseLazyFragment implements View.OnClickListen
     private void initPullRefresh() {  //xuameng 手机滑动刷新页面
         pullRefreshThreshold = ViewConfiguration.get(mContext).getScaledTouchSlop() * 6;
     }
+
+private void updateHotListView(HomeHotVodAdapter adapter,
+                               HomeHotVodAdapterXu adapterXu) {
+
+    boolean hasData = (adapter != null && adapter.getData().size() > 0)
+                   || (adapterXu != null && adapterXu.getData().size() > 0);
+
+    if (hasData) {
+        hotEmptyLayout.setVisibility(View.GONE);
+
+        if (Hawk.get(HawkConfig.HOME_REC_STYLE, false)) {
+            tvHotList1.setVisibility(View.VISIBLE);
+            tvHotList2.setVisibility(View.GONE);
+        } else {
+            tvHotList1.setVisibility(View.GONE);
+            tvHotList2.setVisibility(View.VISIBLE);
+        }
+    } else {
+        tvHotList1.setVisibility(View.GONE);
+        tvHotList2.setVisibility(View.GONE);
+        hotEmptyLayout.setVisibility(View.VISIBLE);
+    }
+}
 
 }
