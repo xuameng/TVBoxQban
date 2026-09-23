@@ -150,7 +150,15 @@ private View hotEmptyLayout;
                 homeHotVodAdapter.setNewData(vodList); //xuameng首页单行
             }
         updateHotListView(homeHotVodAdapter, homeHotVodAdapterxu);
-        }
+        } else {
+        // ✅ 非历史模式：只刷新空状态判断
+        updateHotListView(
+            Hawk.get(HawkConfig.HOME_REC_STYLE, false)
+                ? homeHotVodAdapter : null,
+            Hawk.get(HawkConfig.HOME_REC_STYLE, false)
+                ? null : homeHotVodAdapterxu
+        );
+    }
     }
 
     @Override
