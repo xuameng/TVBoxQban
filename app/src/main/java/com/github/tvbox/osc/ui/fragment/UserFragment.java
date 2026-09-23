@@ -759,11 +759,11 @@ updateHotListView(adapter, null);
         pullRefreshThreshold = ViewConfiguration.get(mContext).getScaledTouchSlop() * 6;
     }
 
-private void updateHotListView(HomeHotVodAdapter adapter,
-                               HomeHotVodAdapterXu adapterXu) {
+private void updateHotListView(BaseQuickAdapter adapter1,
+                               BaseQuickAdapter adapter2) {
 
-    boolean hasData = (adapter != null && adapter.getData().size() > 0)
-                   || (adapterXu != null && adapterXu.getData().size() > 0);
+    boolean hasData = (adapter1 != null && adapter1.getData().size() > 0)
+                   || (adapter2 != null && adapter2.getData().size() > 0);
 
     if (hasData) {
         hotEmptyLayout.setVisibility(View.GONE);
@@ -780,14 +780,6 @@ private void updateHotListView(HomeHotVodAdapter adapter,
         tvHotList2.setVisibility(View.GONE);
         hotEmptyLayout.setVisibility(View.VISIBLE);
     }
-}
-
-private void updateHotListView(HomeHotVodAdapter adapter) {
-    updateHotListView(adapter, null);
-}
-
-private void updateHotListView(HomeHotVodAdapterXu adapterXu) {
-    updateHotListView(null, adapterXu);
 }
 
 }
