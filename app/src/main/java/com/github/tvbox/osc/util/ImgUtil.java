@@ -57,12 +57,12 @@ public class ImgUtil {
     }
 
     public static Style initStyle() {     //xuameng 改成list 不需要ratio
+        if (HawkConfig.isShowList){      //xuameng判断是否显示列表
+            return new Style(0f, "list");
+        }
         String bStyle = ApiConfig.get().getHomeSourceBean().getStyle();
         if (TextUtils.isEmpty(bStyle)) {
             return null;
-        }
-        if (HawkConfig.isShowList){      //xuameng判断是否显示列表
-            return new Style(0f, "list");
         }
         try {
             JSONObject jsonObject = new JSONObject(bStyle);
