@@ -333,5 +333,17 @@
             app:tv_layoutManager="V7LinearLayoutManager"
             app:tv_selectedItemIsCentered="true"
             app:tv_verticalSpacingWithMargins="@dimen/vs_10"/>
+<FrameLayout
+    android:id="@+id/hotEmptyLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:visibility="gone">
+
+    <TextView
+        android:layout_gravity="center"
+        android:text="暂无推荐数据"
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"/>
+</FrameLayout>
     </RelativeLayout>
 </RelativeLayout>
