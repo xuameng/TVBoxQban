@@ -97,7 +97,7 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
             newWidth = ImgUtilHot.defaultWidth;
             newHeight = ImgUtilHot.defaultHeight;
         }
-        if (style != null && !this.mShowList) {
+        if (style != null && !this.mShowList) {  //xuameng判断是否显示列表
             newWidth = defaultWidth;
             float safeRatio = ImgUtilHot.normalizeRatio(style.ratio);  //xuameng normalizeRatio强行指定ratio值防止用户乱写
             newHeight = (int) (newWidth / safeRatio);
