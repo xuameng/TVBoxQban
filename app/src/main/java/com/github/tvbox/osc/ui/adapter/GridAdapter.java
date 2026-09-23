@@ -13,6 +13,7 @@ import com.github.tvbox.osc.bean.Movie;
 import com.github.tvbox.osc.picasso.RoundTransformation;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.MD5;
+import com.github.tvbox.osc.util.HawkConfig;
 import com.squareup.picasso.Picasso;
 import com.github.tvbox.osc.util.ImgUtil;   //xuamengBASE64图片
 
