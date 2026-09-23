@@ -60,7 +60,9 @@ public class ImgUtil {
         if (TextUtils.isEmpty(bStyle)) {
             return null;
         }
-
+        if (HawkConfig.isShowList){      //xuameng判断是否显示列表
+            return new Style(0f, "list");
+        }
         try {
             JSONObject jsonObject = new JSONObject(bStyle);
 
@@ -102,8 +104,8 @@ public class ImgUtil {
             return defaultWidth;
         }
 
-        // 2. xuameng list 类型，直接给固定宽度
-        if ("list".equals(style.type)) {
+        // 2. xuameng list 类型，或显示列表 直接给固定宽度
+        if ("list".equals(style.type) || HawkConfig.isShowList) {
             return 100;
         }
 
