@@ -90,14 +90,14 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
 
         int newWidth;
         int newHeight;
-        if (this.mShowList){
+        if (this.mShowList){  //xuameng判断是否显示列表
             newWidth = 100;
             newHeight = newWidth;
         } else {
             newWidth = ImgUtilHot.defaultWidth;
             newHeight = ImgUtilHot.defaultHeight;
         }
-        if (style != null) {
+        if (style != null && !this.mShowList) {
             newWidth = defaultWidth;
             float safeRatio = ImgUtilHot.normalizeRatio(style.ratio);  //xuameng normalizeRatio强行指定ratio值防止用户乱写
             newHeight = (int) (newWidth / safeRatio);
@@ -136,7 +136,7 @@ public class HomeHotVodAdapterXu extends BaseQuickAdapter<Movie.Video, BaseViewH
      * 根据传入的 style 动态设置 ImageView 的高度：高度 = 宽度 / ratio
      */
     private void applyStyleToImage(final ImageView ivThumb) {
-        if(style!=null && !this.mShowList){
+        if(style!=null && !this.mShowList){  //xuameng判断是否显示列表
             ViewGroup container = (ViewGroup) ivThumb.getParent();
             int width = defaultWidth;
             float safeRatio = ImgUtilHot.normalizeRatio(style.ratio);
