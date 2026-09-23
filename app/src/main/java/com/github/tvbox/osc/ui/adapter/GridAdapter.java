@@ -46,13 +46,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
                 this.defaultWidth = ImgUtil.getStyleDefaultWidth(style);   //style 来设置图片的宽高比例
                 HawkConfig.isShowList = false;    //xuameng判断是否显示列表
             }
-        } else {
-            if (showList){
-                HawkConfig.isShowList = true;    //xuameng判断是否显示列表
-            } else {
-                HawkConfig.isShowList = false;    //xuameng判断是否显示列表
-            }
-        }
+        } 
         this.style = style;
     }
 
