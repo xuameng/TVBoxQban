@@ -231,7 +231,9 @@ hotEmptyLayout = findViewById(R.id.hotEmptyLayout);
             root.setOnTouchListener((v, event) ->
                     handlePullRefreshTouch(v, event));
         }
-
+hotEmptyLayout.setOnTouchListener((v, event) ->
+    handlePullRefreshTouch(v, event)
+);
         tvHotList1.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {   //xuameng 手机滑动刷新页面
             @Override
             public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
@@ -376,6 +378,12 @@ hotEmptyLayout = findViewById(R.id.hotEmptyLayout);
                 FastClickCheckUtil.check(v);
                 if (mActivity instanceof HomeActivity) {
                     ((HomeActivity) mActivity).refreshHomeSort();
+        updateHotListView(
+            Hawk.get(HawkConfig.HOME_REC_STYLE, false)
+                ? homeHotVodAdapter : null,
+            Hawk.get(HawkConfig.HOME_REC_STYLE, false)
+                ? null : homeHotVodAdapterxu
+        );
                     App.showToastShort(mContext, "重载数据！");
                 }
                 return true;
