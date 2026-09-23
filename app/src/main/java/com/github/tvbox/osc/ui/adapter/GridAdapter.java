@@ -95,12 +95,15 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
         }
  //       helper.setText(R.id.tvName, item.name);
  //       helper.setText(R.id.tvActor, item.actor);
+
+        int newWidth;
+        int newHeight;
         if (HawkConfig.isShowList){
-            int newWidth = 100;
-            int newHeight = newWidth;
+            newWidth = 100;
+            newHeight = newWidth;
         } else {
-            int newWidth = ImgUtil.defaultWidth;
-            int newHeight = ImgUtil.defaultHeight;
+            newWidth = ImgUtil.defaultWidth;
+            newHeight = ImgUtil.defaultHeight;
         }
         if (style != null) {
             newWidth = defaultWidth;
