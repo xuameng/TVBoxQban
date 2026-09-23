@@ -87,12 +87,15 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
         }
   //      helper.setText(R.id.tvName, item.name);
         ImageView ivThumb = helper.getView(R.id.ivThumb);
+
+        int newWidth;
+        int newHeight;
         if (this.mShowList){
-            int newWidth = 100;
-            int newHeight = newWidth;
+            newWidth = 100;
+            newHeight = newWidth;
         } else {
-            int newWidth = ImgUtilHot.defaultWidth;
-            int newHeight = ImgUtilHot.defaultHeight;
+            newWidth = ImgUtilHot.defaultWidth;
+            newHeight = ImgUtilHot.defaultHeight;
         }
         if (style != null) {
             newWidth = defaultWidth;
