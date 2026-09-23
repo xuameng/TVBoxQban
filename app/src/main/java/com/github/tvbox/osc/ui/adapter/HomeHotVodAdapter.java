@@ -87,9 +87,13 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
         }
   //      helper.setText(R.id.tvName, item.name);
         ImageView ivThumb = helper.getView(R.id.ivThumb);
-
-        int newWidth = ImgUtilHot.defaultWidth;
-        int newHeight = ImgUtilHot.defaultHeight;
+        if (this.mShowList){
+            int newWidth = 100;
+            int newHeight = newWidth;
+        } else {
+            int newWidth = ImgUtilHot.defaultWidth;
+            int newHeight = ImgUtilHot.defaultHeight;
+        }
         if (style != null) {
             newWidth = defaultWidth;
             float safeRatio = ImgUtilHot.normalizeRatio(style.ratio);  //xuameng normalizeRatio强行指定ratio值防止用户乱写
@@ -129,7 +133,7 @@ public class HomeHotVodAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
      * 根据传入的 style 动态设置 ImageView 的高度：高度 = 宽度 / ratio
      */
     private void applyStyleToImage(final ImageView ivThumb) {
-        if(style!=null){
+        if(style!=null && !this.mShowList){
             ViewGroup container = (ViewGroup) ivThumb.getParent();
             int width = defaultWidth;
             float safeRatio = ImgUtilHot.normalizeRatio(style.ratio);
