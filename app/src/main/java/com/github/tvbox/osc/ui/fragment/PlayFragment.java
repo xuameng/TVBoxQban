@@ -769,7 +769,7 @@ public class PlayFragment extends BaseLazyFragment {
             public String getDisplay(TrackInfoBean val) {
                 String name = val.name.replace("VIDEO,", "");
                 name = name.replace("N/A,", "");
-                //name = name.replace(" ", "");
+                name = name.replace(" ", "");
                 return name;
             }
         }, new DiffUtil.ItemCallback<TrackInfoBean>() {
