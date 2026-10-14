@@ -13,6 +13,7 @@ import android.util.Base64;
 import com.github.tvbox.osc.base.App;
 import com.github.tvbox.osc.api.ApiConfig;
 import com.github.tvbox.osc.util.HawkConfig;
+import com.github.tvbox.osc.ui.adapter.GridAdapter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +43,7 @@ public class ImgUtil {
     
     public static int defaultWidth = 220;
     public static int defaultHeight = 280;
+    private GridAdapter gridAdapter;
 
     /**
      * style 数据结构：ratio 指定宽高比（宽 / 高），type 表示风格（例如 rect、list）
@@ -57,7 +59,7 @@ public class ImgUtil {
     }
 
     public static Style initStyle() {     //xuameng 改成list 不需要ratio
-        if (HawkConfig.isShowList){      //xuameng判断是否显示列表
+        if (gridAdapter.isShowList()){      //xuameng判断是否显示列表
             return new Style(0f, "list");
         }
         String bStyle = ApiConfig.get().getHomeSourceBean().getStyle();
@@ -101,12 +103,12 @@ public class ImgUtil {
 
     public static int getStyleDefaultWidth(Style style) {
         // 1. style 为空，回退默认
-        if (style == null && !HawkConfig.isShowList) {  //xuameng判断是否显示列表
+        if (style == null && !gridAdapter.isShowList()) {  //xuameng判断是否显示列表
             return defaultWidth;
         }
 
         // 2. xuameng list 类型，或显示列表 直接给固定宽度
-        if ("list".equals(style.type) || HawkConfig.isShowList) {
+        if ("list".equals(style.type) || gridAdapter.isShowList()) {
             return 100;
         }
 
