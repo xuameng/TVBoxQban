@@ -234,7 +234,7 @@ public class HomeActivity extends BaseActivity {
 
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
                 if (view != null && position >= 0) {
-                    showSuccess();
+                    HawkConfig.isShowList = false;  
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.sortChange = true;
                     PositionXu = position;  //xuameng 记忆当前Position
