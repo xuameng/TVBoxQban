@@ -18,7 +18,7 @@ xuameng
 6，新增音柱分段效果
 */
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 12222;  //xuameng判断音量大小
+    private static final int MAX_AMPLITUDE = 18222;  //xuameng判断音量大小
     private static final int BAR_COUNT = 22;   //xuameng 音柱数量
     private static final int ANIMATION_DURATION = 80; //xuameng 音柱动画时长
     // 改为非静态变量实现动态刷新
@@ -27,6 +27,9 @@ public class MusicVisualizerView extends View {
     private boolean mShowStripes = true; // 是否显示分段效果
     private int mSegmentCount = 20; // 每个音柱的分段数
     private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
+    private float mSmoothedPeakMagnitude = 0f; // 平滑峰值
+private float mBeatEnergy = 0f;        // 当前节奏能量
+private float mSmoothedBeat = 0f;      // 平滑后的节奏能量
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
         for(int i = 0; i < 3; i++) {
@@ -86,43 +89,107 @@ public class MusicVisualizerView extends View {
         mSegmentSpacingFixed = Math.max(0f, spacing); // 确保非负值
         postInvalidate();
     }
-    public void updateVisualizer(byte[] fft, float volumeLevel) {
-        if(fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-        if(volumeLevel == 0f || volumeLevel == 0.0f || volumeLevel == 0.00f) {
-            reset(); //xuameng处理静音状态重置音柱
-        }
-        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
-        for(int i = 0; i < BAR_COUNT; i++) {
-            int barIndex;
-            if(i < BAR_COUNT / 3) {
-                // 低频段密集采样（每2点取1）
-                barIndex = 2 + i * 2;
-            } else {
-                // 中高频段间隔采样（每4点取1）
-                barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
-            }
-            if(barIndex < fft.length - 1) {
-                byte rfk = fft[barIndex];
-                byte ifk = fft[barIndex + 1];
-                float magnitude = (rfk * rfk + ifk * ifk);
-                // xuameng改进的频率加权策略（三段式加权）
-                float weight;
-                if(i < BAR_COUNT / 4) {
-                    weight = 1.0f; //xuameng 超低频段(0-200Hz)增益
-                } else if(i < BAR_COUNT / 2) {
-                    weight = 2.5f; //xuameng 中低频段(200-800Hz)基准值增益
-                } else {
-                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0); //xuameng 高频段(800Hz+)指数增强
-                    weight = 3.5f * freqFactor;
-                }
-                mTargetHeights[i] = Math.min(
-                    (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, //xuameng判断音量大小
-                    getHeight() * 0.95f);
-                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
-            }
-        }
-        startAnimation();
+
+ public void updateVisualizer(byte[] fft, float volumeLevel) {
+    if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+
+    if (volumeLevel <= 0f) {
+        reset();
+        return;
     }
+
+    // ========================
+    // 1. 计算整体能量 + 节奏能量（重点）
+    // ========================
+    float totalEnergy = 0f;
+    float beatEnergy = 0f;
+
+    for (int i = 0; i < BAR_COUNT; i++) {
+        int barIndex;
+        if (i < BAR_COUNT / 3) {
+            barIndex = 2 + i * 2;
+        } else {
+            barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+        }
+
+        if (barIndex < fft.length - 1) {
+            byte rfk = fft[barIndex];
+            byte ifk = fft[barIndex + 1];
+            float magnitude = (rfk * rfk + ifk * ifk);
+
+            totalEnergy += magnitude;
+
+            // ✅ 节奏能量：重点采样低频 + 中低频（人声/鼓）
+            if (i < BAR_COUNT / 2) {
+                beatEnergy += magnitude * 1.8f;
+            }
+        }
+    }
+
+    // ========================
+    // 2. 归一化节奏能量（关键）
+    // ========================
+    float normalizedBeat = Math.min(
+        beatEnergy / (MAX_AMPLITUDE * BAR_COUNT * 0.5f),
+        1.0f
+    );
+
+    // ✅ 快速上升，慢速衰减（这是“节奏感”的灵魂）
+    if (normalizedBeat > mBeatEnergy) {
+        mBeatEnergy = normalizedBeat;
+    } else {
+        mBeatEnergy -= 0.08f; // 衰减速度
+        if (mBeatEnergy < 0) mBeatEnergy = 0;
+    }
+
+    // 平滑（避免肉眼可见的抖动）
+    mSmoothedBeat += (mBeatEnergy - mSmoothedBeat) * 0.35f;
+
+    // ========================
+    // 3. 每个音柱的高度计算
+    // ========================
+    for (int i = 0; i < BAR_COUNT; i++) {
+        int barIndex;
+        if (i < BAR_COUNT / 3) {
+            barIndex = 2 + i * 2;
+        } else {
+            barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+        }
+
+        float magnitude = 0f;
+        if (barIndex < fft.length - 1) {
+            byte rfk = fft[barIndex];
+            byte ifk = fft[barIndex + 1];
+            magnitude = (rfk * rfk + ifk * ifk);
+        }
+
+        float weight;
+        if (i < BAR_COUNT / 4) {
+            weight = 1.0f;
+        } else if (i < BAR_COUNT / 2) {
+            weight = 2.0f;
+        } else {
+            float freqFactor = (float) Math.pow(1.4, (i - BAR_COUNT / 2) / 2.0);
+            weight = 2.8f * freqFactor;
+        }
+
+        // ✅ 核心逻辑（非常重要）
+        // 主跳动 = 节奏能量
+        // 频段差异 = 只做小幅度扰动
+        float baseHeight = (mSmoothedBeat * getHeight() * volumeLevel * 0.9f);
+        float detailHeight = (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE;
+
+        mTargetHeights[i] = Math.min(
+            baseHeight * 0.75f + detailHeight * 0.25f,
+            getHeight() * 0.95f
+        );
+
+        mAmplitudeLevels[i] = mSmoothedBeat;
+    }
+
+    startAnimation();
+}
+
     private void startAnimation() {
         if(mAnimator != null) {
             mAnimator.cancel();
