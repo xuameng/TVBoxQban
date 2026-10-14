@@ -133,10 +133,6 @@ public class MusicVisualizerView extends View {
 // ✅ 关键修改：peakBoost 不再独立放大，而是作为 volumeLevel 的补充
 // ========================
 
-// 平滑峰值（保持你原来的逻辑）
-float normalizedPeak = Math.min(peakMagnitude / MAX_AMPLITUDE, 1.0f);
-mSmoothedPeakMagnitude += (normalizedPeak - mSmoothedPeakMagnitude) * 0.25f;
-
 // ✅ 新逻辑：peakBoost 变成"小幅加成因子"，范围 1.0 ~ 1.6（不再是 1.0~3.5）
 float peakBoost = 1.0f + (float) Math.pow(mSmoothedPeakMagnitude, 1.6f) * 0.6f;
 
