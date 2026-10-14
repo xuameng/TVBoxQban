@@ -186,10 +186,18 @@ public class GridFragment extends BaseLazyFragment {
     // 丢弃当前页面，将页面还原成上一个保存的页面
     public boolean restoreView(){
         if(mGrids.empty()) return false;
-        HawkConfig.isShowList = false;  //xuameng判断是否显示列表恢复默认
-        this.showSuccess();
-        ((ViewGroup) mGridView.getParent()).removeView(this.mGridView); // 重父窗口移除当前控件
-        GridInfo info = mGrids.pop();// 还原上次保存的控件
+        //xuameng判断是否显示列表恢复默认
+        HawkConfig.isShowList = false;  
+		// 重父窗口移除当前控件
+        if (mGridView != null && mGridView.getParent() != null) {
+            ((ViewGroup) mGridView.getParent()).removeView(this.mGridView);
+        }
+        // 还原上次保存的控件
+        GridInfo info = mGrids.pop();
+        // 恢复前确保旧 View 没有 parent
+        if (info.mGridView != null && info.mGridView.getParent() != null) {
+            ((ViewGroup) info.mGridView.getParent()).removeView(info.mGridView);
+        }
         this.sortData.id = info.sortID;
         this.mGridView = info.mGridView;
         this.gridAdapter = info.gridAdapter;
@@ -204,9 +212,11 @@ public class GridFragment extends BaseLazyFragment {
         this.isLoad = info.isLoad;
         this.hasActionItems = info.hasActionItems;
         this.focusedView = info.focusedView;
-        this.mGridView.setVisibility(View.VISIBLE);
-//        if(this.focusedView != null){ this.focusedView.requestFocus(); }
-        if(mGridView != null) mGridView.requestFocus();
+        this.showSuccess();
+        if (mGridView != null) {
+            mGridView.setVisibility(View.VISIBLE);
+            mGridView.requestFocus();
+        }
         return true;
     }
 
