@@ -18,7 +18,7 @@ xuameng
 6，新增音柱分段效果
 */
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 12222;  //xuameng判断音量大小
+    private static final int MAX_AMPLITUDE = 18222;  //xuameng判断音量大小
     private static final int BAR_COUNT = 22;   //xuameng 音柱数量
     private static final int ANIMATION_DURATION = 80; //xuameng 音柱动画时长
     // 改为非静态变量实现动态刷新
@@ -27,7 +27,7 @@ public class MusicVisualizerView extends View {
     private boolean mShowStripes = true; // 是否显示分段效果
     private int mSegmentCount = 20; // 每个音柱的分段数
     private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
-private float mSmoothedPeakMagnitude = 0f;
+    private float mSmoothedPeakMagnitude = 0f; // 平滑峰值
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
         for(int i = 0; i < 3; i++) {
@@ -87,84 +87,86 @@ private float mSmoothedPeakMagnitude = 0f;
         mSegmentSpacingFixed = Math.max(0f, spacing); // 确保非负值
         postInvalidate();
     }
-public void updateVisualizer(byte[] fft, float volumeLevel) {
-    if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
 
-    if (volumeLevel <= 0f) {
-        reset();
-        return;
-    }
+    public void updateVisualizer(byte[] fft, float volumeLevel) {
+        if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
 
-    // ========================
-    // 1. 先算每个音柱的 magnitude，同时找峰值
-    // ========================
-    float peakMagnitude = 0f;
-    float[] magnitudes = new float[BAR_COUNT];
-
-    for (int i = 0; i < BAR_COUNT; i++) {
-        int barIndex;
-        if (i < BAR_COUNT / 3) {
-            barIndex = 2 + i * 2;
-        } else {
-            barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+        if (volumeLevel <= 0f) {
+            reset();
+            return;
         }
 
-        if (barIndex < fft.length - 1) {
-            byte rfk = fft[barIndex];
-            byte ifk = fft[barIndex + 1];
-            float magnitude = (rfk * rfk + ifk * ifk);
-            magnitudes[i] = magnitude;
+        // ========================
+        // 1. 先算每个音柱的 magnitude，同时找峰值
+        // ========================
+        float peakMagnitude = 0f;
+        float[] magnitudes = new float[BAR_COUNT];
 
-            if (magnitude > peakMagnitude) {
-                peakMagnitude = magnitude;
+        for (int i = 0; i < BAR_COUNT; i++) {
+            int barIndex;
+            if (i < BAR_COUNT / 3) {
+                barIndex = 2 + i * 2;
+            } else {
+                barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+            }
+
+            if (barIndex < fft.length - 1) {
+                byte rfk = fft[barIndex];
+                byte ifk = fft[barIndex + 1];
+                float magnitude = (rfk * rfk + ifk * ifk);
+                magnitudes[i] = magnitude;
+
+                if (magnitude > peakMagnitude) {
+                    peakMagnitude = magnitude;
+                }
             }
         }
-    }
 
-    // ========================
-    // 2. 平滑峰值（避免帧间跳变）
-    // ========================
-    float normalizedPeak = Math.min(peakMagnitude / MAX_AMPLITUDE, 1.0f);
-    mSmoothedPeakMagnitude += (normalizedPeak - mSmoothedPeakMagnitude) * 0.25f;
+        // ========================
+        // 2. 平滑峰值（避免帧间跳变）
+        // ========================
+        float normalizedPeak = Math.min(peakMagnitude / MAX_AMPLITUDE, 1.0f);
+        mSmoothedPeakMagnitude += (normalizedPeak - mSmoothedPeakMagnitude) * 0.25f;
 
-    // ========================
-    // 3. 基于"当前最响声音"做非线性全局加权
-    // 峰值越猛 → boost 越大，但用曲线压一下防止爆
-    // ========================
-    float peakBoost = 1.0f + (float) Math.pow(mSmoothedPeakMagnitude, 1.6f) * 2.5f;
+        // ========================
+        // 3. 基于"当前最响声音"做非线性全局加权
+        // 峰值越猛 → boost 越大，但用曲线压一下防止爆
+        // ========================
+        float peakBoost = 1.0f + (float) Math.pow(mSmoothedPeakMagnitude, 1.6f) * 2.5f;
 
-    // ========================
-    // 4. 每个音柱独立计算高度
-    // ========================
-    for (int i = 0; i < BAR_COUNT; i++) {
-        float magnitude = magnitudes[i];
+        // ========================
+        // 4. 每个音柱独立计算高度
+        // ========================
+        for (int i = 0; i < BAR_COUNT; i++) {
+            float magnitude = magnitudes[i];
 
-        // 频段权重（保持原有差异）
-        float weight;
-        if (i < BAR_COUNT / 4) {
-            weight = 1.0f; // 超低频
-        } else if (i < BAR_COUNT / 2) {
-            weight = 2.5f; // 中低频
-        } else {
-            float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
-            weight = 3.5f * freqFactor; // 高频
+            // 频段权重（保持原有差异）
+            float weight;
+            if (i < BAR_COUNT / 4) {
+                weight = 1.0f; // 超低频
+            } else if (i < BAR_COUNT / 2) {
+                weight = 2.5f; // 中低频
+            } else {
+                float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
+                weight = 3.5f * freqFactor; // 高频
+            }
+
+            // ✅ 关键：每个音柱用自己的 magnitude，但整体被 peakBoost 放大
+            // magnitude 小的音柱 → 放大后仍然小（保持差异）
+            // magnitude 大的音柱 → 放大后更大（突出峰值）
+            float dynamicFactor = peakBoost;
+
+            mTargetHeights[i] = Math.min(
+                (magnitude * getHeight() * weight * dynamicFactor) / MAX_AMPLITUDE,
+                getHeight() * 0.95f
+            );
+
+            mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
         }
 
-        // ✅ 关键：每个音柱用自己的 magnitude，但整体被 peakBoost 放大
-        // magnitude 小的音柱 → 放大后仍然小（保持差异）
-        // magnitude 大的音柱 → 放大后更大（突出峰值）
-        float dynamicFactor = peakBoost;
-
-        mTargetHeights[i] = Math.min(
-            (magnitude * getHeight() * weight * dynamicFactor) / MAX_AMPLITUDE,
-            getHeight() * 0.95f
-        );
-
-        mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
+        startAnimation();
     }
 
-    startAnimation();
-}
     private void startAnimation() {
         if(mAnimator != null) {
             mAnimator.cancel();
