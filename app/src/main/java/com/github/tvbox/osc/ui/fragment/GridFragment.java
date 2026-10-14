@@ -620,6 +620,8 @@ public class GridFragment extends BaseLazyFragment {
             return;
         }
         HawkConfig.isShowList = false;
+        style=ImgUtil.initStyle();
+        gridAdapter = new GridAdapter(isFolederMode(), style);
         // xuameng关键：已经在 LoadSir 托管状态下，不要再 showLoading
         if (!isLoad) {
             showLoading();
