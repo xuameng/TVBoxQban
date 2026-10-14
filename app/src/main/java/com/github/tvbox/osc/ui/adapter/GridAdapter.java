@@ -51,7 +51,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
         HawkConfig.isShowList = showList;  //xuameng判断是否显示列表
     }
 
-    /** xuameng 给GridFragment.java判断用 */
+    //xuameng 给GridFragment.java判断showlist用
     public boolean isShowList() {
         return showList;
     }
