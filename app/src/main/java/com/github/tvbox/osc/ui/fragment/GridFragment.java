@@ -619,16 +619,7 @@ public class GridFragment extends BaseLazyFragment {
             App.showToastShort(getContext(), "数据加载中，请稍候！");
             return;
         }
-        // xuameng关键修复：强制重置 list 状态
         HawkConfig.isShowList = false;
-        // xuameng重新初始化 style
-        style = ImgUtil.initStyle();
-
-        // xuameng如果 UI 模式发生变化，必须重建 Adapter
-        if (gridAdapter != null) {
-            gridAdapter = new GridAdapter(isFolederMode(), style);
-            mGridView.setAdapter(gridAdapter);
-        }
         // xuameng关键：已经在 LoadSir 托管状态下，不要再 showLoading
         if (!isLoad) {
             showLoading();
