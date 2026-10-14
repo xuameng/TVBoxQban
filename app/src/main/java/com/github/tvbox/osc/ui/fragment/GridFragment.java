@@ -193,6 +193,12 @@ public class GridFragment extends BaseLazyFragment {
         this.sortData.id = info.sortID;
         this.mGridView = info.mGridView;
         this.gridAdapter = info.gridAdapter;
+        // xuameng判断 showList
+        if (this.gridAdapter != null && this.gridAdapter.isShowList()) {
+            HawkConfig.isShowList = true;
+        } else {
+            HawkConfig.isShowList = false;
+        }
         this.page = info.page;
         this.maxPage = info.maxPage;
         this.isLoad = info.isLoad;
