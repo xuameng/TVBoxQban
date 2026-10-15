@@ -13,7 +13,6 @@ import com.github.tvbox.osc.bean.Movie;
 import com.github.tvbox.osc.picasso.RoundTransformation;
 import com.github.tvbox.osc.util.DefaultConfig;
 import com.github.tvbox.osc.util.MD5;
-import com.github.tvbox.osc.util.HawkConfig;
 import com.squareup.picasso.Picasso;
 import com.github.tvbox.osc.util.ImgUtil;   //xuamengBASE64图片
 
@@ -126,12 +125,12 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
                         .placeholder(R.drawable.img_loading_placeholder)
                         .noFade()
                     //    .error(R.drawable.img_loading_placeholder)
-						.error(ImgUtil.createTextDrawable(item.name, showList))
+                        .error(ImgUtil.createTextDrawable(item.name, showList))
                         .into(ivThumb);
             }
         } else {
-           // ivThumb.setImageResource(R.drawable.img_loading_placeholder);
-			ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name, showList));
+            // ivThumb.setImageResource(R.drawable.img_loading_placeholder);
+            ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name, showList));
         }
 		applyStyleToImage(ivThumb);//动态设置宽高
     }
