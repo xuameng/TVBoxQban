@@ -193,7 +193,7 @@ public class GridFragment extends BaseLazyFragment {
             mGridView.requestFocus();
         }
         // xuameng关键修复：重新绑定 LoadSir
-        setLoadSir2(mGridView);
+        bindLoadSirToCurrentView();
 	    this.showSuccess();
         return true;
     }
@@ -334,7 +334,7 @@ public class GridFragment extends BaseLazyFragment {
             }
         });
         gridAdapter.setLoadMoreView(new LoadMoreView());
-        setLoadSir2(mGridView);
+        bindLoadSirToCurrentView();
         initPullRefresh();
     }
 
@@ -411,7 +411,7 @@ public class GridFragment extends BaseLazyFragment {
 
     @Override
     protected void showEmpty() {
-        setLoadSir2(mGridView);
+        bindLoadSirToCurrentView();
         super.showEmpty();
         bindPullRefreshTouch(loadSirView);
     }
@@ -425,6 +425,7 @@ public class GridFragment extends BaseLazyFragment {
                 isRequesting = false;
                 if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                     if (page == 1) {
+                        bindLoadSirToCurrentView();
                         showSuccess();
                         gridAdapter.setNewData(absXml.movie.videoList);
                     } else {
@@ -590,12 +591,18 @@ public class GridFragment extends BaseLazyFragment {
             App.showToastShort(getContext(), "数据加载中，请稍候！");
             return;
         }
-        setLoadSir2(mGridView);
+        bindLoadSirToCurrentView();
         showLoading();
         page = 1;
         isRequesting = true;
         scrollTop();
         sourceViewModel.getList(sortData, page);
+    }
+
+    private void bindLoadSirToCurrentView() {
+        if (mGridView != null && mGridView.getParent() != null) {
+            setLoadSir2(mGridView);
+        }
     }
 
 }
