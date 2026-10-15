@@ -728,7 +728,7 @@ public class VideoActivity extends BaseActivity {
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
             if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
-                new Thread(() -> insertVod(firstsourceKey, vodInfo)).start();
+                HISTORY_EXECUTOR.execute(() -> insertVod(firstsourceKey, vodInfo));
             }
             bundle.putString("sourceKey", sourceKey);
             bundle.putString("videoPic", mVideo.pic);   //xuameng 新增给vod显示旋转图片用
@@ -771,7 +771,7 @@ public class VideoActivity extends BaseActivity {
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
             if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
-                new Thread(() -> insertVod(firstsourceKey, vodInfo)).start();
+                HISTORY_EXECUTOR.execute(() -> insertVod(firstsourceKey, vodInfo));
             }
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
@@ -1342,14 +1342,14 @@ public class VideoActivity extends BaseActivity {
                             if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
                                 final String saveSourceKey = firstsourceKey;
                                 final VodInfo finalVodInfo = saveVodInfo;
-                                new Thread(() -> insertVod(saveSourceKey, finalVodInfo)).start();
+                                HISTORY_EXECUTOR.execute(() -> insertVod(saveSourceKey, finalVodInfo));
                             }
                         }
                     } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
                         vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                         //保存历史
                         if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
-                            new Thread(() -> insertVod(firstsourceKey, vodInfo)).start();
+                            HISTORY_EXECUTOR.execute(() -> insertVod(firstsourceKey, vodInfo));
                         }
                     } else if (event.obj instanceof String) {
                         String url = event.obj.toString();
@@ -1914,5 +1914,12 @@ public class VideoActivity extends BaseActivity {
             isPushUrl = false;
         }
     };
+
+    private static final ExecutorService HISTORY_EXECUTOR =
+            Executors.newSingleThreadExecutor(r -> {
+                Thread t = new Thread(r, "history-writer");
+                t.setPriority(Thread.NORM_PRIORITY - 1);
+                return t;
+            });
 
 }
