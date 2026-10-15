@@ -180,7 +180,6 @@ public class GridFragment extends BaseLazyFragment {
     // 丢弃当前页面，将页面还原成上一个保存的页面
     public boolean restoreView(){
         if(mGrids.empty()) return false;
-        this.showSuccess();
         ((ViewGroup) mGridView.getParent()).removeView(this.mGridView); // 重父窗口移除当前控件
         GridInfo info = mGrids.pop();  // 还原上次保存的控件
         this.sortData.id = info.sortID;
@@ -193,6 +192,9 @@ public class GridFragment extends BaseLazyFragment {
             mGridView.setVisibility(View.VISIBLE);
             mGridView.requestFocus();
         }
+        // ✅ 关键修复：重新绑定 LoadSir
+        setLoadSir2(mGridView);
+	    this.showSuccess();
         return true;
     }
 
@@ -587,17 +589,10 @@ public class GridFragment extends BaseLazyFragment {
             App.showToastShort(getContext(), "数据加载中，请稍候！");
             return;
         }
-        // 1. 状态重置
         showLoading();
         page = 1;
         isRequesting = true;
         scrollTop();
-        // 2. 立刻清数据
-        gridAdapter.setNewData(null);
-        // 3. 重置加载更多
-        gridAdapter.loadMoreComplete();
-        gridAdapter.setEnableLoadMore(true);
-        // 4. 重新请求
         sourceViewModel.getList(sortData, page);
     }
 
