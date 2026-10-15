@@ -180,7 +180,10 @@ public class GridFragment extends BaseLazyFragment {
     // 丢弃当前页面，将页面还原成上一个保存的页面
     public boolean restoreView(){
         if(mGrids.empty()) return false;
-        ((ViewGroup) mGridView.getParent()).removeView(this.mGridView); // 重父窗口移除当前控件
+    // ✅ 只隐藏当前，不 remove
+    if (mGridView != null) {
+        mGridView.setVisibility(View.GONE);
+    }
         GridInfo info = mGrids.pop();  // 还原上次保存的控件
         this.sortData.id = info.sortID;
         this.mGridView = info.mGridView;
@@ -192,8 +195,6 @@ public class GridFragment extends BaseLazyFragment {
             mGridView.setVisibility(View.VISIBLE);
             mGridView.requestFocus();
         }
-        // xuameng关键修复：重新绑定 LoadSir
-        bindLoadSirToCurrentView();
 	    this.showSuccess();
         return true;
     }
@@ -334,7 +335,10 @@ public class GridFragment extends BaseLazyFragment {
             }
         });
         gridAdapter.setLoadMoreView(new LoadMoreView());
+    // ✅ 只在「全新 View」时 bind
+    if (!loadSirBound) {
         bindLoadSirToCurrentView();
+    }
         initPullRefresh();
     }
 
@@ -411,7 +415,6 @@ public class GridFragment extends BaseLazyFragment {
 
     @Override
     protected void showEmpty() {
-        bindLoadSirToCurrentView();
         super.showEmpty();
         bindPullRefreshTouch(loadSirView);
     }
@@ -590,7 +593,6 @@ public class GridFragment extends BaseLazyFragment {
             App.showToastShort(getContext(), "数据加载中，请稍候！");
             return;
         }
-        bindLoadSirToCurrentView();
         showLoading();
         page = 1;
         isRequesting = true;
@@ -598,10 +600,14 @@ public class GridFragment extends BaseLazyFragment {
         sourceViewModel.getList(sortData, page);
     }
 
-    private void bindLoadSirToCurrentView() {
-        if (mGridView != null && mGridView.getParent() != null) {
-            setLoadSir2(mGridView);
-        }
+private boolean loadSirBound = false;
+
+private void bindLoadSirToCurrentView() {
+    if (loadSirBound) return; // ✅ 已经 bind 过
+    if (mGridView != null && mGridView.getParent() != null) {
+        setLoadSir2(mGridView);
+        loadSirBound = true;
     }
+}
 
 }
