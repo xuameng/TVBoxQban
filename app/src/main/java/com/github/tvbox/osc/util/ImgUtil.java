@@ -57,9 +57,6 @@ public class ImgUtil {
     }
 
     public static Style initStyle() {     //xuameng 改成list 不需要ratio
-        if (HawkConfig.isShowList){      //xuameng判断是否显示列表
-            return new Style(0f, "list");
-        }
         String bStyle = ApiConfig.get().getHomeSourceBean().getStyle();
         if (TextUtils.isEmpty(bStyle)) {
             return null;
@@ -101,12 +98,12 @@ public class ImgUtil {
 
     public static int getStyleDefaultWidth(Style style) {
         // 1. style 为空，回退默认
-        if (style == null && !HawkConfig.isShowList) {  //xuameng判断是否显示列表
+        if (style == null) {  //xuameng判断是否显示列表
             return defaultWidth;
         }
 
         // 2. xuameng list 类型，或显示列表 直接给固定宽度
-        if ("list".equals(style.type) || HawkConfig.isShowList) {
+        if ("list".equals(style.type)) {
             return 100;
         }
 
@@ -127,7 +124,7 @@ public class ImgUtil {
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 
-    public static Drawable createTextDrawable(String text) {
+    public static Drawable createTextDrawable(String text, boolean showList) {
         if (TextUtils.isEmpty(text)) {
             text = "聚";
         }
@@ -154,9 +151,15 @@ public class ImgUtil {
                 height = (int) (width / safeRatio);
             }
         } else {
-            //  style == null，回退默认
-            width = defaultWidth;
-            height = defaultHeight;
+            //  style == null与showlist，固定宽高
+            if (showList){  
+                width = 100;
+                height = 100;
+            }else{
+                //  style == null与非showlist，回退默认
+                width = defaultWidth;
+                height = defaultHeight;
+			}
         }
 
         if (height <= 0) {
