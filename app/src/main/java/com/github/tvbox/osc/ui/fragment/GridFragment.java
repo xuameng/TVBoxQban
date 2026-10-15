@@ -422,6 +422,12 @@ public class GridFragment extends BaseLazyFragment {
         bindPullRefreshTouch(loadSirView);
     }
 
+    @Override
+    protected void showLoading() {
+        super.showLoading();
+        bindPullRefreshTouch(loadSirView);
+    }
+
     private void initViewModel() {
         if(sourceViewModel != null) { return;}
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
