@@ -281,7 +281,6 @@ public class HomeActivity extends BaseActivity {
                 if (!(baseLazyFragment instanceof GridFragment)) {
                     return false;
                 }
-                return !((GridFragment) baseLazyFragment).isLoad();      //XUAMENG上键刷新完
             }
         });
 
@@ -529,6 +528,7 @@ public class HomeActivity extends BaseActivity {
                                 }
                             });
                         if (!mConfigErrorDialog.isShowing() && !refreshEmpty){
+                            showSuccess();
                             mConfigErrorDialog.show();
                         }
                     }
@@ -789,12 +789,7 @@ public class HomeActivity extends BaseActivity {
                     currentSelected = sortFocused;
                     mViewPager.setCurrentItem(sortFocused, false); 
                     changeTop(sortFocused != 0);
-                 /*   if (baseLazyFragment instanceof GridFragment && ((GridFragment) baseLazyFragment).shouldReloadOnSelect()) {
-                        ((GridFragment) baseLazyFragment).forceRefresh();
-                    }   */
-                } /* else if (baseLazyFragment instanceof GridFragment && ((GridFragment) baseLazyFragment).shouldReloadOnSelect()) {
-                    ((GridFragment) baseLazyFragment).forceRefresh();
-                }  */
+                } 
             }
         }
     };
