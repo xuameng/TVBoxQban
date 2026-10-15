@@ -411,6 +411,7 @@ public class GridFragment extends BaseLazyFragment {
 
     @Override
     protected void showEmpty() {
+        setLoadSir2(mGridView);
         super.showEmpty();
         bindPullRefreshTouch(loadSirView);
     }
@@ -589,6 +590,7 @@ public class GridFragment extends BaseLazyFragment {
             App.showToastShort(getContext(), "数据加载中，请稍候！");
             return;
         }
+        setLoadSir2(mGridView);
         showLoading();
         page = 1;
         isRequesting = true;
