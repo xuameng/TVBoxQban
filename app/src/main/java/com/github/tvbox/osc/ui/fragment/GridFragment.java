@@ -71,11 +71,9 @@ public class GridFragment extends BaseLazyFragment {
     private GridAdapter gridAdapter;
     private int page = 1;
     private int maxPage = 1;
-    private boolean isLoad = false;
     private boolean isTop = true;
     private View focusedView = null;
     private boolean isRequesting = false;
-    private boolean hasActionItems = false;
     private float pullRefreshStartX;
     private float pullRefreshStartY;
     private boolean pullRefreshStartAtTop = false;
@@ -89,8 +87,6 @@ public class GridFragment extends BaseLazyFragment {
         public GridAdapter gridAdapter;
         public int page = 1;
         public int maxPage = 1;
-        public boolean isLoad = false;
-        public boolean hasActionItems = false;
         public View focusedView= null;
     }
     Stack<GridInfo> mGrids = new Stack<GridInfo>(); //ui栈
@@ -178,8 +174,6 @@ public class GridFragment extends BaseLazyFragment {
         info.gridAdapter = this.gridAdapter;
         info.page = this.page;
         info.maxPage = this.maxPage;
-        info.isLoad = this.isLoad;
-        info.hasActionItems = this.hasActionItems;
         info.focusedView = this.focusedView;
         this.mGrids.push(info);
     }
@@ -194,8 +188,6 @@ public class GridFragment extends BaseLazyFragment {
         this.gridAdapter = info.gridAdapter;
         this.page = info.page;
         this.maxPage = info.maxPage;
-        this.isLoad = info.isLoad;
-        this.hasActionItems = info.hasActionItems;
         this.focusedView = info.focusedView;
         if (mGridView != null) {
             mGridView.setVisibility(View.VISIBLE);
@@ -229,7 +221,6 @@ public class GridFragment extends BaseLazyFragment {
         gridAdapter = new GridAdapter(isFolederMode(), style);
         this.page =1;
         this.maxPage =1;
-        this.isLoad = false;
     }
 
     private void initView() {
@@ -432,11 +423,8 @@ public class GridFragment extends BaseLazyFragment {
                 if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                     if (page == 1) {
                         showSuccess();
-                        isLoad = true;
-                        hasActionItems = hasActionVideo(absXml.movie.videoList);
                         gridAdapter.setNewData(absXml.movie.videoList);
                     } else {
-                        hasActionItems = hasActionItems || hasActionVideo(absXml.movie.videoList);
                         gridAdapter.addData(absXml.movie.videoList);
                     }
                     page++;
@@ -451,7 +439,6 @@ public class GridFragment extends BaseLazyFragment {
                     }
                 } else {
                     if (page == 1) {
-                        hasActionItems = false;
                         gridAdapter.setNewData(null);
                         showEmpty();
                     } else if(page > 2){// 只有一页数据时不提示
@@ -460,7 +447,6 @@ public class GridFragment extends BaseLazyFragment {
                     gridAdapter.loadMoreEnd();
                     gridAdapter.setEnableLoadMore(false);
                 }
-showSuccess();
             }
         });
 
@@ -474,19 +460,9 @@ showSuccess();
         });
     }
 
-    public boolean shouldReloadOnSelect() {
-        return !isRequesting && mGrids.empty() && (hasActionItems || !isLoad);
-    }
-
-    public boolean isLoad() {
-        return isLoad || !mGrids.empty(); //如果有缓存页的话也可以认为是加载了数据的
-    }
-
     private void initData() {
         showLoading();
         isRequesting = true;
-        isLoad = false;
-        hasActionItems = false;
         scrollTop();
         sourceViewModel.getList(sortData, page);
     }
@@ -611,12 +587,17 @@ showSuccess();
             App.showToastShort(getContext(), "数据加载中，请稍候！");
             return;
         }
+        // 1. 状态重置
+        showLoading();
         page = 1;
         isRequesting = true;
-        isLoad = false;
-        showLoading();
-        hasActionItems = false;
         scrollTop();
+        // 2. 立刻清数据
+        gridAdapter.setNewData(null);
+        // 3. 重置加载更多
+        gridAdapter.loadMoreComplete();
+        gridAdapter.setEnableLoadMore(true);
+        // 4. 重新请求
         sourceViewModel.getList(sortData, page);
     }
 
