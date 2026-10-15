@@ -185,8 +185,8 @@ public class GridFragment extends BaseLazyFragment {
     }
     // 丢弃当前页面，将页面还原成上一个保存的页面
     public boolean restoreView(){
-        this.showSuccess();
         if(mGrids.empty()) return false;
+        this.showSuccess();
         ((ViewGroup) mGridView.getParent()).removeView(this.mGridView); // 重父窗口移除当前控件
         GridInfo info = mGrids.pop();  // 还原上次保存的控件
         this.sortData.id = info.sortID;
@@ -422,12 +422,6 @@ public class GridFragment extends BaseLazyFragment {
         bindPullRefreshTouch(loadSirView);
     }
 
-    @Override
-    protected void showLoading() {
-        super.showLoading();
-        bindPullRefreshTouch(loadSirView);
-    }
-
     private void initViewModel() {
         if(sourceViewModel != null) { return;}
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
@@ -436,8 +430,8 @@ public class GridFragment extends BaseLazyFragment {
             public void onChanged(AbsXml absXml) {
                 isRequesting = false;
                 if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
-                    showSuccess();
                     if (page == 1) {
+                        showSuccess();
                         isLoad = true;
                         hasActionItems = hasActionVideo(absXml.movie.videoList);
                         gridAdapter.setNewData(absXml.movie.videoList);
