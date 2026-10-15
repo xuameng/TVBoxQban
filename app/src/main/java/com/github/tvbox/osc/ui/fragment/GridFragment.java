@@ -430,6 +430,7 @@ public class GridFragment extends BaseLazyFragment {
             public void onChanged(AbsXml absXml) {
                 isRequesting = false;
                 showSuccess();
+				App.showToastShort(getContext(), "1111111111111111");
                 if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                     if (page == 1) {
                         isLoad = true;
