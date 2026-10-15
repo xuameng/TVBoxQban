@@ -425,7 +425,6 @@ public class GridFragment extends BaseLazyFragment {
                 isRequesting = false;
                 if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                     if (page == 1) {
-                        bindLoadSirToCurrentView();
                         showSuccess();
                         gridAdapter.setNewData(absXml.movie.videoList);
                     } else {
