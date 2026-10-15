@@ -95,11 +95,7 @@ public class RoomDataManger {
             e.printStackTrace();
             record.dataJsonPath = null;
         }
-        if (existingId != null) {
-            dao.update(record);   // 已有记录 → 更新
-        } else {
-            dao.insert(record);   // 新记录 → 插入
-        }
+        dao.insert(record);
     }
 
     public static VodInfo getVodInfo(String sourceKey, String vodId) {
