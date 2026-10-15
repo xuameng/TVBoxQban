@@ -38,7 +38,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
      */
     public GridAdapter(boolean showList, ImgUtil.Style style) {
         super( showList ? R.layout.item_list:R.layout.item_grid, new ArrayList<>());
-        this.showList = showList;     // xuameng保存给GridFragment.java判断用
+        this.showList = showList;    // xuameng 全局showlist判断
         if (style != null) {
             if (showList || "list".equals(style.type)) {   //xuameng如果 showList或 style = list 就以文件夹显示 转style = null 用 item_list
                 style = null;
