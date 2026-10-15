@@ -194,7 +194,7 @@ public class GridFragment extends BaseLazyFragment {
         }
         // xuameng关键修复：重新绑定 LoadSir
         bindLoadSirToCurrentView();
-	    this.showSuccess();
+        this.showSuccess();
         return true;
     }
 
