@@ -281,6 +281,7 @@ public class HomeActivity extends BaseActivity {
                 if (!(baseLazyFragment instanceof GridFragment)) {
                     return false;
                 }
+                return false;
             }
         });
 
