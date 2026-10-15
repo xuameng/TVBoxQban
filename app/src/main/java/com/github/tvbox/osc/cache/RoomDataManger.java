@@ -85,26 +85,21 @@ public class RoomDataManger {
         String fileName = MD5.string2MD5(rawName) + ".json";
         File dir = new File(App.getInstance().getFilesDir(), "vod_record");
         if (!dir.exists()) dir.mkdirs();
-        File jsonFile;
-        try {
-            jsonFile = new File(dir, fileName);
-        } catch (Exception e) {
-            e.printStackTrace();
-            record.dataJson = json;
-            dao.insert(record);
-            return;
-        }
+        File jsonFile = new File(dir, fileName);
         try {
             FileWriter writer = new FileWriter(jsonFile);
             writer.write(json);
-            writer.close();
+            writer.close(); 
             record.dataJsonPath = jsonFile.getAbsolutePath();
         } catch (IOException e) {
             e.printStackTrace();
-            record.dataJson = json; // 兜底
+            record.dataJsonPath = null;
         }
-
-        dao.insert(record);
+        if (existingId != null) {
+            dao.update(record);   // 已有记录 → 更新
+        } else {
+            dao.insert(record);   // 新记录 → 插入
+        }
     }
 
     public static VodInfo getVodInfo(String sourceKey, String vodId) {
