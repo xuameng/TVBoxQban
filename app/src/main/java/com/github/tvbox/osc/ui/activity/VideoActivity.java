@@ -1341,7 +1341,8 @@ public class VideoActivity extends BaseActivity {
                             }
                             if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
                                 final String saveSourceKey = firstsourceKey;
-                                new Thread(() -> insertVod(saveSourceKey, saveVodInfo)).start();
+                                final VodInfo finalVodInfo = saveVodInfo;
+                                new Thread(() -> insertVod(saveSourceKey, finalVodInfo)).start();
                             }
                         }
                     } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
