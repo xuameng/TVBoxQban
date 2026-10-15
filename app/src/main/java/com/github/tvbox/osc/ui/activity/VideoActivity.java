@@ -1340,7 +1340,8 @@ public class VideoActivity extends BaseActivity {
                                 mHandler.post(mPushUrlRunnable); //xuameng 推送地址解析成功
                             }
                             if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
-                                new Thread(() -> insertVod(firstsourceKey, saveVodInfo)).start();
+                                final String saveSourceKey = firstsourceKey;
+                                new Thread(() -> insertVod(saveSourceKey, saveVodInfo)).start();
                             }
                         }
                     } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
