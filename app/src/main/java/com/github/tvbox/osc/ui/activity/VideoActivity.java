@@ -728,7 +728,7 @@ public class VideoActivity extends BaseActivity {
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
             if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
-                insertVod(firstsourceKey, vodInfo);
+                new Thread(() -> insertVod(firstsourceKey, vodInfo)).start();
             }
             bundle.putString("sourceKey", sourceKey);
             bundle.putString("videoPic", mVideo.pic);   //xuameng 新增给vod显示旋转图片用
@@ -771,7 +771,7 @@ public class VideoActivity extends BaseActivity {
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
             if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
-                insertVod(firstsourceKey, vodInfo);
+                new Thread(() -> insertVod(firstsourceKey, vodInfo)).start();
             }
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
@@ -1340,14 +1340,14 @@ public class VideoActivity extends BaseActivity {
                                 mHandler.post(mPushUrlRunnable); //xuameng 推送地址解析成功
                             }
                             if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
-                                insertVod(firstsourceKey, saveVodInfo);
+                                new Thread(() -> insertVod(firstsourceKey, saveVodInfo)).start();
                             }
                         }
                     } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
                         vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                         //保存历史
                         if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
-                            insertVod(firstsourceKey, vodInfo);
+                            new Thread(() -> insertVod(firstsourceKey, vodInfo)).start();
                         }
                     } else if (event.obj instanceof String) {
                         String url = event.obj.toString();
