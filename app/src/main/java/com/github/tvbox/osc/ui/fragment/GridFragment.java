@@ -187,7 +187,6 @@ public class GridFragment extends BaseLazyFragment {
     public boolean restoreView(){
         if(mGrids.empty()) return false;
         //xuameng判断是否显示列表恢复默认
-        HawkConfig.isShowList = false;  
         this.showSuccess();
         ((ViewGroup) mGridView.getParent()).removeView(this.mGridView); // 重父窗口移除当前控件
         // 还原上次保存的控件
@@ -195,12 +194,6 @@ public class GridFragment extends BaseLazyFragment {
         this.sortData.id = info.sortID;
         this.mGridView = info.mGridView;
         this.gridAdapter = info.gridAdapter;
-        // xuameng判断 showList
-        if (this.gridAdapter != null && this.gridAdapter.isShowList()) {
-            HawkConfig.isShowList = true;
-        } else {
-            HawkConfig.isShowList = false;
-        }
         this.page = info.page;
         this.maxPage = info.maxPage;
         this.isLoad = info.isLoad;
@@ -233,7 +226,6 @@ public class GridFragment extends BaseLazyFragment {
             mGridView = v3;
             mGridView.setVisibility(View.VISIBLE);
         }
-        HawkConfig.isShowList = false;  //xuameng判断是否显示列表恢复默认
         mGridView.setHasFixedSize(true);
         style=ImgUtil.initStyle();
         gridAdapter = new GridAdapter(isFolederMode(), style);
@@ -619,7 +611,6 @@ public class GridFragment extends BaseLazyFragment {
             App.showToastShort(getContext(), "数据加载中，请稍候！");
             return;
         }
-        HawkConfig.isShowList = false;
         // xuameng关键：已经在 LoadSir 托管状态下，不要再 showLoading
         if (!isLoad) {
             showLoading();
