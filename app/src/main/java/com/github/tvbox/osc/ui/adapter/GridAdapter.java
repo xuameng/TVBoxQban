@@ -126,12 +126,12 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
                         .placeholder(R.drawable.img_loading_placeholder)
                         .noFade()
                     //    .error(R.drawable.img_loading_placeholder)
-						.error(ImgUtil.createTextDrawable(item.name))
+						.error(ImgUtil.createTextDrawable(item.name, showList))
                         .into(ivThumb);
             }
         } else {
            // ivThumb.setImageResource(R.drawable.img_loading_placeholder);
-			ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name), showList);
+			ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name, showList));
         }
 		applyStyleToImage(ivThumb);//动态设置宽高
     }
