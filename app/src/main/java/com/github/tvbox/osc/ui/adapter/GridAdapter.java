@@ -48,12 +48,6 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
             }
         }
         this.style = style;
-        HawkConfig.isShowList = showList;  //xuameng判断是否显示列表
-    }
-
-    //xuameng 给GridFragment.java判断showlist用
-    public boolean isShowList() {
-        return showList;
     }
 
     @Override
@@ -98,14 +92,14 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
 
         int newWidth;
         int newHeight;
-        if (HawkConfig.isShowList){  //xuameng判断是否显示列表
+        if (showList){  //xuameng判断是否显示列表
             newWidth = 100;
             newHeight = newWidth;
         } else {
             newWidth = ImgUtil.defaultWidth;
             newHeight = ImgUtil.defaultHeight;
         }
-        if (style != null && !HawkConfig.isShowList) {  //xuameng判断是否显示列表
+        if (style != null && !showList) {  //xuameng判断是否显示列表
             newWidth = defaultWidth;
             float safeRatio = ImgUtil.normalizeRatio(style.ratio);  //xuameng normalizeRatio强行指定ratio值防止用户乱写
             newHeight = (int) (newWidth / safeRatio);
@@ -137,7 +131,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
             }
         } else {
            // ivThumb.setImageResource(R.drawable.img_loading_placeholder);
-			ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
+			ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name), showList);
         }
 		applyStyleToImage(ivThumb);//动态设置宽高
     }
@@ -145,7 +139,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
      * 根据传入的 style 动态设置 ImageView 的高度：高度 = 宽度 / ratio
      */
     private void applyStyleToImage(final ImageView ivThumb) {
-        if(style!=null && !HawkConfig.isShowList){   //xuameng判断是否显示列表
+        if(style!=null && !showList){   //xuameng判断是否显示列表
             ViewGroup container = (ViewGroup) ivThumb.getParent();
             // xuameng修复：应用normalizeRatio处理后的安全ratio值来计算高度
             int width = defaultWidth;
