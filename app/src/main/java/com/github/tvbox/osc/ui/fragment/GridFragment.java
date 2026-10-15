@@ -429,10 +429,9 @@ public class GridFragment extends BaseLazyFragment {
             @Override
             public void onChanged(AbsXml absXml) {
                 isRequesting = false;
-                showSuccess();
-				App.showToastShort(getContext(), "1111111111111111");
                 if (absXml != null && absXml.movie != null && absXml.movie.videoList != null && absXml.movie.videoList.size() > 0) {
                     if (page == 1) {
+                        showSuccess();
                         isLoad = true;
                         hasActionItems = hasActionVideo(absXml.movie.videoList);
                         gridAdapter.setNewData(absXml.movie.videoList);
@@ -453,6 +452,7 @@ public class GridFragment extends BaseLazyFragment {
                 } else {
                     if (page == 1) {
                         hasActionItems = false;
+                        gridAdapter.setNewData(null);
                         showEmpty();
                     } else if(page > 2){// 只有一页数据时不提示
                         App.showToastShort(getContext(), "没有更多了！");
@@ -460,6 +460,7 @@ public class GridFragment extends BaseLazyFragment {
                     gridAdapter.loadMoreEnd();
                     gridAdapter.setEnableLoadMore(false);
                 }
+showSuccess();
             }
         });
 
