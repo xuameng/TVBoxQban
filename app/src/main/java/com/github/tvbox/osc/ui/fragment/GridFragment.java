@@ -185,8 +185,8 @@ public class GridFragment extends BaseLazyFragment {
     }
     // 丢弃当前页面，将页面还原成上一个保存的页面
     public boolean restoreView(){
-        if(mGrids.empty()) return false;
         this.showSuccess();
+        if(mGrids.empty()) return false;
         ((ViewGroup) mGridView.getParent()).removeView(this.mGridView); // 重父窗口移除当前控件
         GridInfo info = mGrids.pop();  // 还原上次保存的控件
         this.sortData.id = info.sortID;
