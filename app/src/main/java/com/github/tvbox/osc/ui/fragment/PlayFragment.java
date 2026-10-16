@@ -1402,14 +1402,9 @@ public class PlayFragment extends BaseLazyFragment {
                             initParse(flag, userJxList, playUrl, url);
                         } else {
                             mController.showParse(false);
-    // ↓↓↓ 加这段：把 pl 同步到 mVodPlayerCfg ↓↓↓
-    try {
-        int pl = info.optInt("pl", Hawk.get(HawkConfig.PLAY_TYPE, 1));
-        mVodPlayerCfg.put("pl", pl);
-        mController.updatePlayerCfg();  // 刷新底部按钮显示
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
+initPlayerCfg();
+                    mController.setPlayerConfig(mVodPlayerCfg);   //xuameng更新变更
+                    mController.updatePlayerCfg();  //xuameng更新变更
                             playUrl(playUrl + url, headers);
                         }
                         if (TextUtils.isEmpty(danmaku)) {  //xuameng 弹幕
