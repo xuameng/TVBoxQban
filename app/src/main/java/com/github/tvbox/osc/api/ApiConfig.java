@@ -1751,6 +1751,7 @@ public class ApiConfig {
                 sourceBean.setKey("push_agent");
                 sourceBean.setName("🥇聚汇推送");
                 sourceBean.setType(-1);
+                sourceBean.setPlayerType(1);
                 return sourceBean;
             }
             return null;
