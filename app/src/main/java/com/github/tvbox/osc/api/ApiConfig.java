@@ -1747,11 +1747,12 @@ public class ApiConfig {
     public SourceBean getSource(String key) {
         if (!sourceBeanList.containsKey(key)) {
             if ("push_agent".equals(key)) {
+				int pt = (int) Hawk.get(HawkConfig.PLAY_TYPE, 1);
                 SourceBean sourceBean = new SourceBean();
                 sourceBean.setKey("push_agent");
                 sourceBean.setName("🥇聚汇推送");
                 sourceBean.setType(-1);
-                sourceBean.setPlayerType(1);
+                sourceBean.setPlayerType(pt);
                 return sourceBean;
             }
             return null;
