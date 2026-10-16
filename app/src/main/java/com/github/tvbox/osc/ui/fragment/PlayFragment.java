@@ -1406,7 +1406,7 @@ public class PlayFragment extends BaseLazyFragment {
     try {
         int pl = info.optInt("pl", Hawk.get(HawkConfig.PLAY_TYPE, 1));
         mVodPlayerCfg.put("pl", pl);
-        mController.updatePlayerCfgView();  // 刷新底部按钮显示
+        mController.updatePlayerCfg();  // 刷新底部按钮显示
     } catch (Exception e) {
         e.printStackTrace();
     }
