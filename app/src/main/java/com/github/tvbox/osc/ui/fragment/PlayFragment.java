@@ -1538,10 +1538,7 @@ public class PlayFragment extends BaseLazyFragment {
         }
         try {
             if (!mVodPlayerCfg.has("pl")) {
-                int pt = (sourceBean != null && sourceBean.getPlayerType() != -1)
-                        ? sourceBean.getPlayerType()
-                        : (int) Hawk.get(HawkConfig.PLAY_TYPE, 1);
-                mVodPlayerCfg.put("pl", pt);
+                mVodPlayerCfg.put("pl", (sourceBean.getPlayerType() == -1) ? (int)Hawk.get(HawkConfig.PLAY_TYPE, 1) : sourceBean.getPlayerType());
             }
             if (!mVodPlayerCfg.has("pr")) {
                 mVodPlayerCfg.put("pr", Hawk.get(HawkConfig.PLAY_RENDER, 0));
