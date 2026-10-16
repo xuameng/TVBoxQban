@@ -1402,9 +1402,6 @@ public class PlayFragment extends BaseLazyFragment {
                             initParse(flag, userJxList, playUrl, url);
                         } else {
                             mController.showParse(false);
-initPlayerCfg();
-                    mController.setPlayerConfig(mVodPlayerCfg);   //xuameng更新变更
-                    mController.updatePlayerCfg();  //xuameng更新变更
                             playUrl(playUrl + url, headers);
                         }
                         if (TextUtils.isEmpty(danmaku)) {  //xuameng 弹幕
