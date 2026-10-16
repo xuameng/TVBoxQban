@@ -1747,12 +1747,12 @@ public class ApiConfig {
     public SourceBean getSource(String key) {
         if (!sourceBeanList.containsKey(key)) {
             if ("push_agent".equals(key)) {
-				int pt = (int) Hawk.get(HawkConfig.PLAY_TYPE, 1);
+				int pt = (int) Hawk.get(HawkConfig.PLAY_TYPE, 1);  //xuameng加播放器类型
                 SourceBean sourceBean = new SourceBean();
                 sourceBean.setKey("push_agent");
                 sourceBean.setName("🥇聚汇推送");
                 sourceBean.setType(-1);
-                sourceBean.setPlayerType(pt);
+                sourceBean.setPlayerType(pt); //xuameng加播放器类型
                 return sourceBean;
             }
             return null;
