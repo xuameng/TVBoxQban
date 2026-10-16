@@ -81,7 +81,7 @@ import okhttp3.Call;
 public class SourceViewModel extends ViewModel {
     private static final String PUSH_AGENT = "push_agent";
     private static final String PUSH_FALLBACK = "push_fallback";
-    private static final String PUSH_HEADERS_MARKER = "@XUAMENG-Headers=";
+    private static final String PUSH_HEADERS_MARKER = "@Headers=";
 
     public MutableLiveData<AbsSortXml> sortResult;
     public MutableLiveData<AbsXml> listResult;
