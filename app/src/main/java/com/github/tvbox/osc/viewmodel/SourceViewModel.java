@@ -818,8 +818,6 @@ public class SourceViewModel extends ViewModel {
             }
             sourceKey = isCastPushUrl(pushUrl) ? PUSH_FALLBACK : PUSH_AGENT;
             urlid = pushUrl;
-        } else if (PUSH_AGENT.equals(sourceKey) && isCastPushUrl(urlid)) {
-            sourceKey = PUSH_FALLBACK;
         }
         String id = urlid;
     
