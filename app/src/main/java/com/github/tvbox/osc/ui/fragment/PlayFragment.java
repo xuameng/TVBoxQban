@@ -1538,7 +1538,7 @@ public class PlayFragment extends BaseLazyFragment {
         }
         try {
             if (!mVodPlayerCfg.has("pl")) {
-                int pt = (sourceBean != null && sourceBean.getPlayerType() != -1)
+                int pt = (sourceBean != null && sourceBean.getPlayerType() != -1)  //xuameng sourceBean判空防止内置push_agent源不存在默认播放器问题
                         ? sourceBean.getPlayerType()
                         : (int) Hawk.get(HawkConfig.PLAY_TYPE, 1);
                 mVodPlayerCfg.put("pl", pt);
@@ -1569,6 +1569,7 @@ public class PlayFragment extends BaseLazyFragment {
                 mVodPlayerCfg.put("et", 0);
             }
         } catch (Throwable th) {
+
         }
         mController.setPlayerConfig(mVodPlayerCfg);
     }
