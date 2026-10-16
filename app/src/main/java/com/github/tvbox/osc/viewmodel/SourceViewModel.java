@@ -818,6 +818,8 @@ public class SourceViewModel extends ViewModel {
             }
             sourceKey = isCastPushUrl(pushUrl) ? PUSH_FALLBACK : PUSH_AGENT;
             urlid = pushUrl;
+        } else if (PUSH_AGENT.equals(sourceKey) && isCastPushUrl(urlid)) {
+            sourceKey = PUSH_FALLBACK;
         }
         String id = urlid;
     
@@ -1398,6 +1400,7 @@ public class SourceViewModel extends ViewModel {
             result.put("proKey", progressKey);
             result.put("subtKey", subtitleKey);
             result.put("flag", playFlag);
+			result.put("pl", Hawk.get(HawkConfig.PLAY_TYPE, 1)); // 1=IJK 2=EXO 别给0
             result.put("parse", 0);
             result.put("url", pushUrl.url);
             mergePushHeaders(result, pushUrl);
