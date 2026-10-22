@@ -193,6 +193,7 @@ public class GridFragment extends BaseLazyFragment {
             mGridView.setVisibility(View.VISIBLE);
             // xuameng关键修复：重新绑定 LoadSir
             bindLoadSirToCurrentView();   
+            this.showSuccess();   
             mGridView.requestFocus();
         }
         return true;
