@@ -195,7 +195,7 @@ public class SourceViewModel extends ViewModel {
         return lower.contains("douban") || value.contains("\u8c46\u74e3");
     }
 
-    private static void syncDoubanHistory(SourceBean sourceBean, String categoryId, int page) {
+    private static void syncDoubanHistory(SourceBean sourceBean, String categoryId, int page) {  //xuameng 适配豆瓣猜你喜欢
         if (page != 1 || !"guess_you_like".equals(categoryId) || !isDoubanSource(sourceBean)) return;
         try {
             App app = App.getInstance();
@@ -493,7 +493,7 @@ public class SourceViewModel extends ViewModel {
                         @Override
                         public String call() throws Exception {
                             Spider sp = ApiConfig.get().getCSP(homeSourceBean);
-                            syncDoubanHistory(homeSourceBean, sortData.id, page);
+                            syncDoubanHistory(homeSourceBean, sortData.id, page); //xuameng 适配豆瓣猜你喜欢
                             return sp.categoryContent(sortData.id, page + "", true, sortData.filterSelect);
                         }
                     });
@@ -633,7 +633,7 @@ public class SourceViewModel extends ViewModel {
                         @Override
                         public String call() throws Exception {
                             Spider sp = ApiConfig.get().getCSP(sourceBean);
-                            syncDoubanHistory(sourceBean, sortData.id, page);
+                            syncDoubanHistory(sourceBean, sortData.id, page); //xuameng 适配豆瓣猜你喜欢
                             return sp.categoryContent(sortData.id, page + "", true, sortData.filterSelect);
                         }
                     });
