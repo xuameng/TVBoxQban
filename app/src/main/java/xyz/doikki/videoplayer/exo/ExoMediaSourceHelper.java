@@ -108,8 +108,8 @@ public final class ExoMediaSourceHelper {
                 return new DashMediaSource.Factory(factory).createMediaSource(MediaItem.fromUri(contentUri));
             case C.TYPE_HLS:
                 return new HlsMediaSource.Factory(factory)
-                        .setExtractorFactory(new ResyncHlsExtractorFactory())
-                        .setLoadErrorHandlingPolicy(new HlsErrorHandlingPolicy())  // 切片快速重试并兼容TS同步异常，保留默认回退
+                        .setExtractorFactory(new ResyncHlsExtractorFactory())  //xuameng 在当前连接内继续读取TS不同步数据，避免每次同步异常都重新请求切片
+                        .setLoadErrorHandlingPolicy(new HlsErrorHandlingPolicy())  // xuameng HLS切片快速重试，兼容TS同步异常，并保留默认的错误暴露阈值和备用轨道回退。
                         .createMediaSource(MediaItem.fromUri(contentUri));
             default:
             case C.TYPE_OTHER:
