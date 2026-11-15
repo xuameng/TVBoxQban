@@ -66,7 +66,7 @@ public final class ResyncHlsExtractorFactory implements HlsExtractorFactory {
                 long position = input.getPosition();
                 if (consecutiveResyncErrors >= MAX_CONSECUTIVE_RESYNC_ERRORS
                         || position <= lastResyncPosition) {
-                    Log.w("Tvbox-runtime", "echo-hls-ts-resync-fallback count=" + consecutiveResyncErrors
+                    Log.w("jvhuiys-runtime", "echo-hls-ts-resync-fallback count=" + consecutiveResyncErrors
                             + ", position=" + position);
                     throw error;
                 }
@@ -74,7 +74,7 @@ public final class ResyncHlsExtractorFactory implements HlsExtractorFactory {
                 // 首次异常可能只消耗内部缓冲，后续连续异常必须有新的读取进展。
                 lastResyncPosition = position;
                 consecutiveResyncErrors++;
-                Log.w("Tvbox-runtime", "echo-hls-ts-resync-inplace count=" + consecutiveResyncErrors
+                Log.w("jvhuiys-runtime", "echo-hls-ts-resync-inplace count=" + consecutiveResyncErrors
                         + ", position=" + position);
                 // 返回外层读取循环，保留HlsMediaChunk原有的取消检查和输入结束处理。
                 return true;
