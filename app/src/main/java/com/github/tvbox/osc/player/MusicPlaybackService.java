@@ -8,6 +8,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
@@ -276,7 +277,14 @@ public class MusicPlaybackService extends Service {
         if (!TextUtils.isEmpty(artworkUrl)) {
             metadata.putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, artworkUrl);
         }
-        if (artwork != null) metadata.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, artwork);
+        //if (artwork != null) metadata.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, artwork);
+        if (artwork != null) {
+            metadata.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, artwork);
+        } else {
+            // 没图用 App 图标 bitmap
+            Bitmap def = BitmapFactory.decodeResource(getResources(), R.drawable.app_icon);
+            metadata.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, def);
+        }
         mediaSession.setMetadata(metadata.build());
         long action = PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PAUSE
                 | PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
