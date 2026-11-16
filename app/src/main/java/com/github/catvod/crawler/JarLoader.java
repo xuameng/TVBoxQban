@@ -567,7 +567,7 @@ public class JarLoader {
 
             // 3. 初始化本地配置
             invokeNoArg(classInit, "saveConfig");
-           // invokeNoArg(classInit, "replaceCloudDiskNames");
+            invokeNoArg(classInit, "replaceCloudDiskNames");
 
             // 4. 启动 Go Proxy
             invokeStartGoProxy(classInit);
