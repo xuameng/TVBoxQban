@@ -281,9 +281,11 @@ public class MusicPlaybackService extends Service {
         //if (artwork != null) metadata.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, artwork);
         if (artwork != null) {
             metadata.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, artwork);
+            metadata.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, artwork);
         } else {
             // xuameng没图用 app_music 图标 bitmap
             Bitmap def = BitmapFactory.decodeResource(getResources(), R.drawable.app_music);
+            metadata.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, def);
             metadata.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, def);
         }
         mediaSession.setMetadata(metadata.build());
