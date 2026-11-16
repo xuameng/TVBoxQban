@@ -311,7 +311,7 @@ public class MusicPlaybackService extends Service {
         NotificationCompat.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                 ? new NotificationCompat.Builder(this, CHANNEL_ID)
                 : new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.drawable.app_music)
+        builder.setSmallIcon(R.drawable.app_icon)
                 .setContentTitle(title)
                 .setContentText(subtitle)
                 .setContentIntent(sessionActivity)
