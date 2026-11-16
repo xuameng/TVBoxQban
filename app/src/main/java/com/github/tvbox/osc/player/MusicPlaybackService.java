@@ -277,12 +277,13 @@ public class MusicPlaybackService extends Service {
         if (!TextUtils.isEmpty(artworkUrl)) {
             metadata.putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, artworkUrl);
         }
+        //xuameng 解决投屏图标不显示图片
         //if (artwork != null) metadata.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, artwork);
         if (artwork != null) {
             metadata.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, artwork);
         } else {
-            // 没图用 App 图标 bitmap
-            Bitmap def = BitmapFactory.decodeResource(getResources(), R.drawable.app_icon);
+            // xuameng没图用 app_music 图标 bitmap
+            Bitmap def = BitmapFactory.decodeResource(getResources(), R.drawable.app_music);
             metadata.putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, def);
         }
         mediaSession.setMetadata(metadata.build());
@@ -310,7 +311,7 @@ public class MusicPlaybackService extends Service {
         NotificationCompat.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
                 ? new NotificationCompat.Builder(this, CHANNEL_ID)
                 : new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.drawable.app_icon)
+        builder.setSmallIcon(R.drawable.app_music)
                 .setContentTitle(title)
                 .setContentText(subtitle)
                 .setContentIntent(sessionActivity)
