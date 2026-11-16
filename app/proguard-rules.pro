@@ -1,4 +1,3 @@
-
 #############################################
 #
 # 对于一些基本指令的添加
@@ -20,13 +19,13 @@
 -renamesourcefileattribute SourceFile
 
 # 重新包装所有重命名的包并放在给定的单一包中
-#R8冲突xuameng  -flattenpackagehierarchy androidx.base
+-flattenpackagehierarchy androidx.base
 
 # 将包里的类混淆成n个再重新打包到一个统一的package中  会覆盖flattenpackagehierarchy选项
 -repackageclasses androidx.base
 
 # 把混淆类中的方法名也混淆了
-#R8冲突xuameng  -useuniqueclassmembernames
+-useuniqueclassmembernames
 #############################################
 #
 # Android开发中一些需要保留的公共部分
@@ -61,16 +60,10 @@
 #-keep public class * extends androidx.**
 
 -keep class org.xmlpull.v1.** {*;}
+
 -dontwarn org.fourthline.cling.**
 -keep class org.fourthline.cling.** { *; }
-#r8 xuameng忽略kxml2解析器库的缺失警告
--dontwarn org.kxml2.io.KXmlParser
--dontwarn org.xmlpull.mxp1.**
--dontwarn com.ctc.wstx.stax.**
--keep class com.bea.xml.stream.**
--dontwarn com.bea.xml.stream.**
--dontwarn java.awt.**
--dontwarn javax.swing.plaf.FontUIResource
+
 # 保留R下面的资源
 -keep class **.R$* {*;}
 
@@ -165,6 +158,20 @@
 -keepclassmembers,allowobfuscation class * {
   @com.google.gson.annotations.SerializedName <fields>;
 }
+# Gson 通过字段名反序列化源站首页分类和影片列表。
+-keepclassmembers class com.github.tvbox.osc.bean.AbsJson {
+  <fields>;
+}
+-keepclassmembers class com.github.tvbox.osc.bean.AbsJson$* {
+  <fields>;
+}
+-keepclassmembers class com.github.tvbox.osc.bean.AbsSortJson {
+  <fields>;
+}
+-keepclassmembers class com.github.tvbox.osc.bean.AbsSortJson$* {
+  <fields>;
+}
+-keep,allowobfuscation,allowoptimization class * extends com.google.gson.reflect.TypeToken
 #xstream
 -keep class com.thoughtworks.xstream.converters.extended.SubjectConverter { *; }
 -keep class com.thoughtworks.xstream.converters.extended.ThrowableConverter { *; }
@@ -173,19 +180,6 @@
 -keep class com.thoughtworks.xstream.converters.extended.RegexPatternConverter { *; }
 -keep class com.thoughtworks.xstream.converters.extended.CharsetConverter { *; }
 -keep class com.thoughtworks.xstream.** { *; }
-
-# xuameng新增规则 忽略缺失警告
--dontwarn java.beans.**
--dontwarn javax.activation.**
--dontwarn net.sf.cglib.**
--dontwarn nu.xom.**
--dontwarn org.jdom.**
--dontwarn org.jdom2.**
--dontwarn org.joda.time.**
--dontwarn org.w3c.dom.**
--dontwarn org.codehaus.jettison.**
-
-
 #eventbus
 -keepclassmembers class * {
     @org.greenrobot.eventbus.Subscribe <methods>;
@@ -214,7 +208,6 @@
 
 # 实体类
 #-keep class com.github.tvbox.osc.bean.** { *; }
--keep class com.github.tvbox.osc.** { *; }
 #CardView
 -keep class com.github.tvbox.osc.ui.tv.widget.card.**{*;}
 #ViewObj
@@ -225,6 +218,9 @@
 -keep class com.github.catvod.Proxy { *; }
 -keep class com.github.catvod.crawler.*{*;}
 -keep class com.github.catvod.net.** { *; }
+-keepclassmembers class com.github.tvbox.osc.base.App {
+    public android.app.Activity getCurrentActivity();
+}
 -keep class com.github.tvbox.osc.bean.ProxyRule { *; }
 -keep class com.github.tvbox.osc.util.net.** { *; }
 # 迅雷下载模块
@@ -243,5 +239,6 @@
 # Cronet支持http3
 -keep class com.google.net.cronet.**{*;}
 -keep class org.chromium.net.**{*;}
+
 # Nano
 -keep class fi.iki.elonen.** { *; }
