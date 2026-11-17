@@ -9,15 +9,14 @@ import android.view.View;
 import android.animation.ValueAnimator;
 
 public class MusicVisualizerView extends View {
-    // ===== 老代码原值 =====
-    private static final int MAX_AMPLITUDE = 12222;
+    private static final int MAX_AMPLITUDE = 10222;
     private static final int BAR_COUNT = 22;
-    private static final int ANIMATION_DURATION = 80;
+    private static final int ANIMATION_DURATION = 40;
 
-    // ===== 三浪中心 =====
-    private int mCenterLow = 3;
-    private int mCenterMid = 10;
-    private int mCenterHigh = 17;
+    // ===== 三浪中心（均分 22 根柱）=====
+    private int mCenterLow = 4;   // 低频浪尖（左）
+    private int mCenterMid = 11;  // 中频浪尖（中）
+    private int mCenterHigh = 18; // 高频浪尖（右）
 
     // ===== 颜色 =====
     private int[][] colorSchemes = new int[3][3];
@@ -51,10 +50,13 @@ public class MusicVisualizerView extends View {
     private float mPeakMid = 0.02f;
     private float mPeakHigh = 0.02f;
 
-    private static final float PEAK_DECAY_LOW = 0.06f;
-    private static final float PEAK_DECAY_MID = 0.10f;
-    private static final float PEAK_DECAY_HIGH = 0.14f;
-    private static final float DISTANCE_SIGMA = 0.30f;
+    // 衰减：翻倍加快，下降更干脆
+    private static final float PEAK_DECAY_LOW = 0.12f;
+    private static final float PEAK_DECAY_MID = 0.20f;
+    private static final float PEAK_DECAY_HIGH = 0.28f;
+
+    // σ 缩小到 0.12 → 三个浪尖清晰分离
+    private static final float DISTANCE_SIGMA = 0.12f;
 
     // 校准
     private final float[] mEnergyAccum = new float[BAR_COUNT];
@@ -130,6 +132,7 @@ public class MusicVisualizerView extends View {
         if (normMid > mPeakMid) mPeakMid = normMid;
         if (normHigh > mPeakHigh) mPeakHigh = normHigh;
 
+        // 衰减（翻倍速度）
         mPeakLow -= mPeakLow * PEAK_DECAY_LOW;
         mPeakMid -= mPeakMid * PEAK_DECAY_MID;
         mPeakHigh -= mPeakHigh * PEAK_DECAY_HIGH;
@@ -188,7 +191,7 @@ public class MusicVisualizerView extends View {
 
     private void autoCalibrate() {
         int third = BAR_COUNT / 3;
-        int bestLow = 3, bestMid = 10, bestHigh = 17;
+        int bestLow = 4, bestMid = 11, bestHigh = 18;
         float maxL = 0, maxM = 0, maxH = 0;
         int samples = Math.max(1, mCalibrateCount);
 
@@ -213,7 +216,7 @@ public class MusicVisualizerView extends View {
     }
 
     // ================================================================
-    // 动画（和老代码一样：每次都 cancel + 新建 + start，不用 mAnimationRunning）
+    // 动画（lerpFactor 0.65 → 上升几乎一帧到位）
     // ================================================================
     private void startAnimation() {
         if (mAnimator != null) {
@@ -222,8 +225,7 @@ public class MusicVisualizerView extends View {
         mAnimator = ValueAnimator.ofFloat(0f, 1f);
         mAnimator.setDuration(ANIMATION_DURATION);
         mAnimator.addUpdateListener(animation -> {
-            float fraction = animation.getAnimatedFraction();
-            float lerpFactor = 0.35f; // 平滑插值系数
+            float lerpFactor = 0.65f; // 快速追上目标
             for (int i = 0; i < BAR_COUNT; i++) {
                 mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * lerpFactor;
             }
