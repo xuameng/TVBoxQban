@@ -17,7 +17,7 @@ public class MusicVisualizerView extends View {
     private int mCenterMid = 11;
     private int mCenterHigh = 18;
 
-    private int[][] colorSchemes = new int[3][3];
+    private int[][] colorSchemes = new int[3][4];
     private boolean mShowStripes = true;
     private int mSegmentCount = 20;
     private float mSegmentSpacingFixed = 2.5f;
@@ -26,9 +26,10 @@ public class MusicVisualizerView extends View {
         for (int i = 0; i < 3; i++) {
             float baseHue = (float) (Math.random() * 360);
             colorSchemes[i] = new int[]{
-                    Color.HSVToColor(new float[]{baseHue, 1f, 1f}),
-                    Color.HSVToColor(new float[]{(baseHue + 120) % 360, 1f, 1f}),
-                    Color.HSVToColor(new float[]{(baseHue + 240) % 360, 1f, 1f})
+                    Color.HSVToColor(new float[]{baseHue, 1f, 0.4f}),           // 矮：暗
+                    Color.HSVToColor(new float[]{(baseHue + 120) % 360, 1f, 0.7f}), // 中：中亮
+                    Color.HSVToColor(new float[]{(baseHue + 240) % 360, 1f, 1.0f}), // 高：亮
+                    Color.HSVToColor(new float[]{(baseHue + 60) % 360, 1f, 1.0f})   // 超高：另一个随机色
             };
         }
         postInvalidate();
@@ -154,7 +155,7 @@ public class MusicVisualizerView extends View {
         if (maxH <= 0) maxH = 100f;
 
         final float SHARP = 2.0f;
-        final float GAIN = 2.2f;        // 抬升增益，保证满值 clamp 到 1.0
+        final float GAIN = 1.8f;        // 抬升增益，保证满值 clamp 到 1.0
         final float CURVE = 0.4f;       // 曲线陡峭度，越小低值越矮、差距越大
 
         for (int i = 0; i < BAR_COUNT; i++) {
@@ -182,7 +183,7 @@ public class MusicVisualizerView extends View {
             float heightRatio = (float) Math.pow(shaped, CURVE);
 
             mTargetHeights[i] = Math.min(heightRatio * maxH, maxH);
-            mAmplitudeLevels[i] = Math.min(heightRatio * 3.0f, 1.0f);
+            mAmplitudeLevels[i] = heightRatio;
         }
 
         startAnimation();
@@ -287,10 +288,15 @@ public class MusicVisualizerView extends View {
 
     private int getDynamicColor(float amplitude, int[] currentScheme) {
         amplitude = Math.max(0.0f, Math.min(1.0f, amplitude));
-        if (amplitude < 0.3f) {
-            return interpolateColor(amplitude / 0.3f, currentScheme[0], currentScheme[1]);
+        if (amplitude < 0.33f) {
+            // 矮柱：颜色0 → 颜色1
+            return interpolateColor(amplitude / 0.33f, currentScheme[0], currentScheme[1]);
+        } else if (amplitude < 0.66f) {
+            // 中柱：颜色1 → 颜色2
+            return interpolateColor((amplitude - 0.33f) / 0.33f, currentScheme[1], currentScheme[2]);
         } else {
-            return interpolateColor((amplitude - 0.3f) / 0.7f, currentScheme[1], currentScheme[2]);
+            // 高柱：颜色2 → 颜色3（第4个随机色，不是白色）
+            return interpolateColor((amplitude - 0.66f) / 0.34f, currentScheme[2], currentScheme[3]);
         }
     }
 
