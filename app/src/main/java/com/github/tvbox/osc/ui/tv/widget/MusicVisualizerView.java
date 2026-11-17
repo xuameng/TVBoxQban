@@ -47,11 +47,11 @@ public class MusicVisualizerView extends View {
     private float mPeakMid = 0.02f;
     private float mPeakHigh = 0.02f;
 
-    private static final float PEAK_DECAY_LOW = 0.45f;
-    private static final float PEAK_DECAY_MID = 0.45f;
-    private static final float PEAK_DECAY_HIGH = 0.45f;
+    private static final float PEAK_DECAY_LOW = 0.48f;
+    private static final float PEAK_DECAY_MID = 0.48f;
+    private static final float PEAK_DECAY_HIGH = 0.48f;
 
-    private static final float DISTANCE_SIGMA = 0.18f;
+    private static final float DISTANCE_SIGMA = 0.12f;
 
     private final float[] mEnergyAccum = new float[BAR_COUNT];
     private int mCalibrateCount = 0;
