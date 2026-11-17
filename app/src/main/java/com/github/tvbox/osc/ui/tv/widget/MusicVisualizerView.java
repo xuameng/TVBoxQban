@@ -5,9 +5,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 public class MusicVisualizerView extends View {
+    private static final String TAG = "xuameng_MusicVis";
     private static final int BAR_COUNT = 22;
 
     // 颜色
@@ -36,24 +38,24 @@ public class MusicVisualizerView extends View {
     private final float[] mBarHeights = new float[BAR_COUNT];
     private final float[] mAmplitudeLevels = new float[BAR_COUNT];
 
-    // ============ 峰值检测方案 ============
-    // 三个浪中心
+    // ============ 峰值检测 ============
     private int mCenterLow = 3;
     private int mCenterMid = 10;
     private int mCenterHigh = 17;
 
-    // 三个频带的峰值（瞬态保持，快速回落）
     private float mPeakLow = 0f;
     private float mPeakMid = 0f;
     private float mPeakHigh = 0f;
 
-    // 峰值衰减速度（每帧衰减多少，0.15 = 每帧掉15%，约6帧掉到0）
-    private static final float PEAK_DECAY = 0.15f;
+    // 自适应：跟踪每个频带的历史最大值
+    private float mMaxSeenLow = 1f;
+    private float mMaxSeenMid = 1f;
+    private float mMaxSeenHigh = 1f;
 
-    // 距离衰减
+    private static final float PEAK_DECAY = 0.18f;
     private static final float DISTANCE_SIGMA = 0.22f;
 
-    // FFT bin 范围（覆盖更宽的频率）
+    // FFT bin 范围
     private static final int LOW_BIN_START = 2;
     private static final int LOW_BIN_END = 10;
     private static final int MID_BIN_START = 11;
@@ -67,6 +69,9 @@ public class MusicVisualizerView extends View {
     private long mLastCalibrateTime = 0;
     private static final int CALIBRATE_FRAMES = 45;
     private static final long CALIBRATE_INTERVAL_MS = 4000;
+
+    // 调试
+    private int mDebugFrameCount = 0;
     // ============================================
 
     public MusicVisualizerView(Context context) { super(context); init(); }
@@ -83,61 +88,102 @@ public class MusicVisualizerView extends View {
     public void setSegmentSpacingFixed(float spacing) { mSegmentSpacingFixed = Math.max(0f, spacing); postInvalidate(); }
 
     public void updateVisualizer(byte[] fft, float volumeLevel) {
-        if (fft == null || fft.length < HIGH_BIN_END * 2 + 2) return;
-        if (volumeLevel <= 0.001f) { reset(); return; }
+        if (fft == null) {
+            Log.d(TAG, "fft is null");
+            return;
+        }
+        if (fft.length < HIGH_BIN_END * 2 + 2) {
+            Log.d(TAG, "fft too short: " + fft.length);
+            return;
+        }
+        if (volumeLevel <= 0.001f) {
+            reset();
+            return;
+        }
 
-        // ---------- 1. 读 FFT 各频带，取最大 bin（不是求和！） ----------
+        // ---------- 1. 读 FFT，取各频带最大 bin ----------
         float peak_bin_low = 0, peak_bin_mid = 0, peak_bin_high = 0;
 
         for (int i = LOW_BIN_START; i <= LOW_BIN_END; i++) {
-            byte rfk = fft[i * 2], ifk = fft[i * 2 + 1];
-            float mag = (rfk * rfk + ifk * ifk);
+            int idx = i * 2;
+            if (idx + 1 >= fft.length) break;
+            byte rfk = fft[idx], ifk = fft[idx + 1];
+            float mag = ((rfk & 0xFF) * (rfk & 0xFF)) + ((ifk & 0xFF) * (ifk & 0xFF));
             if (mag > peak_bin_low) peak_bin_low = mag;
         }
         for (int i = MID_BIN_START; i <= MID_BIN_END; i++) {
-            byte rfk = fft[i * 2], ifk = fft[i * 2 + 1];
-            float mag = (rfk * rfk + ifk * ifk);
+            int idx = i * 2;
+            if (idx + 1 >= fft.length) break;
+            byte rfk = fft[idx], ifk = fft[idx + 1];
+            float mag = ((rfk & 0xFF) * (rfk & 0xFF)) + ((ifk & 0xFF) * (ifk & 0xFF));
             if (mag > peak_bin_mid) peak_bin_mid = mag;
         }
         for (int i = HIGH_BIN_START; i <= HIGH_BIN_END; i++) {
-            byte rfk = fft[i * 2], ifk = fft[i * 2 + 1];
-            float mag = (rfk * rfk + ifk * ifk);
+            int idx = i * 2;
+            if (idx + 1 >= fft.length) break;
+            byte rfk = fft[idx], ifk = fft[idx + 1];
+            float mag = ((rfk & 0xFF) * (rfk & 0xFF)) + ((ifk & 0xFF) * (ifk & 0xFF));
             if (mag > peak_bin_high) peak_bin_high = mag;
         }
 
-        // ---------- 2. 峰值检测：新值超过当前peak → 直接跳上去，否则衰减 ----------
-        // 归一化到 0~1
-        float normLow  = Math.min(peak_bin_low  / 20000000f, 1.0f) * volumeLevel;
-        float normMid  = Math.min(peak_bin_mid  / 20000000f, 1.0f) * volumeLevel;
-        float normHigh = Math.min(peak_bin_high / 20000000f, 1.0f) * volumeLevel;
+        // ---------- 2. 自适应归一化（关键修复！） ----------
+        // 跟踪历史最大值，用 99th percentile 做归一化
+        mMaxSeenLow  = Math.max(mMaxSeenLow,  peak_bin_low);
+        mMaxSeenMid  = Math.max(mMaxSeenMid,  peak_bin_mid);
+        mMaxSeenHigh = Math.max(mMaxSeenHigh, peak_bin_high);
 
+        // 缓慢衰减最大值（防止一开始的尖峰永远影响归一化）
+        mMaxSeenLow  *= 0.9995f;
+        mMaxSeenMid  *= 0.9995f;
+        mMaxSeenHigh *= 0.9995f;
+
+        float normLow  = (mMaxSeenLow  > 1f)  ? (peak_bin_low  / mMaxSeenLow)  : 0f;
+        float normMid  = (mMaxSeenMid  > 1f)  ? (peak_bin_mid  / mMaxSeenMid)  : 0f;
+        float normHigh = (mMaxSeenHigh > 1f)  ? (peak_bin_high / mMaxSeenHigh) : 0f;
+
+        // 音量加权
+        normLow  *= volumeLevel;
+        normMid  *= volumeLevel;
+        normHigh *= volumeLevel;
+
+        // ---------- 3. 峰值检测 ----------
         if (normLow > mPeakLow) {
-            mPeakLow = normLow;   // 瞬态来了，一帧到位
+            mPeakLow = normLow;
         } else {
-            mPeakLow -= mPeakLow * PEAK_DECAY;  // 快速回落
-            if (mPeakLow < 0.02f) mPeakLow = 0;
+            mPeakLow -= mPeakLow * PEAK_DECAY;
+            if (mPeakLow < 0.01f) mPeakLow = 0.01f;
         }
 
         if (normMid > mPeakMid) {
             mPeakMid = normMid;
         } else {
             mPeakMid -= mPeakMid * PEAK_DECAY;
-            if (mPeakMid < 0.02f) mPeakMid = 0;
+            if (mPeakMid < 0.01f) mPeakMid = 0.01f;
         }
 
         if (normHigh > mPeakHigh) {
             mPeakHigh = normHigh;
         } else {
             mPeakHigh -= mPeakHigh * PEAK_DECAY;
-            if (mPeakHigh < 0.02f) mPeakHigh = 0;
+            if (mPeakHigh < 0.01f) mPeakHigh = 0.01f;
         }
 
-        // ---------- 3. 校准 ----------
+        // ---------- 4. 调试日志（前100帧） ----------
+        mDebugFrameCount++;
+        if (mDebugFrameCount <= 100) {
+            Log.d(TAG, String.format("frame=%d vol=%.3f low=%.3f mid=%.3f high=%.3f peak=%.3f/%.3f/%.3f maxSeen=%.0f/%.0f/%.0f",
+                    mDebugFrameCount, volumeLevel,
+                    normLow, normMid, normHigh,
+                    mPeakLow, mPeakMid, mPeakHigh,
+                    mMaxSeenLow, mMaxSeenMid, mMaxSeenHigh));
+        }
+
+        // ---------- 5. 校准 ----------
         for (int i = 0; i < BAR_COUNT; i++) {
             int idx = (i < BAR_COUNT / 3) ? (2 + i * 2) : (2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4);
             if (idx < fft.length - 1) {
                 byte rfk = fft[idx], ifk = fft[idx + 1];
-                mEnergyAccum[i] += (rfk * rfk + ifk * ifk);
+                mEnergyAccum[i] += ((rfk & 0xFF) * (rfk & 0xFF)) + ((ifk & 0xFF) * (ifk & 0xFF));
             }
         }
         mCalibrateCount++;
@@ -148,8 +194,9 @@ public class MusicVisualizerView extends View {
             mLastCalibrateTime = now;
         }
 
-        // ---------- 4. 每根柱高度 = 三浪峰值 × 距离权重 ----------
+        // ---------- 6. 每根柱高度 ----------
         float maxH = getHeight() * 0.95f;
+        if (maxH <= 0) maxH = 100f; // 防止 height 还没测量
 
         for (int i = 0; i < BAR_COUNT; i++) {
             float dLow  = Math.abs(i - mCenterLow)  / (float) BAR_COUNT;
@@ -160,14 +207,10 @@ public class MusicVisualizerView extends View {
             float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
             float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
 
-            // 每个浪的峰值直接乘权重
             float barRatio = mPeakLow * wLow + mPeakMid * wMid + mPeakHigh * wHigh;
-
-            // 保证所有柱最低有 5% 高度（安静时也能看到）
             barRatio = Math.max(barRatio, 0.05f);
             barRatio = Math.min(barRatio, 1.0f);
 
-            // 直接赋值，不做插值（要的就是硬跳硬收）
             mBarHeights[i] = maxH * barRatio;
             mAmplitudeLevels[i] = barRatio;
         }
