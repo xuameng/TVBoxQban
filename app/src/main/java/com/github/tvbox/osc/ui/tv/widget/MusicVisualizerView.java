@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.view.View;
 
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 9222;
     private static final int BAR_COUNT = 22;
 
     // 颜色
@@ -35,49 +34,39 @@ public class MusicVisualizerView extends View {
 
     private final Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final float[] mBarHeights = new float[BAR_COUNT];
-    private final float[] mTargetHeights = new float[BAR_COUNT];
     private final float[] mAmplitudeLevels = new float[BAR_COUNT];
 
-    // ============ 核心设计：全局脉冲 + 三浪高度调制 ============
-
+    // ============ 峰值检测方案 ============
     // 三个浪中心
     private int mCenterLow = 3;
-    private int mCenterMid = 11;
-    private int mCenterHigh = 18;
+    private int mCenterMid = 10;
+    private int mCenterHigh = 17;
 
-    // 全局瞬态脉冲（所有柱共享，驱动"跳"）
-    private float mGlobalPulse = 0f;
+    // 三个频带的峰值（瞬态保持，快速回落）
+    private float mPeakLow = 0f;
+    private float mPeakMid = 0f;
+    private float mPeakHigh = 0f;
 
-    // 三个频带的能量（只决定浪的高度，不决定是否跳）
-    private float mEnergyLow = 0f;
-    private float mEnergyMid = 0f;
-    private float mEnergyHigh = 0f;
+    // 峰值衰减速度（每帧衰减多少，0.15 = 每帧掉15%，约6帧掉到0）
+    private static final float PEAK_DECAY = 0.15f;
 
-    // 每个频带的近期平均（用于检测瞬态）
-    private float mAvgLow = 1f, mAvgMid = 1f, mAvgHigh = 1f;
+    // 距离衰减
+    private static final float DISTANCE_SIGMA = 0.22f;
 
-    // ===== 参数（已调优） =====
-    private static final float PULSE_ATTACK = 0.85f;   // 脉冲上升（快）
-    private static final float PULSE_RELEASE = 0.50f;  // 脉冲回落（快！关键）
-    private static final float ENERGY_SMOOTH = 0.15f;  // 浪高平滑（慢一点，浪高变化柔和）
-    private static final float AVG_DECAY = 0.93f;      // 平均能量遗忘（快=对变化敏感）
-    private static final float AVG_LEARN = 0.07f;      // 平均能量学习
-    private static final float TRANSIENT_THRESHOLD = 1.25f; // 瞬态触发门槛（低=容易跳）
-    private static final float DISTANCE_SIGMA = 0.35f; // 距离衰减（宽=更多柱参与）
-    private static final float MIN_PULSE_FLOOR = 0.25f; // 全局最低脉冲（保证所有柱都在动！）
-    private static final float VOLUME_WEIGHT = 0.5f;   // 全局音量对脉冲的影响
-
-    // FFT bin 范围
-    private static final int LOW_BIN_START = 2,  LOW_BIN_END = 8;
-    private static final int MID_BIN_START = 9,  MID_BIN_END = 16;
-    private static final int HIGH_BIN_START = 17, HIGH_BIN_END = 24;
+    // FFT bin 范围（覆盖更宽的频率）
+    private static final int LOW_BIN_START = 2;
+    private static final int LOW_BIN_END = 10;
+    private static final int MID_BIN_START = 11;
+    private static final int MID_BIN_END = 20;
+    private static final int HIGH_BIN_START = 21;
+    private static final int HIGH_BIN_END = 32;
 
     // 校准
     private final float[] mEnergyAccum = new float[BAR_COUNT];
     private int mCalibrateCount = 0;
     private long mLastCalibrateTime = 0;
-    private static final int CALIBRATE_FRAMES = 30;
-    private static final long CALIBRATE_INTERVAL_MS = 3000;
+    private static final int CALIBRATE_FRAMES = 45;
+    private static final long CALIBRATE_INTERVAL_MS = 4000;
     // ============================================
 
     public MusicVisualizerView(Context context) { super(context); init(); }
@@ -97,63 +86,53 @@ public class MusicVisualizerView extends View {
         if (fft == null || fft.length < HIGH_BIN_END * 2 + 2) return;
         if (volumeLevel <= 0.001f) { reset(); return; }
 
-        // ---------- 1. 读 FFT 各频带 ----------
-        float rawLow = 0, rawMid = 0, rawHigh = 0;
+        // ---------- 1. 读 FFT 各频带，取最大 bin（不是求和！） ----------
+        float peak_bin_low = 0, peak_bin_mid = 0, peak_bin_high = 0;
 
         for (int i = LOW_BIN_START; i <= LOW_BIN_END; i++) {
             byte rfk = fft[i * 2], ifk = fft[i * 2 + 1];
-            rawLow += (rfk * rfk + ifk * ifk);
+            float mag = (rfk * rfk + ifk * ifk);
+            if (mag > peak_bin_low) peak_bin_low = mag;
         }
         for (int i = MID_BIN_START; i <= MID_BIN_END; i++) {
             byte rfk = fft[i * 2], ifk = fft[i * 2 + 1];
-            rawMid += (rfk * rfk + ifk * ifk);
+            float mag = (rfk * rfk + ifk * ifk);
+            if (mag > peak_bin_mid) peak_bin_mid = mag;
         }
         for (int i = HIGH_BIN_START; i <= HIGH_BIN_END; i++) {
             byte rfk = fft[i * 2], ifk = fft[i * 2 + 1];
-            rawHigh += (rfk * rfk + ifk * ifk);
+            float mag = (rfk * rfk + ifk * ifk);
+            if (mag > peak_bin_high) peak_bin_high = mag;
         }
 
-        // ---------- 2. 更新平均能量 ----------
-        mAvgLow  = mAvgLow  * AVG_DECAY + rawLow  * AVG_LEARN;
-        mAvgMid  = mAvgMid  * AVG_DECAY + rawMid  * AVG_LEARN;
-        mAvgHigh = mAvgHigh * AVG_DECAY + rawHigh * AVG_LEARN;
-        mAvgLow = Math.max(mAvgLow, 1f);
-        mAvgMid = Math.max(mAvgMid, 1f);
-        mAvgHigh = Math.max(mAvgHigh, 1f);
+        // ---------- 2. 峰值检测：新值超过当前peak → 直接跳上去，否则衰减 ----------
+        // 归一化到 0~1
+        float normLow  = Math.min(peak_bin_low  / 20000000f, 1.0f) * volumeLevel;
+        float normMid  = Math.min(peak_bin_mid  / 20000000f, 1.0f) * volumeLevel;
+        float normHigh = Math.min(peak_bin_high / 20000000f, 1.0f) * volumeLevel;
 
-        // ---------- 3. 检测瞬态 → 驱动全局脉冲 ----------
-        float relLow = rawLow / mAvgLow;
-        float relMid = rawMid / mAvgMid;
-        float relHigh = rawHigh / mAvgHigh;
-
-        // 任一频带有瞬态 → 触发全局脉冲
-        float maxRel = Math.max(Math.max(relLow, relMid), relHigh);
-        float transientStrength = 0f;
-        if (maxRel > TRANSIENT_THRESHOLD) {
-            transientStrength = Math.min((maxRel - TRANSIENT_THRESHOLD) / TRANSIENT_THRESHOLD, 1.0f);
-        }
-
-        // 全局脉冲 = 瞬态强度 × 音量权重 + 音量基础
-        float pulseTarget = MIN_PULSE_FLOOR + transientStrength * (1.0f - MIN_PULSE_FLOOR);
-        pulseTarget = pulseTarget * (VOLUME_WEIGHT + (1f - VOLUME_WEIGHT) * volumeLevel);
-
-        // 快起快落
-        if (pulseTarget > mGlobalPulse) {
-            mGlobalPulse += (pulseTarget - mGlobalPulse) * PULSE_ATTACK;
+        if (normLow > mPeakLow) {
+            mPeakLow = normLow;   // 瞬态来了，一帧到位
         } else {
-            mGlobalPulse += (pulseTarget - mGlobalPulse) * PULSE_RELEASE;
+            mPeakLow -= mPeakLow * PEAK_DECAY;  // 快速回落
+            if (mPeakLow < 0.02f) mPeakLow = 0;
         }
 
-        // ---------- 4. 更新三浪能量（决定各浪高度） ----------
-        float normLow  = Math.min(rawLow  / MAX_AMPLITUDE, 1f);
-        float normMid  = Math.min(rawMid  / MAX_AMPLITUDE, 1f);
-        float normHigh = Math.min(rawHigh / MAX_AMPLITUDE, 1f);
+        if (normMid > mPeakMid) {
+            mPeakMid = normMid;
+        } else {
+            mPeakMid -= mPeakMid * PEAK_DECAY;
+            if (mPeakMid < 0.02f) mPeakMid = 0;
+        }
 
-        mEnergyLow  += (normLow  - mEnergyLow)  * ENERGY_SMOOTH;
-        mEnergyMid  += (normMid  - mEnergyMid)  * ENERGY_SMOOTH;
-        mEnergyHigh += (normHigh - mEnergyHigh) * ENERGY_SMOOTH;
+        if (normHigh > mPeakHigh) {
+            mPeakHigh = normHigh;
+        } else {
+            mPeakHigh -= mPeakHigh * PEAK_DECAY;
+            if (mPeakHigh < 0.02f) mPeakHigh = 0;
+        }
 
-        // ---------- 5. 校准 ----------
+        // ---------- 3. 校准 ----------
         for (int i = 0; i < BAR_COUNT; i++) {
             int idx = (i < BAR_COUNT / 3) ? (2 + i * 2) : (2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4);
             if (idx < fft.length - 1) {
@@ -169,44 +148,36 @@ public class MusicVisualizerView extends View {
             mLastCalibrateTime = now;
         }
 
-        // ---------- 6. 每根柱的高度 = 全局脉冲 × 距离加权 ----------
+        // ---------- 4. 每根柱高度 = 三浪峰值 × 距离权重 ----------
         float maxH = getHeight() * 0.95f;
 
         for (int i = 0; i < BAR_COUNT; i++) {
-            float dLow = Math.abs(i - mCenterLow) / (float) BAR_COUNT;
-            float dMid = Math.abs(i - mCenterMid) / (float) BAR_COUNT;
+            float dLow  = Math.abs(i - mCenterLow)  / (float) BAR_COUNT;
+            float dMid  = Math.abs(i - mCenterMid)  / (float) BAR_COUNT;
             float dHigh = Math.abs(i - mCenterHigh) / (float) BAR_COUNT;
 
-            // 每个浪对这根柱的"影响力"
             float wLow  = (float) Math.exp(-(dLow  * dLow)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
             float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
             float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
 
-            // 加权浪高
-            float waveHeight = wLow * mEnergyLow + wMid * mEnergyMid + wHigh * mEnergyHigh;
-            // 归一化权重
-            float totalW = wLow + wMid + wHigh;
-            if (totalW > 0) waveHeight /= totalW;
+            // 每个浪的峰值直接乘权重
+            float barRatio = mPeakLow * wLow + mPeakMid * wMid + mPeakHigh * wHigh;
 
-            // 最终高度 = 全局脉冲 × (基底 + 浪高调制)
-            float barRatio = mGlobalPulse * (0.3f + 0.7f * waveHeight);
-            barRatio = Math.max(barRatio, MIN_PULSE_FLOOR * 0.5f);
+            // 保证所有柱最低有 5% 高度（安静时也能看到）
+            barRatio = Math.max(barRatio, 0.05f);
             barRatio = Math.min(barRatio, 1.0f);
 
-            mTargetHeights[i] = maxH * barRatio;
+            // 直接赋值，不做插值（要的就是硬跳硬收）
+            mBarHeights[i] = maxH * barRatio;
             mAmplitudeLevels[i] = barRatio;
         }
 
-        // ---------- 7. 直接插值 + 绘制（无 ValueAnimator） ----------
-        for (int i = 0; i < BAR_COUNT; i++) {
-            mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.55f;
-        }
         postInvalidate();
     }
 
     private void autoCalibrate() {
         int third = BAR_COUNT / 3;
-        int bestLow = 3, bestMid = 11, bestHigh = 18;
+        int bestLow = 3, bestMid = 10, bestHigh = 17;
         float maxL = 0, maxM = 0, maxH = 0;
         int samples = Math.max(1, mCalibrateCount);
 
@@ -223,13 +194,9 @@ public class MusicVisualizerView extends View {
             if (avg > maxH) { maxH = avg; bestHigh = i; }
         }
 
-        float t = 0.3f;
-        mCenterLow  = (int)(mCenterLow  * (1 - t) + bestLow  * t);
-        mCenterMid  = (int)(mCenterMid  * (1 - t) + bestMid  * t);
-        mCenterHigh = (int)(mCenterHigh * (1 - t) + bestHigh * t);
-        mCenterLow = Math.max(0, Math.min(BAR_COUNT - 1, mCenterLow));
-        mCenterMid = Math.max(0, Math.min(BAR_COUNT - 1, mCenterMid));
-        mCenterHigh = Math.max(0, Math.min(BAR_COUNT - 1, mCenterHigh));
+        mCenterLow  = bestLow;
+        mCenterMid  = bestMid;
+        mCenterHigh = bestHigh;
 
         for (int i = 0; i < BAR_COUNT; i++) mEnergyAccum[i] = 0;
     }
@@ -237,10 +204,10 @@ public class MusicVisualizerView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (mBarHeights == null) return;
         checkColorCycleSwitch();
 
         final int width = getWidth(), height = getHeight();
+        if (width == 0 || height == 0) return;
         final float barWidth = width / (float) BAR_COUNT;
         final float gap = barWidth * 0.2f;
         final float barUnitWidth = barWidth - gap;
@@ -298,10 +265,10 @@ public class MusicVisualizerView extends View {
 
     public void reset() {
         for (int i = 0; i < BAR_COUNT; i++) {
-            mBarHeights[i] = 0; mTargetHeights[i] = 0; mAmplitudeLevels[i] = 0;
+            mBarHeights[i] = 0;
+            mAmplitudeLevels[i] = 0;
         }
-        mGlobalPulse = 0f;
-        mEnergyLow = mEnergyMid = mEnergyHigh = 0f;
+        mPeakLow = mPeakMid = mPeakHigh = 0f;
         postInvalidate();
     }
 
