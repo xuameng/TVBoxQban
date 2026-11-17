@@ -9,7 +9,7 @@ import android.view.View;
 import android.animation.ValueAnimator;
 
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 9222;
+    private static final int MAX_AMPLITUDE = 10222;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 60;
 
@@ -56,7 +56,7 @@ public class MusicVisualizerView extends View {
     private static final float PEAK_DECAY_HIGH = 0.45f;
 
     // σ 缩小到 0.12 → 三个浪尖清晰分离
-    private static final float DISTANCE_SIGMA = 0.10f;
+    private static final float DISTANCE_SIGMA = 0.18f;
 
     // 校准
     private final float[] mEnergyAccum = new float[BAR_COUNT];
@@ -123,9 +123,9 @@ public class MusicVisualizerView extends View {
         float normMid  = Math.min(peakMid  / (float) MAX_AMPLITUDE, 1.0f);
         float normHigh = Math.min(peakHigh / (float) MAX_AMPLITUDE, 1.0f);
 
-        normLow  = normLow  * (0.1f + 0.95f * volumeLevel);  // 0.1 加权 → 音量敏感
-        normMid  = normMid  * (0.1f + 0.95f * volumeLevel);
-        normHigh = normHigh * (0.1f + 0.95f * volumeLevel);
+        normLow  = normLow  * (0.2f + 0.85f * volumeLevel);  // 0.1 加权 → 音量敏感
+        normMid  = normMid  * (0.2f + 0.85f * volumeLevel);
+        normHigh = normHigh * (0.2f + 0.85f * volumeLevel);
 
         // ---------- 3. 峰值检测 ----------
         if (normLow > mPeakLow) mPeakLow = normLow;
@@ -165,26 +165,48 @@ public class MusicVisualizerView extends View {
         float maxH = getHeight() * 0.95f;
         if (maxH <= 0) maxH = 100f;
 
-        for (int i = 0; i < BAR_COUNT; i++) {
-            float dLow  = Math.abs(i - mCenterLow)  / (float) BAR_COUNT;
-            float dMid  = Math.abs(i - mCenterMid)  / (float) BAR_COUNT;
-            float dHigh = Math.abs(i - mCenterHigh) / (float) BAR_COUNT;
+for (int i = 0; i < BAR_COUNT; i++) {
+    float dLow  = Math.abs(i - mCenterLow)  / (float) BAR_COUNT;
+    float dMid  = Math.abs(i - mCenterMid)  / (float) BAR_COUNT;
+    float dHigh = Math.abs(i - mCenterHigh) / (float) BAR_COUNT;
 
-            float wLow  = (float) Math.exp(-(dLow  * dLow)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
-            float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
-            float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
+    float wLow  = (float) Math.exp(-(dLow  * dLow)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
+    float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
+    float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
 
-            float totalWeight = wLow + wMid + wHigh;
-            float combinedRatio;
-            if (totalWeight > 0.001f) {
-                combinedRatio = (mPeakLow * wLow + mPeakMid * wMid + mPeakHigh * wHigh) / totalWeight;
-            } else {
-                combinedRatio = 0f;
-            }
+    float maxWeight = Math.max(Math.max(wLow, wMid), wHigh);
+    float totalWeight = wLow + wMid + wHigh;
 
-            mTargetHeights[i] = Math.min(combinedRatio * maxH, maxH);
-            mAmplitudeLevels[i] = Math.min(combinedRatio * 3.0f, 1.0f);
-        }
+    // ===== 主峰高度 =====
+    float mainRatio;
+    if (maxWeight == wLow) {
+        mainRatio = mPeakLow;
+    } else if (maxWeight == wMid) {
+        mainRatio = mPeakMid;
+    } else {
+        mainRatio = mPeakHigh;
+    }
+
+    // ===== 平滑混合高度 =====
+    float blendRatio = 0f;
+    if (totalWeight > 0.001f) {
+        blendRatio =
+            (mPeakLow * wLow + mPeakMid * wMid + mPeakHigh * wHigh)
+            / totalWeight;
+    }
+
+    // ===== 主峰 75% + 混合 25%（山感 + 平滑）=====
+    float finalRatio = mainRatio * 0.75f + blendRatio * 0.25f;
+
+    // ===== 谷底保护（防止死黑）=====
+    finalRatio = Math.max(finalRatio, 0.08f);
+
+    // ===== 非线性高度拉伸（山感来源）=====
+    float heightRatio = (float) Math.pow(finalRatio, 1.35f);
+
+    mTargetHeights[i] = Math.min(heightRatio * maxH, maxH);
+    mAmplitudeLevels[i] = Math.min(heightRatio * 3.0f, 1.0f);
+}
 
         startAnimation();
     }
