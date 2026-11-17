@@ -9,9 +9,9 @@ import android.view.View;
 import android.animation.ValueAnimator;
 
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 6222;
+    private static final int MAX_AMPLITUDE = 7222;
     private static final int BAR_COUNT = 22;
-    private static final int ANIMATION_DURATION = 50;
+    private static final int ANIMATION_DURATION = 60;
 
     private int mCenterLow = 4;
     private int mCenterMid = 11;
@@ -116,22 +116,14 @@ public class MusicVisualizerView extends View {
         normMid  = normMid  * (0.2f + 0.8f * volumeLevel);
         normHigh = normHigh * (0.2f + 0.8f * volumeLevel);
 
-// ---------- 3. 峰值检测 + 动态衰减 ----------
-if (normLow > mPeakLow) mPeakLow = normLow;
-if (normMid > mPeakMid) mPeakMid = normMid;
-if (normHigh > mPeakHigh) mPeakHigh = normHigh;
+        // ---------- 3. 峰值检测 ----------
+        if (normLow > mPeakLow) mPeakLow = normLow;
+        if (normMid > mPeakMid) mPeakMid = normMid;
+        if (normHigh > mPeakHigh) mPeakHigh = normHigh;
 
-// 动态 decay：peak 越高，衰减越快
-// 基础 0.35（比之前慢一点，保节奏感）
-// peak 接近 1.0 时 decay 可达 0.85（快速回落）
-float decayLow  = 0.35f + 0.50f * mPeakLow;
-float decayMid  = 0.35f + 0.50f * mPeakMid;
-float decayHigh = 0.35f + 0.50f * mPeakHigh;
-
-mPeakLow  -= mPeakLow  * decayLow;
-mPeakMid  -= mPeakMid  * decayMid;
-mPeakHigh -= mPeakHigh * decayHigh;
-
+        mPeakLow -= mPeakLow * PEAK_DECAY_LOW;
+        mPeakMid -= mPeakMid * PEAK_DECAY_MID;
+        mPeakHigh -= mPeakHigh * PEAK_DECAY_HIGH;
         if (mPeakLow < 0.005f) mPeakLow = 0f;
         if (mPeakMid < 0.005f) mPeakMid = 0f;
         if (mPeakHigh < 0.005f) mPeakHigh = 0f;
