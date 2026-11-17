@@ -11,7 +11,7 @@ import android.animation.ValueAnimator;
 public class MusicVisualizerView extends View {
     private static final int MAX_AMPLITUDE = 6222;
     private static final int BAR_COUNT = 22;
-    private static final int ANIMATION_DURATION = 20;
+    private static final int ANIMATION_DURATION = 50;
 
     private int mCenterLow = 4;
     private int mCenterMid = 11;
@@ -150,14 +150,10 @@ public class MusicVisualizerView extends View {
         }
 
         // ---------- 5. 计算目标高度 ----------
-        // ★ 改1：maxH 直接取满高度，不再留 5% 余量
         float maxH = getHeight();
         if (maxH <= 0) maxH = 100f;
 
         final float SHARP = 2.0f;
-        final float HEIGHT_GAMMA = 1.5f;
-        // ★ 改2：FLOOR 改为 0，彻底去掉初始/静音时的底高度
-        final float FLOOR = 0.0f;
 
         for (int i = 0; i < BAR_COUNT; i++) {
             float dLow  = Math.abs(i - mCenterLow)  / (float) BAR_COUNT;
@@ -179,9 +175,12 @@ public class MusicVisualizerView extends View {
                 combinedRatio = (mPeakLow * wLow + mPeakMid * wMid + mPeakHigh * wHigh) / totalWeight;
             }
 
-            combinedRatio = Math.max(combinedRatio, FLOOR);
-
-            float heightRatio = (float) Math.pow(combinedRatio, HEIGHT_GAMMA);
+            // ★ 关键改动：用 sqrt 代替 pow 1.5
+            // sqrt(x) 曲线：小值更低（谷更深），大值接近 x（浪尖能到顶）
+            // 0.1 → 0.316（谷底被压低）
+            // 0.5 → 0.707
+            // 1.0 → 1.0（满值能到顶！）
+            float heightRatio = (float) Math.sqrt(combinedRatio);
 
             mTargetHeights[i] = Math.min(heightRatio * maxH, maxH);
             mAmplitudeLevels[i] = Math.min(heightRatio * 3.0f, 1.0f);
@@ -251,7 +250,6 @@ public class MusicVisualizerView extends View {
         for (int i = 0; i < BAR_COUNT; i++) {
             float left = i * barWidth + gap / 2;
             float right = left + barUnitWidth;
-            // ★ 改3：上限从 height * 0.9f 改为 height，满高可达顶
             float barHeight = Math.min(mBarHeights[i], height);
             float top = height - barHeight;
 
