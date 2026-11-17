@@ -18,7 +18,7 @@ xuameng
 6，新增音柱分段效果
 */
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 12222;  //xuameng判断音量大小
+    private static final int MAX_AMPLITUDE = 9222;  //xuameng判断音量大小
     private static final int BAR_COUNT = 22;   //xuameng 音柱数量
     private static final int ANIMATION_DURATION = 80; //xuameng 音柱动画时长
     // 改为非静态变量实现动态刷新
@@ -56,13 +56,25 @@ public class MusicVisualizerView extends View {
     private final float[] mTargetHeights = new float[BAR_COUNT];
     private final float[] mAmplitudeLevels = new float[BAR_COUNT]; // 存储各柱振幅强度
 
-// 替换掉之前的平滑变量，用这组：
-private float[] mBarEnergyHistory = new float[BAR_COUNT];  // 每个柱的能量历史（用于瞬态检测）
-private float mGlobalEnergy = 0f;
-private int mCurrentDominantBar = BAR_COUNT / 2;
-private static final float ENERGY_ATTACK = 0.6f;   // 上升速度（大=跟得快）
-private static final float ENERGY_RELEASE = 0.15f; // 回落速度（小=落得快=有"回"的感觉）
-private static final float HISTORY_DECAY = 0.92f;  // 历史能量衰减
+// ============ 三频带主音方案 ============
+// 三个频带的中心柱索引（固定）
+private static final int BAND_LOW_CENTER = 3;      // 低频中心
+private static final int BAND_MID_CENTER = 11;     // 中频中心（主唱）
+private static final int BAND_HIGH_CENTER = 18;    // 高频中心
+
+// 三个频带的能量（快起快落）
+private float mEnergyLow = 0f;
+private float mEnergyMid = 0f;
+private float mEnergyHigh = 0f;
+
+// 每个柱的当前能量（用于动画）
+private float[] mBarEnergies = new float[BAR_COUNT];
+
+// 快速响应参数
+private static final float ATTACK = 0.7f;    // 上升（大=瞬间跳起）
+private static final float RELEASE = 0.25f;  // 回落（比之前快，有"回弹"感）
+// =========================================
+
     // 动画控制器
     private ValueAnimator mAnimator;
     public MusicVisualizerView(Context context) {
@@ -102,11 +114,8 @@ public void updateVisualizer(byte[] fft, float volumeLevel) {
         return;
     }
 
-    // ---------- 第一步：计算每个频段的相对能量（而非绝对能量） ----------
-    float[] barMagnitudes = new float[BAR_COUNT];
-    float maxRelativeEnergy = 0f;
-    int transientBar = 0;
-
+    // ---------- 第一步：计算每个柱的频谱能量 ----------
+    float[] magnitudes = new float[BAR_COUNT];
     for (int i = 0; i < BAR_COUNT; i++) {
         int barIndex;
         if (i < BAR_COUNT / 3) {
@@ -118,73 +127,85 @@ public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (barIndex < fft.length - 1) {
             byte rfk = fft[barIndex];
             byte ifk = fft[barIndex + 1];
-            float magnitude = (rfk * rfk + ifk * ifk);
-
-            // 相对能量 = 当前能量 / 历史平均能量
-            // 这样低频不再永远最高，而是"突然变响的频率"最高
-            float historyAvg = mBarEnergyHistory[i] + 1f; // +1防止除零
-            float relativeEnergy = magnitude / historyAvg;
-
-            barMagnitudes[i] = relativeEnergy;
-
-            // 更新历史（快速衰减，让新峰值能凸显）
-            mBarEnergyHistory[i] = mBarEnergyHistory[i] * HISTORY_DECAY + magnitude * (1f - HISTORY_DECAY);
-
-            if (relativeEnergy > maxRelativeEnergy) {
-                maxRelativeEnergy = relativeEnergy;
-                transientBar = i;
-            }
+            magnitudes[i] = (rfk * rfk + ifk * ifk);
         }
     }
 
-    // ---------- 第二步：主频 = 瞬态最强的柱 ----------
-    mCurrentDominantBar = transientBar;
+    // ---------- 第二步：计算三个频带的能量（取带内最大值） ----------
+    float lowEnergy = 0, midEnergy = 0, highEnergy = 0;
 
-    // ---------- 第三步：全局能量（用瞬态柱的绝对能量，轻平滑） ----------
-    int dominantIdx = transientBar;
-    int rawIdx = 2 + (dominantIdx < BAR_COUNT / 3
-            ? dominantIdx * 2
-            : (BAR_COUNT / 3) * 2 + (dominantIdx - BAR_COUNT / 3) * 4);
-
-    float dominantMagnitude = 0;
-    if (rawIdx < fft.length - 1) {
-        byte rfk = fft[rawIdx];
-        byte ifk = fft[rawIdx + 1];
-        dominantMagnitude = (rfk * rfk + ifk * ifk);
+    // 低频带：柱 2~5
+    for (int i = 2; i <= 5 && i < BAR_COUNT; i++) {
+        if (magnitudes[i] > lowEnergy) lowEnergy = magnitudes[i];
     }
 
-    float rawGlobal = Math.min(dominantMagnitude / MAX_AMPLITUDE, 1.0f) * volumeLevel;
+    // 中频带：柱 9~13
+    for (int i = 9; i <= 13 && i < BAR_COUNT; i++) {
+        if (magnitudes[i] > midEnergy) midEnergy = magnitudes[i];
+    }
 
-    // 快速攻击 + 快速回落（关键！）
-    if (rawGlobal > mGlobalEnergy) {
-        mGlobalEnergy += (rawGlobal - mGlobalEnergy) * ENERGY_ATTACK;  // 快速跟上
+    // 高频带：柱 17~20
+    for (int i = 17; i <= 20 && i < BAR_COUNT; i++) {
+        if (magnitudes[i] > highEnergy) highEnergy = magnitudes[i];
+    }
+
+    // 归一化到 0~1
+    float lowNorm = Math.min(lowEnergy / MAX_AMPLITUDE, 1.0f) * volumeLevel;
+    float midNorm = Math.min(midEnergy / MAX_AMPLITUDE, 1.0f) * volumeLevel;
+    float highNorm = Math.min(highEnergy / MAX_AMPLITUDE, 1.0f) * volumeLevel;
+
+    // ---------- 第三步：快起快落（关键！"跳-回-跳"的核心） ----------
+    // 上升快
+    if (lowNorm > mEnergyLow) {
+        mEnergyLow += (lowNorm - mEnergyLow) * ATTACK;
     } else {
-        mGlobalEnergy += (rawGlobal - mGlobalEnergy) * ENERGY_RELEASE;  // 快速回落 → "跳回"感
+        mEnergyLow += (lowNorm - mEnergyLow) * RELEASE; // 快速回落
+    }
+
+    if (midNorm > mEnergyMid) {
+        mEnergyMid += (midNorm - mEnergyMid) * ATTACK;
+    } else {
+        mEnergyMid += (midNorm - mEnergyMid) * RELEASE;
+    }
+
+    if (highNorm > mEnergyHigh) {
+        mEnergyHigh += (highNorm - mEnergyHigh) * ATTACK;
+    } else {
+        mEnergyHigh += (highNorm - mEnergyHigh) * RELEASE;
     }
 
     // ---------- 第四步：计算每个柱的目标高度 ----------
-    float globalScale = getHeight() * 0.95f * mGlobalEnergy;
+    float maxHeight = getHeight() * 0.95f;
 
     for (int i = 0; i < BAR_COUNT; i++) {
-        // 距离衰减（用瞬态主频，更陡）
-        float distance = Math.abs(i - mCurrentDominantBar);
-        float normalizedDistance = distance / (float) BAR_COUNT;
+        // 计算当前柱到三个频带中心的距离因子
+        float distLow = Math.abs(i - BAND_LOW_CENTER);
+        float distMid = Math.abs(i - BAND_MID_CENTER);
+        float distHigh = Math.abs(i - BAND_HIGH_CENTER);
 
-        // 更陡的高斯（sigma小 = 集中 = 只有靠近主频的柱才高）
-        float sigma = 0.22f;
-        float distanceFactor = (float) Math.exp(-(normalizedDistance * normalizedDistance)
-                / (2 * sigma * sigma));
+        // 距离衰减（更陡，让每个频带只影响附近的柱）
+        float sigma = 0.18f; // 更集中
+        float factorLow = (float) Math.exp(-(distLow * distLow) / (2 * sigma * sigma));
+        float factorMid = (float) Math.exp(-(distMid * distMid) / (2 * sigma * sigma));
+        float factorHigh = (float) Math.exp(-(distHigh * distHigh) / (2 * sigma * sigma));
 
-        // 相对能量加权（让瞬态突出的柱额外增高）
-        float relativeBoost = Math.min(barMagnitudes[i] / (maxRelativeEnergy + 0.001f), 1.5f);
+        // 加权合成：每个频带贡献自己的能量 × 距离因子
+        float barEnergy = mEnergyLow * factorLow
+                        + mEnergyMid * factorMid
+                        + mEnergyHigh * factorHigh;
 
-        mTargetHeights[i] = globalScale * distanceFactor * (0.6f + 0.4f * relativeBoost);
-        mTargetHeights[i] = Math.min(mTargetHeights[i], getHeight() * 0.95f);
+        // 归一化到 0~1
+        barEnergy = Math.min(barEnergy, 1.0f);
 
-        mAmplitudeLevels[i] = Math.min(
-                mTargetHeights[i] / (getHeight() * 0.95f),
-                1.0f
-        );
+        // 存储用于动画
+        mBarEnergies[i] = barEnergy;
+
+        // 目标高度
+        mTargetHeights[i] = maxHeight * barEnergy;
+        mTargetHeights[i] = Math.min(mTargetHeights[i], maxHeight);
+
+        // 振幅等级（给颜色用）
+        mAmplitudeLevels[i] = barEnergy;
     }
 
     startAnimation();
@@ -194,12 +215,11 @@ private void startAnimation() {
         mAnimator.cancel();
     }
     mAnimator = ValueAnimator.ofFloat(0f, 1f);
-    mAnimator.setDuration(40); // 原来80，减半 → 更干脆
+    mAnimator.setDuration(35); // 更快！鼓点级响应
     mAnimator.addUpdateListener(animation -> {
-        float fraction = animation.getAnimatedFraction();
-        // 加大插值系数 → 更快到达目标
         for (int i = 0; i < BAR_COUNT; i++) {
-            mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.45f; // 原来用fraction，现在用固定大系数
+            // 直接用较大系数插值 → 干脆利落
+            mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.55f;
         }
         postInvalidate();
     });
@@ -284,14 +304,18 @@ private void startAnimation() {
         int blue = (int)(Color.blue(startColor) + (Color.blue(endColor) - Color.blue(startColor)) * ratio);
         return Color.argb(alpha, red, green, blue);
     }
-    public void reset() {
-        for(int i = 0; i < BAR_COUNT; i++) {
-            mBarHeights[i] = 0;
-            mTargetHeights[i] = 0;
-            mAmplitudeLevels[i] = 0;
-        }
-        postInvalidate();
+public void reset() {
+    for (int i = 0; i < BAR_COUNT; i++) {
+        mBarHeights[i] = 0;
+        mTargetHeights[i] = 0;
+        mAmplitudeLevels[i] = 0;
+        mBarEnergies[i] = 0;
     }
+    mEnergyLow = 0;
+    mEnergyMid = 0;
+    mEnergyHigh = 0;
+    postInvalidate();
+}
     public void release() {
         if(mAnimator != null) {
             mAnimator.cancel();
