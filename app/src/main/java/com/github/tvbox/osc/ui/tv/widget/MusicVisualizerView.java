@@ -154,13 +154,15 @@ public class MusicVisualizerView extends View {
         if (maxH <= 0) maxH = 100f;
 
         final float SHARP = 2.0f;
+        final float GAIN = 2.2f;        // 抬升增益，保证满值 clamp 到 1.0
+        final float CURVE = 0.4f;       // 曲线陡峭度，越小低值越矮、差距越大
 
         for (int i = 0; i < BAR_COUNT; i++) {
             float dLow  = Math.abs(i - mCenterLow)  / (float) BAR_COUNT;
             float dMid  = Math.abs(i - mCenterMid)  / (float) BAR_COUNT;
             float dHigh = Math.abs(i - mCenterHigh) / (float) BAR_COUNT;
 
-            float wLow  = (float) Math.exp(-(dLow  * dLow)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
+            float wLow  = (float) Math.exp(-(dLow  * dLow)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGEMA));
             float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
             float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
 
@@ -175,19 +177,9 @@ public class MusicVisualizerView extends View {
                 combinedRatio = (mPeakLow * wLow + mPeakMid * wMid + mPeakHigh * wHigh) / totalWeight;
             }
 
-            // ★ 关键改动：用 sqrt 代替 pow 1.5
-            // sqrt(x) 曲线：小值更低（谷更深），大值接近 x（浪尖能到顶）
-            // 0.1 → 0.316（谷底被压低）
-            // 0.5 → 0.707
-            // 1.0 → 1.0（满值能到顶！）
-// ★ 加大高低 bar 的差距（≥2 倍视觉差）
-final float EXPAND_POWER = 2.2f;
-combinedRatio = (float) Math.pow(combinedRatio, EXPAND_POWER);
-
-// ★ 拉开高低柱差距，同时保证最高柱能到顶
-            float boosted = combinedRatio * 1.6f;  // 补偿，防止整体变矮
-            boosted = Math.min(boosted, 1.0f);
-            float heightRatio = (float) Math.pow(boosted, 0.55f);
+            // ★ 核心：单段曲线，波峰到顶 + 波谷贴底 + 差距拉大
+            float shaped = Math.min(combinedRatio * GAIN, 1.0f);
+            float heightRatio = (float) Math.pow(shaped, CURVE);
 
             mTargetHeights[i] = Math.min(heightRatio * maxH, maxH);
             mAmplitudeLevels[i] = Math.min(heightRatio * 3.0f, 1.0f);
