@@ -11,7 +11,7 @@ import android.animation.ValueAnimator;
 public class MusicVisualizerView extends View {
     private static final int MAX_AMPLITUDE = 6222;
     private static final int BAR_COUNT = 22;
-    private static final int ANIMATION_DURATION = 50;
+    private static final int ANIMATION_DURATION = 20;
 
     private int mCenterLow = 4;
     private int mCenterMid = 11;
