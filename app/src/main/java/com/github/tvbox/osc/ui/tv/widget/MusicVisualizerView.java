@@ -132,9 +132,9 @@ mPeakLow  -= mPeakLow  * decayLow;
 mPeakMid  -= mPeakMid  * decayMid;
 mPeakHigh -= mPeakHigh * decayHigh;
 
-if (mPeakLow < 0.02f) mPeakLow = 0.02f;
-if (mPeakMid < 0.02f) mPeakMid = 0.02f;
-if (mPeakHigh < 0.02f) mPeakHigh = 0.02f;
+        if (mPeakLow < 0.005f) mPeakLow = 0f;
+        if (mPeakMid < 0.005f) mPeakMid = 0f;
+        if (mPeakHigh < 0.005f) mPeakHigh = 0f;
 
         // ---------- 4. 校准 ----------
         for (int i = 0; i < BAR_COUNT; i++) {
