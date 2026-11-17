@@ -9,12 +9,12 @@ import android.view.View;
 import android.animation.ValueAnimator;
 
 public class MusicVisualizerView extends View {
-    // ===== 改回老代码的值 =====
+    // ===== 老代码原值 =====
     private static final int MAX_AMPLITUDE = 12222;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 80;
 
-    // ===== 三浪中心（初始值，会自动校准）=====
+    // ===== 三浪中心 =====
     private int mCenterLow = 3;
     private int mCenterMid = 10;
     private int mCenterHigh = 17;
@@ -51,7 +51,6 @@ public class MusicVisualizerView extends View {
     private float mPeakMid = 0.02f;
     private float mPeakHigh = 0.02f;
 
-    // 衰减速度：低频慢（鼓点持续）、高频快（镲片短）
     private static final float PEAK_DECAY_LOW = 0.06f;
     private static final float PEAK_DECAY_MID = 0.10f;
     private static final float PEAK_DECAY_HIGH = 0.14f;
@@ -65,7 +64,6 @@ public class MusicVisualizerView extends View {
     private static final long CALIBRATE_INTERVAL_MS = 4000;
 
     private ValueAnimator mAnimator;
-    private boolean mAnimationRunning = false;
 
     // ================================================================
 
@@ -118,12 +116,11 @@ public class MusicVisualizerView extends View {
             if (mag > peakHigh) peakHigh = mag;
         }
 
-        // ---------- 2. 归一化（用 12222，和老代码一致） ----------
+        // ---------- 2. 归一化 ----------
         float normLow  = Math.min(peakLow  / (float) MAX_AMPLITUDE, 1.0f);
         float normMid  = Math.min(peakMid  / (float) MAX_AMPLITUDE, 1.0f);
         float normHigh = Math.min(peakHigh / (float) MAX_AMPLITUDE, 1.0f);
 
-        // volumeLevel 温和放大（不是乘，是加权混合）
         normLow  = normLow  * (0.3f + 0.7f * volumeLevel);
         normMid  = normMid  * (0.3f + 0.7f * volumeLevel);
         normHigh = normHigh * (0.3f + 0.7f * volumeLevel);
@@ -161,7 +158,7 @@ public class MusicVisualizerView extends View {
             mLastCalibrateTime = now;
         }
 
-        // ---------- 5. 计算目标高度（关键修复：去掉递增 weight） ----------
+        // ---------- 5. 计算目标高度 ----------
         float maxH = getHeight() * 0.95f;
         if (maxH <= 0) maxH = 100f;
 
@@ -174,7 +171,6 @@ public class MusicVisualizerView extends View {
             float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
             float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
 
-            // 平滑权重：每根柱只受最近的浪主导
             float totalWeight = wLow + wMid + wHigh;
             float combinedRatio;
             if (totalWeight > 0.001f) {
@@ -183,10 +179,7 @@ public class MusicVisualizerView extends View {
                 combinedRatio = 0f;
             }
 
-            // ===== 高度映射：不乘递增 weight，直接线性映射 =====
             mTargetHeights[i] = Math.min(combinedRatio * maxH, maxH);
-
-            // ===== 颜色幅度：放大到 0~1 全范围 =====
             mAmplitudeLevels[i] = Math.min(combinedRatio * 3.0f, 1.0f);
         }
 
@@ -220,36 +213,27 @@ public class MusicVisualizerView extends View {
     }
 
     // ================================================================
-    // 动画（平滑插值，不 cancel 重来）
+    // 动画（和老代码一样：每次都 cancel + 新建 + start，不用 mAnimationRunning）
     // ================================================================
     private void startAnimation() {
-        if (mAnimationRunning) return; // 已有动画在跑就不新建
         if (mAnimator != null) {
             mAnimator.cancel();
         }
-        mAnimationRunning = true;
         mAnimator = ValueAnimator.ofFloat(0f, 1f);
         mAnimator.setDuration(ANIMATION_DURATION);
         mAnimator.addUpdateListener(animation -> {
             float fraction = animation.getAnimatedFraction();
-            // 平滑插值：用固定系数而非 fraction
-            float lerpFactor = 0.35f;
+            float lerpFactor = 0.35f; // 平滑插值系数
             for (int i = 0; i < BAR_COUNT; i++) {
                 mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * lerpFactor;
             }
             postInvalidate();
         });
-        mAnimator.addListener(new android.animation.AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(android.animation.Animator animation) {
-                mAnimationRunning = false;
-            }
-        });
         mAnimator.start();
     }
 
     // ================================================================
-    // 绘制（和老代码一致）
+    // 绘制
     // ================================================================
     @Override
     protected void onDraw(Canvas canvas) {
@@ -335,7 +319,6 @@ public class MusicVisualizerView extends View {
     }
 
     public void release() {
-        mAnimationRunning = false;
         if (mAnimator != null) {
             mAnimator.cancel();
             mAnimator.removeAllUpdateListeners();
