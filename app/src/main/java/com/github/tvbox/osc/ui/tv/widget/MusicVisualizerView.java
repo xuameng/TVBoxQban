@@ -4,46 +4,70 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
-
-import androidx.annotation.RequiresApi;
+import android.animation.ValueAnimator;
 
 public class MusicVisualizerView extends View {
-    private static final String TAG = "xuameng_MusicVis";
+    // ===== 改回老代码的值 =====
+    private static final int MAX_AMPLITUDE = 12222;
     private static final int BAR_COUNT = 22;
-    // 老代码里的最大振幅常量，保持和你原有逻辑一致
-    private static final float MAX_AMPLITUDE = 10000f;
+    private static final int ANIMATION_DURATION = 80;
 
-    // 颜色配置
+    // ===== 三浪中心（初始值，会自动校准）=====
+    private int mCenterLow = 3;
+    private int mCenterMid = 10;
+    private int mCenterHigh = 17;
+
+    // ===== 颜色 =====
     private int[][] colorSchemes = new int[3][3];
     private boolean mShowStripes = true;
     private int mSegmentCount = 20;
-    private float mSegmentSpacingFixed;
-    private float mLastBaseHue;
-    private static final long COLOR_CYCLE_DURATION = 20 * 1000;
+    private float mSegmentSpacingFixed = 2.5f;
+
+    private void refreshColorSchemes() {
+        for (int i = 0; i < 3; i++) {
+            float baseHue = (float) (Math.random() * 360);
+            colorSchemes[i] = new int[]{
+                    Color.HSVToColor(new float[]{baseHue, 1f, 1f}),
+                    Color.HSVToColor(new float[]{(baseHue + 120) % 360, 1f, 1f}),
+                    Color.HSVToColor(new float[]{(baseHue + 240) % 360, 1f, 1f})
+            };
+        }
+        postInvalidate();
+    }
+
+    private static final long COLOR_CYCLE_DURATION = (long) (0.1 * 60 * 1000);
     private int currentSchemeIndex = 0;
     private long lastSwitchTime = 0;
 
     private final Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final float[] mBarHeights = new float[BAR_COUNT];
-    private final float[] mAmplitudeLevels = new float[BAR_COUNT];
-    // 新增目标高度数组，完全对齐你老代码的计算逻辑
     private final float[] mTargetHeights = new float[BAR_COUNT];
+    private final float[] mAmplitudeLevels = new float[BAR_COUNT];
 
-    // ============ 核心优化参数，直接叠加到老逻辑上 ============
-    private static final float PEAK_DECAY = 0.08f;
-    private static final float HEIGHT_LERP_FACTOR = 0.65f;
-    private static final float DYNAMIC_GAIN = 1.6f;
-    // =========================================================
+    // ===== 三浪峰值 =====
+    private float mPeakLow = 0.02f;
+    private float mPeakMid = 0.02f;
+    private float mPeakHigh = 0.02f;
 
-    // 性能与状态控制
-    private long mLastDrawTime = 0;
-    private static final long MIN_DRAW_INTERVAL = 33;
-    private boolean mIsPendingRedraw = false;
-    private boolean mIsPaused = false;
-    private float mBarWidth, mGap, mBarUnitWidth, mCornerRadius;
+    // 衰减速度：低频慢（鼓点持续）、高频快（镲片短）
+    private static final float PEAK_DECAY_LOW = 0.06f;
+    private static final float PEAK_DECAY_MID = 0.10f;
+    private static final float PEAK_DECAY_HIGH = 0.14f;
+    private static final float DISTANCE_SIGMA = 0.30f;
+
+    // 校准
+    private final float[] mEnergyAccum = new float[BAR_COUNT];
+    private int mCalibrateCount = 0;
+    private long mLastCalibrateTime = 0;
+    private static final int CALIBRATE_FRAMES = 45;
+    private static final long CALIBRATE_INTERVAL_MS = 4000;
+
+    private ValueAnimator mAnimator;
+    private boolean mAnimationRunning = false;
+
+    // ================================================================
 
     public MusicVisualizerView(Context context) { super(context); init(); }
     public MusicVisualizerView(Context context, AttributeSet attrs) { super(context, attrs); init(); }
@@ -51,180 +75,225 @@ public class MusicVisualizerView extends View {
 
     private void init() {
         mBarPaint.setStyle(Paint.Style.FILL);
-        mSegmentSpacingFixed = dp2px(2.5f);
-        mLastBaseHue = (float) (Math.random() * 360);
         refreshColorSchemes();
-        
-        // 初始化默认最小高度，避免启动时完全空白
-        for (int i = 0; i < BAR_COUNT; i++) {
-            mBarHeights[i] = dp2px(10);
-            mTargetHeights[i] = dp2px(10);
-            mAmplitudeLevels[i] = 0.1f;
-        }
     }
 
-    private float dp2px(float dp) {
-        return dp * getResources().getDisplayMetrics().density + 0.5f;
-    }
+    public void setShowStripes(boolean show) { mShowStripes = show; postInvalidate(); }
+    public void setSegmentCount(int count) { mSegmentCount = Math.max(1, count); postInvalidate(); }
+    public void setSegmentSpacingFixed(float spacing) { mSegmentSpacingFixed = Math.max(0f, spacing); postInvalidate(); }
 
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-        if (w > 0 && h > 0) {
-            mBarWidth = w / (float) BAR_COUNT;
-            mGap = mBarWidth * 0.2f;
-            mBarUnitWidth = mBarWidth - mGap;
-            mCornerRadius = mBarUnitWidth * 0.25f;
-        }
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        mIsPaused = false;
-        postInvalidateOnAnimation();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        release();
-    }
-
-    @Override
-    protected void onWindowVisibilityChanged(int visibility) {
-        super.onWindowVisibilityChanged(visibility);
-        mIsPaused = visibility != VISIBLE;
-        if (!mIsPaused) postInvalidateOnAnimation();
-    }
-
-    public void setShowStripes(boolean show) { mShowStripes = show; postInvalidateOnAnimation(); }
-    public void setSegmentCount(int count) { mSegmentCount = Math.max(1, count); postInvalidateOnAnimation(); }
-    public void setSegmentSpacingFixed(float spacingDp) { 
-        mSegmentSpacingFixed = dp2px(Math.max(0f, spacingDp)); 
-        postInvalidateOnAnimation(); 
-    }
-
-    public void setPaused(boolean paused) {
-        mIsPaused = paused;
-        if (!paused) postInvalidateOnAnimation();
-    }
-
-    // ============ 100% 兼容你老代码的updateVisualizer逻辑，完全保留你原来的采样策略 ============
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    // ================================================================
+    // 核心
+    // ================================================================
     public void updateVisualizer(byte[] fft, float volumeLevel) {
-        if (mIsPaused) return;
-        
-        // 完全沿用你老代码的边界判断，不做任何修改
-        if(fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-        if(volumeLevel == 0f || volumeLevel == 0.0f || volumeLevel == 0.00f) {
+        if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+
+        if (volumeLevel <= 0.001f) {
             reset();
+            return;
         }
 
-        // 完全照搬你老代码的逐根柱子采样逻辑 + 三段式频率加权
-        for(int i = 0; i < BAR_COUNT; i++) {
+        // ---------- 1. 读三频带峰值 ----------
+        float peakLow = 0, peakMid = 0, peakHigh = 0;
+
+        for (int i = 2; i <= 10; i++) {
+            int idx = i * 2;
+            if (idx + 1 >= fft.length) break;
+            byte rfk = fft[idx], ifk = fft[idx + 1];
+            float mag = (rfk * rfk + ifk * ifk);
+            if (mag > peakLow) peakLow = mag;
+        }
+        for (int i = 11; i <= 20; i++) {
+            int idx = i * 2;
+            if (idx + 1 >= fft.length) break;
+            byte rfk = fft[idx], ifk = fft[idx + 1];
+            float mag = (rfk * rfk + ifk * ifk);
+            if (mag > peakMid) peakMid = mag;
+        }
+        for (int i = 21; i <= 32; i++) {
+            int idx = i * 2;
+            if (idx + 1 >= fft.length) break;
+            byte rfk = fft[idx], ifk = fft[idx + 1];
+            float mag = (rfk * rfk + ifk * ifk);
+            if (mag > peakHigh) peakHigh = mag;
+        }
+
+        // ---------- 2. 归一化（用 12222，和老代码一致） ----------
+        float normLow  = Math.min(peakLow  / (float) MAX_AMPLITUDE, 1.0f);
+        float normMid  = Math.min(peakMid  / (float) MAX_AMPLITUDE, 1.0f);
+        float normHigh = Math.min(peakHigh / (float) MAX_AMPLITUDE, 1.0f);
+
+        // volumeLevel 温和放大（不是乘，是加权混合）
+        normLow  = normLow  * (0.3f + 0.7f * volumeLevel);
+        normMid  = normMid  * (0.3f + 0.7f * volumeLevel);
+        normHigh = normHigh * (0.3f + 0.7f * volumeLevel);
+
+        // ---------- 3. 峰值检测 ----------
+        if (normLow > mPeakLow) mPeakLow = normLow;
+        if (normMid > mPeakMid) mPeakMid = normMid;
+        if (normHigh > mPeakHigh) mPeakHigh = normHigh;
+
+        mPeakLow -= mPeakLow * PEAK_DECAY_LOW;
+        mPeakMid -= mPeakMid * PEAK_DECAY_MID;
+        mPeakHigh -= mPeakHigh * PEAK_DECAY_HIGH;
+        if (mPeakLow < 0.02f) mPeakLow = 0.02f;
+        if (mPeakMid < 0.02f) mPeakMid = 0.02f;
+        if (mPeakHigh < 0.02f) mPeakHigh = 0.02f;
+
+        // ---------- 4. 校准 ----------
+        for (int i = 0; i < BAR_COUNT; i++) {
             int barIndex;
-            if(i < BAR_COUNT / 3) {
-                // 低频段密集采样（每2点取1）
+            if (i < BAR_COUNT / 3) {
                 barIndex = 2 + i * 2;
             } else {
-                // 中高频段间隔采样（每4点取1）
                 barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
             }
-            if(barIndex < fft.length - 1) {
-                byte rfk = fft[barIndex];
-                byte ifk = fft[barIndex + 1];
-                // 这里修复老代码的潜在bug：byte是有符号类型，直接相乘会溢出负数，之前你没发现是因为刚好没触发极端值
-                int rfkUnsigned = rfk & 0xFF;
-                int ifkUnsigned = ifk & 0xFF;
-                float magnitude = (rfkUnsigned * rfkUnsigned + ifkUnsigned * ifkUnsigned);
-
-                // 完全保留你老代码的三段式加权策略
-                float weight;
-                if(i < BAR_COUNT / 4) {
-                    weight = 1.0f;
-                } else if(i < BAR_COUNT / 2) {
-                    weight = 2.5f;
-                } else {
-                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
-                    weight = 3.5f * freqFactor;
-                }
-
-                // 叠加动态增益DYNAMIC_GAIN，直接解决老代码幅度太小的问题
-                float rawTargetH = (magnitude * getHeight() * weight * volumeLevel * DYNAMIC_GAIN) / MAX_AMPLITUDE;
-                mTargetHeights[i] = Math.min(rawTargetH, getHeight() * 0.95f);
-                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
+            if (barIndex < fft.length - 1) {
+                byte rfk = fft[barIndex], ifk = fft[barIndex + 1];
+                mEnergyAccum[i] += (rfk * rfk + ifk * ifk);
             }
         }
-
-        // ============ 新增平滑插值逻辑，解决老代码音柱跳动生硬、乱跳的问题 ============
-        for (int i = 0; i < BAR_COUNT; i++) {
-            // 用你优化过的插值系数，响应速度翻倍，跟手不延迟
-            mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * HEIGHT_LERP_FACTOR;
-            // 保底最小高度，防止柱子完全消失
-            if (mBarHeights[i] < dp2px(5f)) {
-                mBarHeights[i] = dp2px(5f);
-            }
-        }
-
-        // 帧率控制，避免UI消息队列堆积，彻底解决乱跳
+        mCalibrateCount++;
         long now = System.currentTimeMillis();
-        if (!mIsPendingRedraw && now - mLastDrawTime >= MIN_DRAW_INTERVAL) {
-            mIsPendingRedraw = true;
-            postInvalidateOnAnimation();
+        if (mCalibrateCount >= CALIBRATE_FRAMES && now - mLastCalibrateTime > CALIBRATE_INTERVAL_MS) {
+            autoCalibrate();
+            mCalibrateCount = 0;
+            mLastCalibrateTime = now;
         }
+
+        // ---------- 5. 计算目标高度（关键修复：去掉递增 weight） ----------
+        float maxH = getHeight() * 0.95f;
+        if (maxH <= 0) maxH = 100f;
+
+        for (int i = 0; i < BAR_COUNT; i++) {
+            float dLow  = Math.abs(i - mCenterLow)  / (float) BAR_COUNT;
+            float dMid  = Math.abs(i - mCenterMid)  / (float) BAR_COUNT;
+            float dHigh = Math.abs(i - mCenterHigh) / (float) BAR_COUNT;
+
+            float wLow  = (float) Math.exp(-(dLow  * dLow)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
+            float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
+            float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
+
+            // 平滑权重：每根柱只受最近的浪主导
+            float totalWeight = wLow + wMid + wHigh;
+            float combinedRatio;
+            if (totalWeight > 0.001f) {
+                combinedRatio = (mPeakLow * wLow + mPeakMid * wMid + mPeakHigh * wHigh) / totalWeight;
+            } else {
+                combinedRatio = 0f;
+            }
+
+            // ===== 高度映射：不乘递增 weight，直接线性映射 =====
+            mTargetHeights[i] = Math.min(combinedRatio * maxH, maxH);
+
+            // ===== 颜色幅度：放大到 0~1 全范围 =====
+            mAmplitudeLevels[i] = Math.min(combinedRatio * 3.0f, 1.0f);
+        }
+
+        startAnimation();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void autoCalibrate() {
+        int third = BAR_COUNT / 3;
+        int bestLow = 3, bestMid = 10, bestHigh = 17;
+        float maxL = 0, maxM = 0, maxH = 0;
+        int samples = Math.max(1, mCalibrateCount);
+
+        for (int i = 0; i < third; i++) {
+            float avg = mEnergyAccum[i] / samples;
+            if (avg > maxL) { maxL = avg; bestLow = i; }
+        }
+        for (int i = third; i < third * 2; i++) {
+            float avg = mEnergyAccum[i] / samples;
+            if (avg > maxM) { maxM = avg; bestMid = i; }
+        }
+        for (int i = third * 2; i < BAR_COUNT; i++) {
+            float avg = mEnergyAccum[i] / samples;
+            if (avg > maxH) { maxH = avg; bestHigh = i; }
+        }
+
+        mCenterLow  = bestLow;
+        mCenterMid  = bestMid;
+        mCenterHigh = bestHigh;
+
+        for (int i = 0; i < BAR_COUNT; i++) mEnergyAccum[i] = 0;
+    }
+
+    // ================================================================
+    // 动画（平滑插值，不 cancel 重来）
+    // ================================================================
+    private void startAnimation() {
+        if (mAnimationRunning) return; // 已有动画在跑就不新建
+        if (mAnimator != null) {
+            mAnimator.cancel();
+        }
+        mAnimationRunning = true;
+        mAnimator = ValueAnimator.ofFloat(0f, 1f);
+        mAnimator.setDuration(ANIMATION_DURATION);
+        mAnimator.addUpdateListener(animation -> {
+            float fraction = animation.getAnimatedFraction();
+            // 平滑插值：用固定系数而非 fraction
+            float lerpFactor = 0.35f;
+            for (int i = 0; i < BAR_COUNT; i++) {
+                mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * lerpFactor;
+            }
+            postInvalidate();
+        });
+        mAnimator.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(android.animation.Animator animation) {
+                mAnimationRunning = false;
+            }
+        });
+        mAnimator.start();
+    }
+
+    // ================================================================
+    // 绘制（和老代码一致）
+    // ================================================================
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        mIsPendingRedraw = false;
-        mLastDrawTime = System.currentTimeMillis();
+        if (mBarHeights == null) return;
+
         checkColorCycleSwitch();
 
-        final int width = getWidth(), height = getHeight();
+        final int width = getWidth();
+        final int height = getHeight();
         if (width == 0 || height == 0) return;
-        final float MIN_H = dp2px(5f);
+
+        final float barWidth = width / (float) BAR_COUNT;
+        final float gap = barWidth * 0.2f;
+        final float barUnitWidth = barWidth - gap;
+        final float MIN_HEIGHT_FOR_STRIPES = 20f;
 
         for (int i = 0; i < BAR_COUNT; i++) {
-            float left = i * mBarWidth + mGap / 2;
-            float right = left + mBarUnitWidth;
-            float barH = Math.min(mBarHeights[i], height * 0.9f);
-            float top = height - barH;
+            float left = i * barWidth + gap / 2;
+            float right = left + barUnitWidth;
+            float barHeight = Math.min(mBarHeights[i], height * 0.9f);
+            float top = height - barHeight;
 
             int color = getDynamicColor(mAmplitudeLevels[i], colorSchemes[currentSchemeIndex]);
             mBarPaint.setColor(color);
 
-            if (mShowStripes && barH >= MIN_H) {
-                float segWithSpace = mSegmentSpacingFixed * 2;
-                int segCount = Math.min((int)(barH / segWithSpace), mSegmentCount);
-                segCount = Math.max(1, segCount);
-                float segH = (barH - (segCount - 1) * mSegmentSpacingFixed) / segCount;
-                segH = Math.max(1f, segH);
+            if (mShowStripes && barHeight >= MIN_HEIGHT_FOR_STRIPES) {
+                float segmentHeightWithSpacing = mSegmentSpacingFixed * 2;
+                int actualSegmentCount = (int) (barHeight / segmentHeightWithSpacing);
+                actualSegmentCount = Math.min(actualSegmentCount, mSegmentCount);
+                actualSegmentCount = Math.max(1, actualSegmentCount);
 
-                for (int s = 0; s < segCount; s++) {
-                    float sTop = height - (s + 1) * (segH + mSegmentSpacingFixed);
-                    float sBot = sTop + segH;
-                    if (sTop >= top) {
-                        canvas.drawRoundRect(left, sTop, right, sBot, mCornerRadius, mCornerRadius, mBarPaint);
+                float actualSegmentHeight = (barHeight - (actualSegmentCount - 1) * mSegmentSpacingFixed) / actualSegmentCount;
+
+                for (int segment = 0; segment < actualSegmentCount; segment++) {
+                    float segmentTop = height - (segment + 1) * (actualSegmentHeight + mSegmentSpacingFixed);
+                    float segmentBottom = segmentTop + actualSegmentHeight;
+                    if (segmentTop >= top) {
+                        canvas.drawRect(left, segmentTop, right, segmentBottom, mBarPaint);
                     }
                 }
             } else {
-                canvas.drawRoundRect(left, top, right, height, mCornerRadius, mCornerRadius, mBarPaint);
+                canvas.drawRect(left, top, right, height, mBarPaint);
             }
-        }
-    }
-
-    private void refreshColorSchemes() {
-        for (int i = 0; i < 3; i++) {
-            mLastBaseHue = (mLastBaseHue + 30f + (float) (Math.random() * 60f)) % 360;
-            float baseHue = mLastBaseHue;
-            colorSchemes[i] = new int[]{
-                    Color.HSVToColor(new float[]{baseHue, 0.9f, 1f}),
-                    Color.HSVToColor(new float[]{(baseHue + 120) % 360, 0.9f, 1f}),
-                    Color.HSVToColor(new float[]{(baseHue + 240) % 360, 0.9f, 1f})
-            };
         }
     }
 
@@ -237,48 +306,40 @@ public class MusicVisualizerView extends View {
         }
     }
 
-    private int getDynamicColor(float amp, int[] scheme) {
-        amp = Math.max(0f, Math.min(1f, amp));
-        if (amp < 0.3f) return interpolateColor(amp / 0.3f, scheme[0], scheme[1]);
-        else return interpolateColor((amp - 0.3f) / 0.7f, scheme[1], scheme[2]);
+    private int getDynamicColor(float amplitude, int[] currentScheme) {
+        amplitude = Math.max(0.0f, Math.min(1.0f, amplitude));
+        if (amplitude < 0.3f) {
+            return interpolateColor(amplitude / 0.3f, currentScheme[0], currentScheme[1]);
+        } else {
+            return interpolateColor((amplitude - 0.3f) / 0.7f, currentScheme[1], currentScheme[2]);
+        }
     }
 
-    private int interpolateColor(float r, int sc, int ec) {
-        r = Math.max(0f, Math.min(1f, r));
-        float[] hsv1 = new float[3], hsv2 = new float[3];
-        Color.colorToHSV(sc, hsv1);
-        Color.colorToHSV(ec, hsv2);
-        
-        float h1 = hsv1[0], h2 = hsv2[0];
-        float dh = h2 - h1;
-        if (dh > 180) dh -= 360;
-        if (dh < -180) dh += 360;
-        float h = (h1 + dh * r) % 360;
-        if (h < 0) h += 360;
-        
-        float s = hsv1[1] + (hsv2[1] - hsv1[1]) * r;
-        float v = hsv1[2] + (hsv2[2] - hsv1[2]) * r;
-        
-        int alpha = (int)(Color.alpha(sc) + (Color.alpha(ec) - Color.alpha(sc)) * r);
-        return Color.HSVToColor(alpha, new float[]{h, s, v});
+    private int interpolateColor(float ratio, int startColor, int endColor) {
+        ratio = Math.max(0f, Math.min(1f, ratio));
+        int alpha = (int) (Color.alpha(startColor) + (Color.alpha(endColor) - Color.alpha(startColor)) * ratio);
+        int red = (int) (Color.red(startColor) + (Color.red(endColor) - Color.red(startColor)) * ratio);
+        int green = (int) (Color.green(startColor) + (Color.green(endColor) - Color.green(startColor)) * ratio);
+        int blue = (int) (Color.blue(startColor) + (Color.blue(endColor) - Color.blue(startColor)) * ratio);
+        return Color.argb(alpha, red, green, blue);
     }
 
     public void reset() {
-        // 优化reset逻辑，平滑回落不突兀
-        for (int i = 0; i < BAR_COUNT; i++) {
-            mTargetHeights[i] = dp2px(5f);
-        }
-        postInvalidateOnAnimation();
-    }
-
-    public void release() {
-        mIsPaused = true;
-        removeCallbacks(null);
         for (int i = 0; i < BAR_COUNT; i++) {
             mBarHeights[i] = 0;
             mTargetHeights[i] = 0;
             mAmplitudeLevels[i] = 0;
         }
-        invalidate();
+        mPeakLow = mPeakMid = mPeakHigh = 0.02f;
+        postInvalidate();
+    }
+
+    public void release() {
+        mAnimationRunning = false;
+        if (mAnimator != null) {
+            mAnimator.cancel();
+            mAnimator.removeAllUpdateListeners();
+        }
+        reset();
     }
 }
