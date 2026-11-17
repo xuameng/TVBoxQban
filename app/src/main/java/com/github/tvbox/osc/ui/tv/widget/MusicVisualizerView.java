@@ -13,12 +13,10 @@ public class MusicVisualizerView extends View {
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 60;
 
-    // ===== 三浪中心（均分 22 根柱）=====
-    private int mCenterLow = 4;   // 低频浪尖（左）
-    private int mCenterMid = 11;  // 中频浪尖（中）
-    private int mCenterHigh = 18; // 高频浪尖（右）
+    private int mCenterLow = 4;
+    private int mCenterMid = 11;
+    private int mCenterHigh = 18;
 
-    // ===== 颜色 =====
     private int[][] colorSchemes = new int[3][3];
     private boolean mShowStripes = true;
     private int mSegmentCount = 20;
@@ -45,20 +43,16 @@ public class MusicVisualizerView extends View {
     private final float[] mTargetHeights = new float[BAR_COUNT];
     private final float[] mAmplitudeLevels = new float[BAR_COUNT];
 
-    // ===== 三浪峰值 =====
     private float mPeakLow = 0.02f;
     private float mPeakMid = 0.02f;
     private float mPeakHigh = 0.02f;
 
-    // 衰减：翻倍加快，下降更干脆
     private static final float PEAK_DECAY_LOW = 0.45f;
     private static final float PEAK_DECAY_MID = 0.45f;
     private static final float PEAK_DECAY_HIGH = 0.45f;
 
-    // σ 缩小到 0.12 → 三个浪尖清晰分离
     private static final float DISTANCE_SIGMA = 0.18f;
 
-    // 校准
     private final float[] mEnergyAccum = new float[BAR_COUNT];
     private int mCalibrateCount = 0;
     private long mLastCalibrateTime = 0;
@@ -66,8 +60,6 @@ public class MusicVisualizerView extends View {
     private static final long CALIBRATE_INTERVAL_MS = 4000;
 
     private ValueAnimator mAnimator;
-
-    // ================================================================
 
     public MusicVisualizerView(Context context) { super(context); init(); }
     public MusicVisualizerView(Context context, AttributeSet attrs) { super(context, attrs); init(); }
@@ -82,9 +74,6 @@ public class MusicVisualizerView extends View {
     public void setSegmentCount(int count) { mSegmentCount = Math.max(1, count); postInvalidate(); }
     public void setSegmentSpacingFixed(float spacing) { mSegmentSpacingFixed = Math.max(0f, spacing); postInvalidate(); }
 
-    // ================================================================
-    // 核心
-    // ================================================================
     public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
 
@@ -123,7 +112,7 @@ public class MusicVisualizerView extends View {
         float normMid  = Math.min(peakMid  / (float) MAX_AMPLITUDE, 1.0f);
         float normHigh = Math.min(peakHigh / (float) MAX_AMPLITUDE, 1.0f);
 
-        normLow  = normLow  * (0.2f + 0.8f * volumeLevel);  // 0.2 加权 → 音量敏感
+        normLow  = normLow  * (0.2f + 0.8f * volumeLevel);
         normMid  = normMid  * (0.2f + 0.8f * volumeLevel);
         normHigh = normHigh * (0.2f + 0.8f * volumeLevel);
 
@@ -132,7 +121,6 @@ public class MusicVisualizerView extends View {
         if (normMid > mPeakMid) mPeakMid = normMid;
         if (normHigh > mPeakHigh) mPeakHigh = normHigh;
 
-        // 衰减（翻倍速度）
         mPeakLow -= mPeakLow * PEAK_DECAY_LOW;
         mPeakMid -= mPeakMid * PEAK_DECAY_MID;
         mPeakHigh -= mPeakHigh * PEAK_DECAY_HIGH;
@@ -162,55 +150,42 @@ public class MusicVisualizerView extends View {
         }
 
         // ---------- 5. 计算目标高度 ----------
-        float maxH = getHeight() * 0.95f;
+        // ★ 改1：maxH 直接取满高度，不再留 5% 余量
+        float maxH = getHeight();
         if (maxH <= 0) maxH = 100f;
 
-// 权重锐化指数：控制"主峰突出 vs 平滑过渡"的平衡
-// 1.0 = 纯线性混合（太平）
-// 3.0 = 锐化（太硬）
-// 2.0 = 当前推荐值
-final float SHARP = 2.0f;
+        final float SHARP = 2.0f;
+        final float HEIGHT_GAMMA = 1.5f;
+        // ★ 改2：FLOOR 改为 0，彻底去掉初始/静音时的底高度
+        final float FLOOR = 0.0f;
 
-// 非线性高度指数：让高低差更明显
-// 1.0 = 线性（起伏小）
-// 1.3 = 推荐（山感）
-final float HEIGHT_GAMMA = 1.3f;
+        for (int i = 0; i < BAR_COUNT; i++) {
+            float dLow  = Math.abs(i - mCenterLow)  / (float) BAR_COUNT;
+            float dMid  = Math.abs(i - mCenterMid)  / (float) BAR_COUNT;
+            float dHigh = Math.abs(i - mCenterHigh) / (float) BAR_COUNT;
 
-// 谷底保护
-final float FLOOR = 0.06f;
+            float wLow  = (float) Math.exp(-(dLow  * dLow)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
+            float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
+            float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
 
-for (int i = 0; i < BAR_COUNT; i++) {
-    float dLow  = Math.abs(i - mCenterLow)  / (float) BAR_COUNT;
-    float dMid  = Math.abs(i - mCenterMid)  / (float) BAR_COUNT;
-    float dHigh = Math.abs(i - mCenterHigh) / (float) BAR_COUNT;
+            wLow  = (float) Math.pow(wLow,  SHARP);
+            wMid  = (float) Math.pow(wMid,  SHARP);
+            wHigh = (float) Math.pow(wHigh, SHARP);
 
-    // 高斯权重
-    float wLow  = (float) Math.exp(-(dLow  * dLow)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
-    float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
-    float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
+            float totalWeight = wLow + wMid + wHigh;
 
-    // 权重锐化：pow 让大的更大，小的更小，但不归零
-    wLow  = (float) Math.pow(wLow,  SHARP);
-    wMid  = (float) Math.pow(wMid,  SHARP);
-    wHigh = (float) Math.pow(wHigh, SHARP);
+            float combinedRatio = 0f;
+            if (totalWeight > 0.001f) {
+                combinedRatio = (mPeakLow * wLow + mPeakMid * wMid + mPeakHigh * wHigh) / totalWeight;
+            }
 
-    float totalWeight = wLow + wMid + wHigh;
+            combinedRatio = Math.max(combinedRatio, FLOOR);
 
-    // 加权混合（不做硬分类！）
-    float combinedRatio = 0f;
-    if (totalWeight > 0.001f) {
-        combinedRatio = (mPeakLow * wLow + mPeakMid * wMid + mPeakHigh * wHigh) / totalWeight;
-    }
+            float heightRatio = (float) Math.pow(combinedRatio, HEIGHT_GAMMA);
 
-    // 谷底保护
-    combinedRatio = Math.max(combinedRatio, FLOOR);
-
-    // 非线性高度拉伸
-    float heightRatio = (float) Math.pow(combinedRatio, HEIGHT_GAMMA);
-
-    mTargetHeights[i] = Math.min(heightRatio * maxH, maxH);
-    mAmplitudeLevels[i] = Math.min(heightRatio * 3.0f, 1.0f);
-}
+            mTargetHeights[i] = Math.min(heightRatio * maxH, maxH);
+            mAmplitudeLevels[i] = Math.min(heightRatio * 3.0f, 1.0f);
+        }
 
         startAnimation();
     }
@@ -218,7 +193,7 @@ for (int i = 0; i < BAR_COUNT; i++) {
     private void autoCalibrate() {
         int third = BAR_COUNT / 3;
         int bestLow = 4, bestMid = 11, bestHigh = 18;
-        float maxL = 0, maxM = 0, maxH = 0;
+        float maxL = 0, maxM = 0, maxHCal = 0;
         int samples = Math.max(1, mCalibrateCount);
 
         for (int i = 0; i < third; i++) {
@@ -231,7 +206,7 @@ for (int i = 0; i < BAR_COUNT; i++) {
         }
         for (int i = third * 2; i < BAR_COUNT; i++) {
             float avg = mEnergyAccum[i] / samples;
-            if (avg > maxH) { maxH = avg; bestHigh = i; }
+            if (avg > maxHCal) { maxHCal = avg; bestHigh = i; }
         }
 
         mCenterLow  = bestLow;
@@ -241,9 +216,6 @@ for (int i = 0; i < BAR_COUNT; i++) {
         for (int i = 0; i < BAR_COUNT; i++) mEnergyAccum[i] = 0;
     }
 
-    // ================================================================
-    // 动画（lerpFactor 0.65 → 上升几乎一帧到位）
-    // ================================================================
     private void startAnimation() {
         if (mAnimator != null) {
             mAnimator.cancel();
@@ -251,7 +223,7 @@ for (int i = 0; i < BAR_COUNT; i++) {
         mAnimator = ValueAnimator.ofFloat(0f, 1f);
         mAnimator.setDuration(ANIMATION_DURATION);
         mAnimator.addUpdateListener(animation -> {
-            float lerpFactor = 0.65f; // 快速追上目标
+            float lerpFactor = 0.65f;
             for (int i = 0; i < BAR_COUNT; i++) {
                 mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * lerpFactor;
             }
@@ -260,9 +232,6 @@ for (int i = 0; i < BAR_COUNT; i++) {
         mAnimator.start();
     }
 
-    // ================================================================
-    // 绘制
-    // ================================================================
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -282,7 +251,8 @@ for (int i = 0; i < BAR_COUNT; i++) {
         for (int i = 0; i < BAR_COUNT; i++) {
             float left = i * barWidth + gap / 2;
             float right = left + barUnitWidth;
-            float barHeight = Math.min(mBarHeights[i], height * 0.9f);
+            // ★ 改3：上限从 height * 0.9f 改为 height，满高可达顶
+            float barHeight = Math.min(mBarHeights[i], height);
             float top = height - barHeight;
 
             int color = getDynamicColor(mAmplitudeLevels[i], colorSchemes[currentSchemeIndex]);
@@ -316,6 +286,18 @@ for (int i = 0; i < BAR_COUNT; i++) {
             lastSwitchTime = now;
             refreshColorSchemes();
         }
+    }
+
+    private void refreshColorSchemes() {
+        for (int i = 0; i < 3; i++) {
+            float baseHue = (float) (Math.random() * 360);
+            colorSchemes[i] = new int[]{
+                    Color.HSVToColor(new float[]{baseHue, 1f, 1f}),
+                    Color.HSVToColor(new float[]{(baseHue + 120) % 360, 1f, 1f}),
+                    Color.HSVToColor(new float[]{(baseHue + 240) % 360, 1f, 1f})
+            };
+        }
+        postInvalidate();
     }
 
     private int getDynamicColor(float amplitude, int[] currentScheme) {
