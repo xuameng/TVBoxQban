@@ -56,7 +56,7 @@ public class MusicVisualizerView extends View {
     private static final float PEAK_DECAY_HIGH = 0.45f;
 
     // σ 缩小到 0.12 → 三个浪尖清晰分离
-    private static final float DISTANCE_SIGMA = 0.10f;
+    private static final float DISTANCE_SIGMA = 0.05f;
 
     // 校准
     private final float[] mEnergyAccum = new float[BAR_COUNT];
