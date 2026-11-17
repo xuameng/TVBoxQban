@@ -9,7 +9,7 @@ import android.view.View;
 import android.animation.ValueAnimator;
 
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 10222;
+    private static final int MAX_AMPLITUDE = 9222;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 60;
 
@@ -123,9 +123,9 @@ public class MusicVisualizerView extends View {
         float normMid  = Math.min(peakMid  / (float) MAX_AMPLITUDE, 1.0f);
         float normHigh = Math.min(peakHigh / (float) MAX_AMPLITUDE, 1.0f);
 
-        normLow  = normLow  * (0.2f + 0.85f * volumeLevel);  // 0.1 加权 → 音量敏感
-        normMid  = normMid  * (0.2f + 0.85f * volumeLevel);
-        normHigh = normHigh * (0.2f + 0.85f * volumeLevel);
+        normLow  = normLow  * (0.2f + 0.8f * volumeLevel);  // 0.2 加权 → 音量敏感
+        normMid  = normMid  * (0.2f + 0.8f * volumeLevel);
+        normHigh = normHigh * (0.2f + 0.8f * volumeLevel);
 
         // ---------- 3. 峰值检测 ----------
         if (normLow > mPeakLow) mPeakLow = normLow;
@@ -165,44 +165,52 @@ public class MusicVisualizerView extends View {
         float maxH = getHeight() * 0.95f;
         if (maxH <= 0) maxH = 100f;
 
+// ---------- 5. 计算目标高度 ----------
+float maxH = getHeight() * 0.95f;
+if (maxH <= 0) maxH = 100f;
+
+// 权重锐化指数：控制"主峰突出 vs 平滑过渡"的平衡
+// 1.0 = 纯线性混合（太平）
+// 3.0 = 锐化（太硬）
+// 2.0 = 当前推荐值
+final float SHARP = 2.0f;
+
+// 非线性高度指数：让高低差更明显
+// 1.0 = 线性（起伏小）
+// 1.3 = 推荐（山感）
+final float HEIGHT_GAMMA = 1.3f;
+
+// 谷底保护
+final float FLOOR = 0.06f;
+
 for (int i = 0; i < BAR_COUNT; i++) {
     float dLow  = Math.abs(i - mCenterLow)  / (float) BAR_COUNT;
     float dMid  = Math.abs(i - mCenterMid)  / (float) BAR_COUNT;
     float dHigh = Math.abs(i - mCenterHigh) / (float) BAR_COUNT;
 
+    // 高斯权重
     float wLow  = (float) Math.exp(-(dLow  * dLow)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
     float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
     float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
 
-    float maxWeight = Math.max(Math.max(wLow, wMid), wHigh);
+    // 权重锐化：pow 让大的更大，小的更小，但不归零
+    wLow  = (float) Math.pow(wLow,  SHARP);
+    wMid  = (float) Math.pow(wMid,  SHARP);
+    wHigh = (float) Math.pow(wHigh, SHARP);
+
     float totalWeight = wLow + wMid + wHigh;
 
-    // ===== 主峰高度 =====
-    float mainRatio;
-    if (maxWeight == wLow) {
-        mainRatio = mPeakLow;
-    } else if (maxWeight == wMid) {
-        mainRatio = mPeakMid;
-    } else {
-        mainRatio = mPeakHigh;
-    }
-
-    // ===== 平滑混合高度 =====
-    float blendRatio = 0f;
+    // 加权混合（不做硬分类！）
+    float combinedRatio = 0f;
     if (totalWeight > 0.001f) {
-        blendRatio =
-            (mPeakLow * wLow + mPeakMid * wMid + mPeakHigh * wHigh)
-            / totalWeight;
+        combinedRatio = (mPeakLow * wLow + mPeakMid * wMid + mPeakHigh * wHigh) / totalWeight;
     }
 
-    // ===== 主峰 75% + 混合 25%（山感 + 平滑）=====
-    float finalRatio = mainRatio * 0.75f + blendRatio * 0.25f;
+    // 谷底保护
+    combinedRatio = Math.max(combinedRatio, FLOOR);
 
-    // ===== 谷底保护（防止死黑）=====
-    finalRatio = Math.max(finalRatio, 0.08f);
-
-    // ===== 非线性高度拉伸（山感来源）=====
-    float heightRatio = (float) Math.pow(finalRatio, 1.35f);
+    // 非线性高度拉伸
+    float heightRatio = (float) Math.pow(combinedRatio, HEIGHT_GAMMA);
 
     mTargetHeights[i] = Math.min(heightRatio * maxH, maxH);
     mAmplitudeLevels[i] = Math.min(heightRatio * 3.0f, 1.0f);
