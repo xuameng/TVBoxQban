@@ -162,7 +162,7 @@ public class MusicVisualizerView extends View {
             float dMid  = Math.abs(i - mCenterMid)  / (float) BAR_COUNT;
             float dHigh = Math.abs(i - mCenterHigh) / (float) BAR_COUNT;
 
-            float wLow  = (float) Math.exp(-(dLow  * dLow)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGEMA));
+            float wLow  = (float) Math.exp(-(dLow  * dLow)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
             float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
             float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
 
