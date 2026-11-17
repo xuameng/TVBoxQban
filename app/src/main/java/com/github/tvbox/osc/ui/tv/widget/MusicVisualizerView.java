@@ -11,7 +11,7 @@ import android.animation.ValueAnimator;
 public class MusicVisualizerView extends View {
     private static final int MAX_AMPLITUDE = 10222;
     private static final int BAR_COUNT = 22;
-    private static final int ANIMATION_DURATION = 40;
+    private static final int ANIMATION_DURATION = 60;
 
     // ===== 三浪中心（均分 22 根柱）=====
     private int mCenterLow = 4;   // 低频浪尖（左）
@@ -51,12 +51,12 @@ public class MusicVisualizerView extends View {
     private float mPeakHigh = 0.02f;
 
     // 衰减：翻倍加快，下降更干脆
-    private static final float PEAK_DECAY_LOW = 0.25f;
-    private static final float PEAK_DECAY_MID = 0.35f;
+    private static final float PEAK_DECAY_LOW = 0.45f;
+    private static final float PEAK_DECAY_MID = 0.45f;
     private static final float PEAK_DECAY_HIGH = 0.45f;
 
     // σ 缩小到 0.12 → 三个浪尖清晰分离
-    private static final float DISTANCE_SIGMA = 0.12f;
+    private static final float DISTANCE_SIGMA = 0.10f;
 
     // 校准
     private final float[] mEnergyAccum = new float[BAR_COUNT];
@@ -123,9 +123,9 @@ public class MusicVisualizerView extends View {
         float normMid  = Math.min(peakMid  / (float) MAX_AMPLITUDE, 1.0f);
         float normHigh = Math.min(peakHigh / (float) MAX_AMPLITUDE, 1.0f);
 
-        normLow  = normLow  * (0.3f + 0.7f * volumeLevel);
-        normMid  = normMid  * (0.3f + 0.7f * volumeLevel);
-        normHigh = normHigh * (0.3f + 0.7f * volumeLevel);
+        normLow  = normLow  * (0.05f + 0.95f * volumeLevel);  // 0.8 加权 → 音量敏感
+        normMid  = normMid  * (0.05f + 0.95f * volumeLevel);
+        normHigh = normHigh * (0.05f + 0.95f * volumeLevel);
 
         // ---------- 3. 峰值检测 ----------
         if (normLow > mPeakLow) mPeakLow = normLow;
