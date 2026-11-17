@@ -165,10 +165,6 @@ public class MusicVisualizerView extends View {
         float maxH = getHeight() * 0.95f;
         if (maxH <= 0) maxH = 100f;
 
-// ---------- 5. 计算目标高度 ----------
-float maxH = getHeight() * 0.95f;
-if (maxH <= 0) maxH = 100f;
-
 // 权重锐化指数：控制"主峰突出 vs 平滑过渡"的平衡
 // 1.0 = 纯线性混合（太平）
 // 3.0 = 锐化（太硬）
