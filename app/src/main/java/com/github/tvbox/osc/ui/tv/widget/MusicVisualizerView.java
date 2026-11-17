@@ -51,7 +51,7 @@ public class MusicVisualizerView extends View {
     private static final float PEAK_DECAY_MID = 0.48f;
     private static final float PEAK_DECAY_HIGH = 0.48f;
 
-    private static final float DISTANCE_SIGMA = 0.12f;
+    private static final float DISTANCE_SIGMA = 0.18f;
 
     private final float[] mEnergyAccum = new float[BAR_COUNT];
     private int mCalibrateCount = 0;
@@ -180,7 +180,12 @@ public class MusicVisualizerView extends View {
             // 0.1 → 0.316（谷底被压低）
             // 0.5 → 0.707
             // 1.0 → 1.0（满值能到顶！）
-            float heightRatio = (float) Math.sqrt(combinedRatio);
+// ★ 加大高低 bar 的差距（≥2 倍视觉差）
+final float EXPAND_POWER = 2.2f;
+combinedRatio = (float) Math.pow(combinedRatio, EXPAND_POWER);
+
+// sqrt 保持浪尖能到顶
+float heightRatio = (float) Math.sqrt(combinedRatio);
 
             mTargetHeights[i] = Math.min(heightRatio * maxH, maxH);
             mAmplitudeLevels[i] = Math.min(heightRatio * 3.0f, 1.0f);
