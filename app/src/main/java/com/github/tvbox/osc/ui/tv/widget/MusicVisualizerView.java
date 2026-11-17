@@ -20,7 +20,7 @@ xuameng
 public class MusicVisualizerView extends View {
     private static final int MAX_AMPLITUDE = 9222;  //xuameng判断音量大小
     private static final int BAR_COUNT = 22;   //xuameng 音柱数量
-    private static final int ANIMATION_DURATION = 80; //xuameng 音柱动画时长
+    private static final int ANIMATION_DURATION = 50; //xuameng 音柱动画时长
     // 改为非静态变量实现动态刷新
     private int[][] colorSchemes = new int[3][3];
     // 新增音柱分段效果相关变量
@@ -74,6 +74,18 @@ private float[] mBarEnergies = new float[BAR_COUNT];
 private static final float ATTACK = 0.7f;    // 上升（大=瞬间跳起）
 private static final float RELEASE = 0.25f;  // 回落（比之前快，有"回弹"感）
 // =========================================
+// ============ 自动校准频带位置 ============
+private int mAutoBandLowCenter = BAND_LOW_CENTER;   // 初始用默认值
+private int mAutoBandMidCenter = BAND_MID_CENTER;
+private int mAutoBandHighCenter = BAND_HIGH_CENTER;
+
+// 校准用的能量累计
+private final float[] mBandEnergyAccum = new float[BAR_COUNT];
+private int mCalibrateSampleCount = 0;
+private static final int CALIBRATE_INTERVAL = 25; // 每25帧校准一次（约2秒@60fps）
+private long mLastCalibrateTime = 0;
+private static final long CALIBRATE_MIN_INTERVAL_MS = 1500; // 至少间隔1.5秒
+// ==========================================
 
     // 动画控制器
     private ValueAnimator mAnimator;
@@ -131,35 +143,56 @@ public void updateVisualizer(byte[] fft, float volumeLevel) {
         }
     }
 
-    // ---------- 第二步：计算三个频带的能量（取带内最大值） ----------
-    float lowEnergy = 0, midEnergy = 0, highEnergy = 0;
+    // ---------- 第二步：累计能量用于校准 ----------
+    for (int i = 0; i < BAR_COUNT; i++) {
+        mBandEnergyAccum[i] += magnitudes[i];
+    }
+    mCalibrateSampleCount++;
 
-    // 低频带：柱 2~5
-    for (int i = 2; i <= 5 && i < BAR_COUNT; i++) {
+    long now = System.currentTimeMillis();
+    if (mCalibrateSampleCount >= CALIBRATE_INTERVAL
+            && now - mLastCalibrateTime > CALIBRATE_MIN_INTERVAL_MS) {
+        performAutoCalibrate();
+        mCalibrateSampleCount = 0;
+        mLastCalibrateTime = now;
+        // 清零累计（但保留平滑过渡，不清零）
+    }
+
+    // ---------- 第三步：用校准后的频带中心计算三带能量 ----------
+    // 低频带：围绕 mAutoBandLowCenter，取 ±3 柱范围
+    int lowStart = Math.max(0, mAutoBandLowCenter - 3);
+    int lowEnd = Math.min(BAR_COUNT - 1, mAutoBandLowCenter + 3);
+    float lowEnergy = 0;
+    for (int i = lowStart; i <= lowEnd; i++) {
         if (magnitudes[i] > lowEnergy) lowEnergy = magnitudes[i];
     }
 
-    // 中频带：柱 9~13
-    for (int i = 9; i <= 13 && i < BAR_COUNT; i++) {
+    // 中频带：围绕 mAutoBandMidCenter，取 ±4 柱范围
+    int midStart = Math.max(0, mAutoBandMidCenter - 4);
+    int midEnd = Math.min(BAR_COUNT - 1, mAutoBandMidCenter + 4);
+    float midEnergy = 0;
+    for (int i = midStart; i <= midEnd; i++) {
         if (magnitudes[i] > midEnergy) midEnergy = magnitudes[i];
     }
 
-    // 高频带：柱 17~20
-    for (int i = 17; i <= 20 && i < BAR_COUNT; i++) {
+    // 高频带：围绕 mAutoBandHighCenter，取 ±3 柱范围
+    int highStart = Math.max(0, mAutoBandHighCenter - 3);
+    int highEnd = Math.min(BAR_COUNT - 1, mAutoBandHighCenter + 3);
+    float highEnergy = 0;
+    for (int i = highStart; i <= highEnd; i++) {
         if (magnitudes[i] > highEnergy) highEnergy = magnitudes[i];
     }
 
-    // 归一化到 0~1
+    // 归一化
     float lowNorm = Math.min(lowEnergy / MAX_AMPLITUDE, 1.0f) * volumeLevel;
     float midNorm = Math.min(midEnergy / MAX_AMPLITUDE, 1.0f) * volumeLevel;
     float highNorm = Math.min(highEnergy / MAX_AMPLITUDE, 1.0f) * volumeLevel;
 
-    // ---------- 第三步：快起快落（关键！"跳-回-跳"的核心） ----------
-    // 上升快
+    // ---------- 第四步：快起快落 ----------
     if (lowNorm > mEnergyLow) {
         mEnergyLow += (lowNorm - mEnergyLow) * ATTACK;
     } else {
-        mEnergyLow += (lowNorm - mEnergyLow) * RELEASE; // 快速回落
+        mEnergyLow += (lowNorm - mEnergyLow) * RELEASE;
     }
 
     if (midNorm > mEnergyMid) {
@@ -174,42 +207,94 @@ public void updateVisualizer(byte[] fft, float volumeLevel) {
         mEnergyHigh += (highNorm - mEnergyHigh) * RELEASE;
     }
 
-    // ---------- 第四步：计算每个柱的目标高度 ----------
+    // ---------- 第五步：计算每个柱的目标高度 ----------
     float maxHeight = getHeight() * 0.95f;
 
     for (int i = 0; i < BAR_COUNT; i++) {
-        // 计算当前柱到三个频带中心的距离因子
-        float distLow = Math.abs(i - BAND_LOW_CENTER);
-        float distMid = Math.abs(i - BAND_MID_CENTER);
-        float distHigh = Math.abs(i - BAND_HIGH_CENTER);
+        float distLow = Math.abs(i - mAutoBandLowCenter);
+        float distMid = Math.abs(i - mAutoBandMidCenter);
+        float distHigh = Math.abs(i - mAutoBandHighCenter);
 
-        // 距离衰减（更陡，让每个频带只影响附近的柱）
-        float sigma = 0.18f; // 更集中
+        float sigma = 0.18f;
         float factorLow = (float) Math.exp(-(distLow * distLow) / (2 * sigma * sigma));
         float factorMid = (float) Math.exp(-(distMid * distMid) / (2 * sigma * sigma));
         float factorHigh = (float) Math.exp(-(distHigh * distHigh) / (2 * sigma * sigma));
 
-        // 加权合成：每个频带贡献自己的能量 × 距离因子
         float barEnergy = mEnergyLow * factorLow
                         + mEnergyMid * factorMid
                         + mEnergyHigh * factorHigh;
-
-        // 归一化到 0~1
         barEnergy = Math.min(barEnergy, 1.0f);
 
-        // 存储用于动画
         mBarEnergies[i] = barEnergy;
-
-        // 目标高度
         mTargetHeights[i] = maxHeight * barEnergy;
         mTargetHeights[i] = Math.min(mTargetHeights[i], maxHeight);
-
-        // 振幅等级（给颜色用）
         mAmplitudeLevels[i] = barEnergy;
     }
 
     startAnimation();
 }
+
+/**
+ * 自动校准三个频带的中心位置
+ * 将频谱分为低/中/高三段，在每段内找能量最高的柱
+ */
+private void performAutoCalibrate() {
+    int barCount = BAR_COUNT;
+
+    // 分段边界（按柱索引划分）
+    int lowBoundary = barCount / 3;          // 柱 0~7
+    int midBoundary = lowBoundary * 2;       // 柱 8~14
+
+    int bestLow = 3;
+    int bestMid = 11;
+    int bestHigh = 18;
+
+    float maxLow = 0, maxMid = 0, maxHigh = 0;
+
+    // 找低频段最佳位置
+    for (int i = 0; i < lowBoundary; i++) {
+        float avg = mBandEnergyAccum[i] / mCalibrateSampleCount;
+        if (avg > maxLow) {
+            maxLow = avg;
+            bestLow = i;
+        }
+    }
+
+    // 找中频段最佳位置
+    for (int i = lowBoundary; i < midBoundary; i++) {
+        float avg = mBandEnergyAccum[i] / mCalibrateSampleCount;
+        if (avg > maxMid) {
+            maxMid = avg;
+            bestMid = i;
+        }
+    }
+
+    // 找高频段最佳位置
+    for (int i = midBoundary; i < barCount; i++) {
+        float avg = mBandEnergyAccum[i] / mCalibrateSampleCount;
+        if (avg > maxHigh) {
+            maxHigh = avg;
+            bestHigh = i;
+        }
+    }
+
+    // ---------- 平滑过渡到新位置（防止跳变） ----------
+    float transitionSpeed = 0.3f; // 30% 向新位置移动
+    mAutoBandLowCenter = (int)(mAutoBandLowCenter * (1f - transitionSpeed) + bestLow * transitionSpeed);
+    mAutoBandMidCenter = (int)(mAutoBandMidCenter * (1f - transitionSpeed) + bestMid * transitionSpeed);
+    mAutoBandHighCenter = (int)(mAutoBandHighCenter * (1f - transitionSpeed) + bestHigh * transitionSpeed);
+
+    // 确保不越界
+    mAutoBandLowCenter = Math.max(0, Math.min(barCount - 1, mAutoBandLowCenter));
+    mAutoBandMidCenter = Math.max(0, Math.min(barCount - 1, mAutoBandMidCenter));
+    mAutoBandHighCenter = Math.max(0, Math.min(barCount - 1, mAutoBandHighCenter));
+
+    // 清零累计数组（为下一轮校准准备）
+    for (int i = 0; i < barCount; i++) {
+        mBandEnergyAccum[i] = 0;
+    }
+}
+
 private void startAnimation() {
     if (mAnimator != null) {
         mAnimator.cancel();
