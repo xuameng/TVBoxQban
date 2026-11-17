@@ -27,6 +27,7 @@ public class MusicVisualizerView extends View {
     private boolean mShowStripes = true; // 是否显示分段效果
     private int mSegmentCount = 20; // 每个音柱的分段数
     private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
+
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
         for(int i = 0; i < 3; i++) {
@@ -55,6 +56,14 @@ public class MusicVisualizerView extends View {
     private final float[] mBarHeights = new float[BAR_COUNT];
     private final float[] mTargetHeights = new float[BAR_COUNT];
     private final float[] mAmplitudeLevels = new float[BAR_COUNT]; // 存储各柱振幅强度
+// ==================== 新增：平滑用的成员变量（加到类里） ====================
+// 放在 BAR_COUNT 那些变量旁边就行：
+private float mSmoothedGlobalEnergy = 0f;
+private int mSmoothedDominantBar = BAR_COUNT / 2; // 默认中间
+private static final float ENERGY_SMOOTH_FACTOR = 0.25f;   // 能量平滑系数（越小越丝滑）
+private static final float DOMINANT_SMOOTH_FACTOR = 0.15f;  // 主频平滑系数（越小越稳）
+// ==========================================================================
+
     // 动画控制器
     private ValueAnimator mAnimator;
     public MusicVisualizerView(Context context) {
@@ -86,43 +95,87 @@ public class MusicVisualizerView extends View {
         mSegmentSpacingFixed = Math.max(0f, spacing); // 确保非负值
         postInvalidate();
     }
-    public void updateVisualizer(byte[] fft, float volumeLevel) {
-        if(fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-        if(volumeLevel == 0f || volumeLevel == 0.0f || volumeLevel == 0.00f) {
-            reset(); //xuameng处理静音状态重置音柱
-        }
-        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
-        for(int i = 0; i < BAR_COUNT; i++) {
-            int barIndex;
-            if(i < BAR_COUNT / 3) {
-                // 低频段密集采样（每2点取1）
-                barIndex = 2 + i * 2;
-            } else {
-                // 中高频段间隔采样（每4点取1）
-                barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
-            }
-            if(barIndex < fft.length - 1) {
-                byte rfk = fft[barIndex];
-                byte ifk = fft[barIndex + 1];
-                float magnitude = (rfk * rfk + ifk * ifk);
-                // xuameng改进的频率加权策略（三段式加权）
-                float weight;
-                if(i < BAR_COUNT / 4) {
-                    weight = 1.0f; //xuameng 超低频段(0-200Hz)增益
-                } else if(i < BAR_COUNT / 2) {
-                    weight = 2.5f; //xuameng 中低频段(200-800Hz)基准值增益
-                } else {
-                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0); //xuameng 高频段(800Hz+)指数增强
-                    weight = 3.5f * freqFactor;
-                }
-                mTargetHeights[i] = Math.min(
-                    (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, //xuameng判断音量大小
-                    getHeight() * 0.95f);
-                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
-            }
-        }
-        startAnimation();
+public void updateVisualizer(byte[] fft, float volumeLevel) {
+    if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+
+    // ---------- 静音处理 ----------
+    if (volumeLevel <= 0.001f) {
+        reset();
+        return;
     }
+
+    // ---------- 第一步：扫描全频谱，找最大能量和主频 ----------
+    float globalMaxMagnitude = 0f;
+    int dominantBinIndex = 2; // 跳过DC分量，从第一个有效bin开始
+
+    for (int i = 2; i < fft.length - 1; i += 2) {
+        byte rfk = fft[i];
+        byte ifk = fft[i + 1];
+        float magnitude = (rfk * rfk + ifk * ifk);
+
+        if (magnitude > globalMaxMagnitude) {
+            globalMaxMagnitude = magnitude;
+            dominantBinIndex = i;
+        }
+    }
+
+    // ---------- 第二步：把主频bin映射到音柱索引 ----------
+    // fft数组：索引2开始，每2个byte是一个复数（实部+虚部）
+    // 所以 binIndex = i / 2
+    int dominantBin = dominantBinIndex / 2;
+
+    // 映射到 BAR_COUNT 范围（线性映射）
+    int dominantBar = (int) ((float) dominantBin / ((fft.length / 2) - 1) * (BAR_COUNT - 1));
+    dominantBar = Math.max(0, Math.min(BAR_COUNT - 1, dominantBar));
+
+    // ---------- 第三步：平滑（关键！防止乱跳） ----------
+    // 3a. 能量平滑
+    float rawEnergy = Math.min(globalMaxMagnitude / MAX_AMPLITUDE, 1.0f);
+    rawEnergy *= volumeLevel; // 音量权重
+    mSmoothedGlobalEnergy = mSmoothedGlobalEnergy * (1f - ENERGY_SMOOTH_FACTOR)
+            + rawEnergy * ENERGY_SMOOTH_FACTOR;
+
+    // 3b. 主频平滑（让主峰位置变化慢一点）
+    mSmoothedDominantBar = (int) (mSmoothedDominantBar * (1f - DOMINANT_SMOOTH_FACTOR)
+            + dominantBar * DOMINANT_SMOOTH_FACTOR);
+    mSmoothedDominantBar = Math.max(0, Math.min(BAR_COUNT - 1, mSmoothedDominantBar));
+
+    // ---------- 第四步：计算每个音柱的目标高度 ----------
+    float globalScale = getHeight() * 0.95f * mSmoothedGlobalEnergy;
+
+    for (int i = 0; i < BAR_COUNT; i++) {
+        // 距离主频越远 → 衰减越大
+        float distance = Math.abs(i - mSmoothedDominantBar);
+        float normalizedDistance = distance / (float) BAR_COUNT;
+
+        // 用高斯衰减（比线性好看，中间高两边自然下降）
+        float sigma = 0.35f; // 控制衰减宽度，越小越集中
+        float distanceFactor = (float) Math.exp(-(normalizedDistance * normalizedDistance)
+                / (2 * sigma * sigma));
+
+        // 轻微的频率加权（保留你原来的低频增益思路，但弱化）
+        float freqBias;
+        if (i < BAR_COUNT / 4) {
+            freqBias = 1.1f;       // 超低频微增益
+        } else if (i < BAR_COUNT / 2) {
+            freqBias = 1.05f;      // 中低频微增益
+        } else {
+            freqBias = 0.95f;      // 高频微衰减
+        }
+
+        mTargetHeights[i] = globalScale * distanceFactor * freqBias;
+        mTargetHeights[i] = Math.min(mTargetHeights[i], getHeight() * 0.95f);
+
+        // 振幅等级（给颜色渐变用，保留你原来的逻辑）
+        mAmplitudeLevels[i] = Math.min(
+                mTargetHeights[i] / (getHeight() * 0.95f),
+                1.0f
+        );
+    }
+
+    // ---------- 第五步：启动动画 ----------
+    startAnimation();
+}
     private void startAnimation() {
         if(mAnimator != null) {
             mAnimator.cancel();
