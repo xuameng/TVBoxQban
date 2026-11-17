@@ -27,7 +27,6 @@ public class MusicVisualizerView extends View {
     private boolean mShowStripes = true; // 是否显示分段效果
     private int mSegmentCount = 20; // 每个音柱的分段数
     private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
-
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
         for(int i = 0; i < 3; i++) {
@@ -56,14 +55,14 @@ public class MusicVisualizerView extends View {
     private final float[] mBarHeights = new float[BAR_COUNT];
     private final float[] mTargetHeights = new float[BAR_COUNT];
     private final float[] mAmplitudeLevels = new float[BAR_COUNT]; // 存储各柱振幅强度
-// ==================== 新增：平滑用的成员变量（加到类里） ====================
-// 放在 BAR_COUNT 那些变量旁边就行：
-private float mSmoothedGlobalEnergy = 0f;
-private int mSmoothedDominantBar = BAR_COUNT / 2; // 默认中间
-private static final float ENERGY_SMOOTH_FACTOR = 0.25f;   // 能量平滑系数（越小越丝滑）
-private static final float DOMINANT_SMOOTH_FACTOR = 0.15f;  // 主频平滑系数（越小越稳）
-// ==========================================================================
 
+// 替换掉之前的平滑变量，用这组：
+private float[] mBarEnergyHistory = new float[BAR_COUNT];  // 每个柱的能量历史（用于瞬态检测）
+private float mGlobalEnergy = 0f;
+private int mCurrentDominantBar = BAR_COUNT / 2;
+private static final float ENERGY_ATTACK = 0.6f;   // 上升速度（大=跟得快）
+private static final float ENERGY_RELEASE = 0.15f; // 回落速度（小=落得快=有"回"的感觉）
+private static final float HISTORY_DECAY = 0.92f;  // 历史能量衰减
     // 动画控制器
     private ValueAnimator mAnimator;
     public MusicVisualizerView(Context context) {
@@ -98,99 +97,114 @@ private static final float DOMINANT_SMOOTH_FACTOR = 0.15f;  // 主频平滑系�
 public void updateVisualizer(byte[] fft, float volumeLevel) {
     if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
 
-    // ---------- 静音处理 ----------
     if (volumeLevel <= 0.001f) {
         reset();
         return;
     }
 
-    // ---------- 第一步：扫描全频谱，找最大能量和主频 ----------
-    float globalMaxMagnitude = 0f;
-    int dominantBinIndex = 2; // 跳过DC分量，从第一个有效bin开始
+    // ---------- 第一步：计算每个频段的相对能量（而非绝对能量） ----------
+    float[] barMagnitudes = new float[BAR_COUNT];
+    float maxRelativeEnergy = 0f;
+    int transientBar = 0;
 
-    for (int i = 2; i < fft.length - 1; i += 2) {
-        byte rfk = fft[i];
-        byte ifk = fft[i + 1];
-        float magnitude = (rfk * rfk + ifk * ifk);
+    for (int i = 0; i < BAR_COUNT; i++) {
+        int barIndex;
+        if (i < BAR_COUNT / 3) {
+            barIndex = 2 + i * 2;
+        } else {
+            barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+        }
 
-        if (magnitude > globalMaxMagnitude) {
-            globalMaxMagnitude = magnitude;
-            dominantBinIndex = i;
+        if (barIndex < fft.length - 1) {
+            byte rfk = fft[barIndex];
+            byte ifk = fft[barIndex + 1];
+            float magnitude = (rfk * rfk + ifk * ifk);
+
+            // 相对能量 = 当前能量 / 历史平均能量
+            // 这样低频不再永远最高，而是"突然变响的频率"最高
+            float historyAvg = mBarEnergyHistory[i] + 1f; // +1防止除零
+            float relativeEnergy = magnitude / historyAvg;
+
+            barMagnitudes[i] = relativeEnergy;
+
+            // 更新历史（快速衰减，让新峰值能凸显）
+            mBarEnergyHistory[i] = mBarEnergyHistory[i] * HISTORY_DECAY + magnitude * (1f - HISTORY_DECAY);
+
+            if (relativeEnergy > maxRelativeEnergy) {
+                maxRelativeEnergy = relativeEnergy;
+                transientBar = i;
+            }
         }
     }
 
-    // ---------- 第二步：把主频bin映射到音柱索引 ----------
-    // fft数组：索引2开始，每2个byte是一个复数（实部+虚部）
-    // 所以 binIndex = i / 2
-    int dominantBin = dominantBinIndex / 2;
+    // ---------- 第二步：主频 = 瞬态最强的柱 ----------
+    mCurrentDominantBar = transientBar;
 
-    // 映射到 BAR_COUNT 范围（线性映射）
-    int dominantBar = (int) ((float) dominantBin / ((fft.length / 2) - 1) * (BAR_COUNT - 1));
-    dominantBar = Math.max(0, Math.min(BAR_COUNT - 1, dominantBar));
+    // ---------- 第三步：全局能量（用瞬态柱的绝对能量，轻平滑） ----------
+    int dominantIdx = transientBar;
+    int rawIdx = 2 + (dominantIdx < BAR_COUNT / 3
+            ? dominantIdx * 2
+            : (BAR_COUNT / 3) * 2 + (dominantIdx - BAR_COUNT / 3) * 4);
 
-    // ---------- 第三步：平滑（关键！防止乱跳） ----------
-    // 3a. 能量平滑
-    float rawEnergy = Math.min(globalMaxMagnitude / MAX_AMPLITUDE, 1.0f);
-    rawEnergy *= volumeLevel; // 音量权重
-    mSmoothedGlobalEnergy = mSmoothedGlobalEnergy * (1f - ENERGY_SMOOTH_FACTOR)
-            + rawEnergy * ENERGY_SMOOTH_FACTOR;
+    float dominantMagnitude = 0;
+    if (rawIdx < fft.length - 1) {
+        byte rfk = fft[rawIdx];
+        byte ifk = fft[rawIdx + 1];
+        dominantMagnitude = (rfk * rfk + ifk * ifk);
+    }
 
-    // 3b. 主频平滑（让主峰位置变化慢一点）
-    mSmoothedDominantBar = (int) (mSmoothedDominantBar * (1f - DOMINANT_SMOOTH_FACTOR)
-            + dominantBar * DOMINANT_SMOOTH_FACTOR);
-    mSmoothedDominantBar = Math.max(0, Math.min(BAR_COUNT - 1, mSmoothedDominantBar));
+    float rawGlobal = Math.min(dominantMagnitude / MAX_AMPLITUDE, 1.0f) * volumeLevel;
 
-    // ---------- 第四步：计算每个音柱的目标高度 ----------
-    float globalScale = getHeight() * 0.95f * mSmoothedGlobalEnergy;
+    // 快速攻击 + 快速回落（关键！）
+    if (rawGlobal > mGlobalEnergy) {
+        mGlobalEnergy += (rawGlobal - mGlobalEnergy) * ENERGY_ATTACK;  // 快速跟上
+    } else {
+        mGlobalEnergy += (rawGlobal - mGlobalEnergy) * ENERGY_RELEASE;  // 快速回落 → "跳回"感
+    }
+
+    // ---------- 第四步：计算每个柱的目标高度 ----------
+    float globalScale = getHeight() * 0.95f * mGlobalEnergy;
 
     for (int i = 0; i < BAR_COUNT; i++) {
-        // 距离主频越远 → 衰减越大
-        float distance = Math.abs(i - mSmoothedDominantBar);
+        // 距离衰减（用瞬态主频，更陡）
+        float distance = Math.abs(i - mCurrentDominantBar);
         float normalizedDistance = distance / (float) BAR_COUNT;
 
-        // 用高斯衰减（比线性好看，中间高两边自然下降）
-        float sigma = 0.35f; // 控制衰减宽度，越小越集中
+        // 更陡的高斯（sigma小 = 集中 = 只有靠近主频的柱才高）
+        float sigma = 0.22f;
         float distanceFactor = (float) Math.exp(-(normalizedDistance * normalizedDistance)
                 / (2 * sigma * sigma));
 
-        // 轻微的频率加权（保留你原来的低频增益思路，但弱化）
-        float freqBias;
-        if (i < BAR_COUNT / 4) {
-            freqBias = 1.1f;       // 超低频微增益
-        } else if (i < BAR_COUNT / 2) {
-            freqBias = 1.05f;      // 中低频微增益
-        } else {
-            freqBias = 0.95f;      // 高频微衰减
-        }
+        // 相对能量加权（让瞬态突出的柱额外增高）
+        float relativeBoost = Math.min(barMagnitudes[i] / (maxRelativeEnergy + 0.001f), 1.5f);
 
-        mTargetHeights[i] = globalScale * distanceFactor * freqBias;
+        mTargetHeights[i] = globalScale * distanceFactor * (0.6f + 0.4f * relativeBoost);
         mTargetHeights[i] = Math.min(mTargetHeights[i], getHeight() * 0.95f);
 
-        // 振幅等级（给颜色渐变用，保留你原来的逻辑）
         mAmplitudeLevels[i] = Math.min(
                 mTargetHeights[i] / (getHeight() * 0.95f),
                 1.0f
         );
     }
 
-    // ---------- 第五步：启动动画 ----------
     startAnimation();
 }
-    private void startAnimation() {
-        if(mAnimator != null) {
-            mAnimator.cancel();
-        }
-        mAnimator = ValueAnimator.ofFloat(0f, 1f);
-        mAnimator.setDuration(ANIMATION_DURATION);
-        mAnimator.addUpdateListener(animation -> {
-            float fraction = animation.getAnimatedFraction();
-            for(int i = 0; i < BAR_COUNT; i++) {
-                mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * fraction;
-            }
-            postInvalidate();
-        });
-        mAnimator.start();
+private void startAnimation() {
+    if (mAnimator != null) {
+        mAnimator.cancel();
     }
+    mAnimator = ValueAnimator.ofFloat(0f, 1f);
+    mAnimator.setDuration(40); // 原来80，减半 → 更干脆
+    mAnimator.addUpdateListener(animation -> {
+        float fraction = animation.getAnimatedFraction();
+        // 加大插值系数 → 更快到达目标
+        for (int i = 0; i < BAR_COUNT; i++) {
+            mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.45f; // 原来用fraction，现在用固定大系数
+        }
+        postInvalidate();
+    });
+    mAnimator.start();
+}
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
