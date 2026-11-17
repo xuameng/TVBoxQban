@@ -12,7 +12,7 @@ import android.view.View;
 import androidx.annotation.RequiresApi;
 
 public class MusicVisualizerView extends View {
-    private static final String TAG = "xuameng_MusicVis";
+    private static final String TAG = "MusicVis";
     private static final int BAR_COUNT = 22;
 
     // 颜色配置
@@ -43,14 +43,14 @@ public class MusicVisualizerView extends View {
     private float mMaxSeenMid = 1f;
     private float mMaxSeenHigh = 1f;
 
-    // ============ 核心参数优化：完全解决幅度小、不同步、单音浪问题 ============
-    private static final float PEAK_DECAY = 0.08f; // 峰值衰减更慢，重音节拍保留更久
-    private static final float DISTANCE_SIGMA = 0.28f; // 频带权重收窄，三频区分更明显，不会互相覆盖
-    private static final float HEIGHT_LERP_FACTOR = 0.65f; // 响应速度翻倍，音柱跟随节奏几乎无延迟
-    private static final float DYNAMIC_GAIN = 1.6f; // 动态增益倍数，彻底解决幅度太小问题
+    // ============ 核心参数优化 ============
+    private static final float PEAK_DECAY = 0.08f; 
+    private static final float DISTANCE_SIGMA = 0.28f; 
+    private static final float HEIGHT_LERP_FACTOR = 0.65f; 
+    private static final float DYNAMIC_GAIN = 1.6f; 
     // ==============================================================
 
-    // FFT bin 范围
+    // FFT bin 范围 (保持原样，但读取时会做边界保护)
     private static final int LOW_BIN_START = 2;
     private static final int LOW_BIN_END = 10;
     private static final int MID_BIN_START = 11;
@@ -71,10 +71,10 @@ public class MusicVisualizerView extends View {
     private boolean mIsPendingRedraw = false;
     private boolean mIsPaused = false;
     private float mBarWidth, mGap, mBarUnitWidth, mCornerRadius;
-
-    // 调试
-    private int mDebugFrameCount = 0;
-    // ============================================
+    
+    // 【新增】用于检测是否收到过有效数据
+    private boolean hasReceivedValidData = false;
+    private long lastDataTime = 0;
 
     public MusicVisualizerView(Context context) { super(context); init(); }
     public MusicVisualizerView(Context context, AttributeSet attrs) { super(context, attrs); init(); }
@@ -85,6 +85,11 @@ public class MusicVisualizerView extends View {
         mSegmentSpacingFixed = dp2px(2.5f);
         mLastBaseHue = (float) (Math.random() * 360);
         refreshColorSchemes();
+        // 初始化一些默认高度，确保一开始能看到东西
+        for(int i=0; i<BAR_COUNT; i++) {
+            mBarHeights[i] = dp2px(10);
+            mAmplitudeLevels[i] = 0.1f;
+        }
     }
 
     private float dp2px(float dp) {
@@ -106,6 +111,8 @@ public class MusicVisualizerView extends View {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         mIsPaused = false;
+        // 启动初始绘制
+        postInvalidateOnAnimation();
     }
 
     @Override
@@ -137,11 +144,18 @@ public class MusicVisualizerView extends View {
     public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (mIsPaused) return;
         
-        float peak_bin_low = 0, peak_bin_mid = 0, peak_bin_high = 0;
-        boolean hasValidFft = fft != null && fft.length >= HIGH_BIN_END * 2 + 2;
+        // 【关键修复1】：即使 fft 为 null 或 volume 为 0，也不直接 return，而是进入下面的“兜底逻辑”
+        // 这样能保证只要调用这个方法，视图就会刷新
         
-        if (hasValidFft && volumeLevel > 0.001f) {
-            // 读三频带FFT峰值
+        float peak_bin_low = 0, peak_bin_mid = 0, peak_bin_high = 0;
+        boolean hasValidFft = false;
+        
+        // 【关键修复2】：放宽 FFT 长度检查。有些播放器只返回前几个字节，或者格式不同
+        // 原代码要求 >= 66，这里改为 >= 10 即可尝试读取低频，避免直接跳过
+        if (fft != null && fft.length >= 10) {
+            hasValidFft = true;
+            
+            // 安全读取 Low
             for (int i = LOW_BIN_START; i <= LOW_BIN_END; i++) {
                 int idx = i * 2;
                 if (idx + 1 >= fft.length) break;
@@ -149,6 +163,7 @@ public class MusicVisualizerView extends View {
                 float mag = ((rfk & 0xFF) * (rfk & 0xFF)) + ((ifk & 0xFF) * (ifk & 0xFF));
                 if (mag > peak_bin_low) peak_bin_low = mag;
             }
+            // 安全读取 Mid
             for (int i = MID_BIN_START; i <= MID_BIN_END; i++) {
                 int idx = i * 2;
                 if (idx + 1 >= fft.length) break;
@@ -156,6 +171,7 @@ public class MusicVisualizerView extends View {
                 float mag = ((rfk & 0xFF) * (rfk & 0xFF)) + ((ifk & 0xFF) * (ifk & 0xFF));
                 if (mag > peak_bin_mid) peak_bin_mid = mag;
             }
+            // 安全读取 High
             for (int i = HIGH_BIN_START; i <= HIGH_BIN_END; i++) {
                 int idx = i * 2;
                 if (idx + 1 >= fft.length) break;
@@ -163,31 +179,34 @@ public class MusicVisualizerView extends View {
                 float mag = ((rfk & 0xFF) * (rfk & 0xFF)) + ((ifk & 0xFF) * (ifk & 0xFF));
                 if (mag > peak_bin_high) peak_bin_high = mag;
             }
+            
+            hasReceivedValidData = true;
+            lastDataTime = System.currentTimeMillis();
 
-            // ============ 独立频带动态归一化：三频互不干扰，幅度足够大 ============
+            // ---------- 自适应归一化 ----------
             mMaxSeenLow  = Math.max(mMaxSeenLow,  peak_bin_low);
             mMaxSeenMid  = Math.max(mMaxSeenMid,  peak_bin_mid);
             mMaxSeenHigh = Math.max(mMaxSeenHigh, peak_bin_high);
-            // 三频用不同衰减速度：低频慢衰减稳动态，高频快衰减跟节拍
             mMaxSeenLow  *= 0.996f;
             mMaxSeenMid  *= 0.997f;
             mMaxSeenHigh *= 0.998f;
 
-            // 动态增益拉升幅度，限制最大值1.0避免爆顶
             float normLow  = (mMaxSeenLow  > 1f)  ? Math.min(1.0f, (peak_bin_low  / mMaxSeenLow) * DYNAMIC_GAIN) : 0f;
             float normMid  = (mMaxSeenMid  > 1f)  ? Math.min(1.0f, (peak_bin_mid  / mMaxSeenMid) * DYNAMIC_GAIN) : 0f;
             float normHigh = (mMaxSeenHigh > 1f)  ? Math.min(1.0f, (peak_bin_high / mMaxSeenHigh) * DYNAMIC_GAIN) : 0f;
 
-            normLow  *= volumeLevel;
-            normMid  *= volumeLevel;
-            normHigh *= volumeLevel;
+            // 如果 volumeLevel 异常大或异常小，做个保护
+            float vol = Math.max(0f, Math.min(1.5f, volumeLevel));
             
-            // 峰值快速跟随：新数据大于当前峰值直接更新，保证节拍点响应及时
+            normLow  *= vol;
+            normMid  *= vol;
+            normHigh *= vol;
+            
             if (normLow > mPeakLow) mPeakLow = normLow;
             if (normMid > mPeakMid) mPeakMid = normMid;
             if (normHigh > mPeakHigh) mPeakHigh = normHigh;
             
-            // 自动校准能量累积
+            // 校准能量累积
             for (int i = 0; i < BAR_COUNT; i++) {
                 int idx = (i < BAR_COUNT / 3) ? (2 + i * 2) : (2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4);
                 if (idx < fft.length - 1) {
@@ -202,24 +221,27 @@ public class MusicVisualizerView extends View {
                 mCalibrateCount = 0;
                 mLastCalibrateTime = now;
             }
-
-            // 调试日志
-            mDebugFrameCount++;
-            if (mDebugFrameCount <= 100) {
-                Log.d(TAG, String.format("frame=%d vol=%.3f low=%.3f mid=%.3f high=%.3f peak=%.3f/%.3f/%.3f",
-                        mDebugFrameCount, volumeLevel,
-                        normLow, normMid, normHigh,
-                        mPeakLow, mPeakMid, mPeakHigh));
+        } else {
+            // 【关键修复3】：如果没有有效 FFT 数据，但视图需要显示，则使用“呼吸模式”
+            // 模拟微小的跳动，让用户知道控件还在工作
+            if (!hasReceivedValidData || System.currentTimeMillis() - lastDataTime > 2000) {
+                 // 简单的正弦波模拟，让柱子有点动静
+                 long t = System.currentTimeMillis();
+                 mPeakLow = 0.1f + 0.05f * (float)Math.sin(t * 0.005);
+                 mPeakMid = 0.1f + 0.05f * (float)Math.sin(t * 0.007 + 1);
+                 mPeakHigh = 0.1f + 0.05f * (float)Math.sin(t * 0.009 + 2);
             }
         }
         
-        // 峰值平滑衰减：避免卡柱，回落自然不突兀
+        // 峰值平滑衰减
         mPeakLow -= mPeakLow * PEAK_DECAY;
         mPeakMid -= mPeakMid * PEAK_DECAY;
         mPeakHigh -= mPeakHigh * PEAK_DECAY;
-        if (mPeakLow < 0.01f) mPeakLow = 0.01f;
-        if (mPeakMid < 0.01f) mPeakMid = 0.01f;
-        if (mPeakHigh < 0.01f) mPeakHigh = 0.01f;
+        
+        // 【关键修复4】：设置一个绝对最小值，防止柱子完全消失
+        if (mPeakLow < 0.02f) mPeakLow = 0.02f;
+        if (mPeakMid < 0.02f) mPeakMid = 0.02f;
+        if (mPeakHigh < 0.02f) mPeakHigh = 0.02f;
 
         // 计算柱高
         float maxH = getHeight() * 0.95f;
@@ -234,19 +256,20 @@ public class MusicVisualizerView extends View {
             float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
             float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
 
-            // ============ 权重归一化：三频高度互不抢占，三个独立音浪清晰可见 ============
             float totalWeight = wLow + wMid + wHigh + 0.001f;
             float barRatio = (mPeakLow * wLow + mPeakMid * wMid + mPeakHigh * wHigh) / totalWeight;
-            barRatio = Math.max(barRatio, 0.05f);
+            
+            // 保证最小可见高度
+            barRatio = Math.max(barRatio, 0.05f); 
             barRatio = Math.min(barRatio, 1.0f);
 
             float targetH = maxH * barRatio;
-            // 快速平滑插值，跟手无延迟
+            // 快速平滑插值
             mBarHeights[i] += (targetH - mBarHeights[i]) * HEIGHT_LERP_FACTOR;
             mAmplitudeLevels[i] = barRatio;
         }
 
-        // 帧率控制+VSync同步绘制
+        // 帧率控制
         long now = System.currentTimeMillis();
         if (!mIsPendingRedraw && now - mLastDrawTime >= MIN_DRAW_INTERVAL) {
             mIsPendingRedraw = true;
@@ -290,12 +313,21 @@ public class MusicVisualizerView extends View {
 
         final int width = getWidth(), height = getHeight();
         if (width == 0 || height == 0) return;
-        final float MIN_H = dp2px(20f);
+        
+        // 调试用：在左上角画一个小点，证明 onDraw 正在执行
+        // mBarPaint.setColor(Color.RED);
+        // canvas.drawCircle(10, 10, 5, mBarPaint);
+
+        final float MIN_H = dp2px(5f); // 降低最小高度阈值，确保能看见
 
         for (int i = 0; i < BAR_COUNT; i++) {
             float left = i * mBarWidth + mGap / 2;
             float right = left + mBarUnitWidth;
-            float barH = Math.min(mBarHeights[i], height * 0.9f);
+            
+            // 确保 barH 至少有一点高度
+            float barH = Math.max(mBarHeights[i], dp2px(5f));
+            barH = Math.min(barH, height * 0.9f);
+            
             float top = height - barH;
 
             int color = getDynamicColor(mAmplitudeLevels[i], colorSchemes[currentSchemeIndex]);
