@@ -184,8 +184,10 @@ public class MusicVisualizerView extends View {
 final float EXPAND_POWER = 2.2f;
 combinedRatio = (float) Math.pow(combinedRatio, EXPAND_POWER);
 
-// sqrt 保持浪尖能到顶
-float heightRatio = (float) Math.sqrt(combinedRatio);
+// ★ 拉开高低柱差距，同时保证最高柱能到顶
+            float boosted = combinedRatio * 1.6f;  // 补偿，防止整体变矮
+            boosted = Math.min(boosted, 1.0f);
+            float heightRatio = (float) Math.pow(boosted, 0.55f);
 
             mTargetHeights[i] = Math.min(heightRatio * maxH, maxH);
             mAmplitudeLevels[i] = Math.min(heightRatio * 3.0f, 1.0f);
