@@ -9,7 +9,7 @@ import android.view.View;
 import android.animation.ValueAnimator;
 
 public class MusicVisualizerView extends View {
-    private static final int MAX_AMPLITUDE = 9222;
+    private static final int MAX_AMPLITUDE = 6222;
     private static final int BAR_COUNT = 22;
     private static final int ANIMATION_DURATION = 50;
 
