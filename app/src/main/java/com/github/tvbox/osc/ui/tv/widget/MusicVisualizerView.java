@@ -11,7 +11,7 @@ import android.animation.ValueAnimator;
 public class MusicVisualizerView extends View {
     private static final int MAX_AMPLITUDE = 9222;
     private static final int BAR_COUNT = 22;
-    private static final int ANIMATION_DURATION = 60;
+    private static final int ANIMATION_DURATION = 50;
 
     private int mCenterLow = 4;
     private int mCenterMid = 11;
@@ -286,18 +286,6 @@ public class MusicVisualizerView extends View {
             lastSwitchTime = now;
             refreshColorSchemes();
         }
-    }
-
-    private void refreshColorSchemes() {
-        for (int i = 0; i < 3; i++) {
-            float baseHue = (float) (Math.random() * 360);
-            colorSchemes[i] = new int[]{
-                    Color.HSVToColor(new float[]{baseHue, 1f, 1f}),
-                    Color.HSVToColor(new float[]{(baseHue + 120) % 360, 1f, 1f}),
-                    Color.HSVToColor(new float[]{(baseHue + 240) % 360, 1f, 1f})
-            };
-        }
-        postInvalidate();
     }
 
     private int getDynamicColor(float amplitude, int[] currentScheme) {
