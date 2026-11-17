@@ -50,16 +50,13 @@ public class MusicVisualizerView extends View {
     private float mPeakMid = 0.02f;
     private float mPeakHigh = 0.02f;
 
-    // ===== 衰减（快回落：低频0.25 / 中频0.35 / 高频0.45）=====
+    // ===== 衰减（快回落）=====
     private static final float PEAK_DECAY_LOW = 0.25f;
     private static final float PEAK_DECAY_MID = 0.35f;
     private static final float PEAK_DECAY_HIGH = 0.45f;
 
-    // ===== σ=0.10 → 浪窄且尖，三浪清晰分离 =====
-    private static final float DISTANCE_SIGMA = 0.10f;
-
-    // 对比度拉伸指数（0.5 → 浪尖锐利，低谷压低）
-    private static final float CONTRAST_POWER = 0.5f;
+    // ===== σ=0.07 → 浪更窄，谷底权重自然降低 =====
+    private static final float DISTANCE_SIGMA = 0.07f;
 
     // 校准
     private final float[] mEnergyAccum = new float[BAR_COUNT];
@@ -126,7 +123,7 @@ public class MusicVisualizerView extends View {
         float normMid  = Math.min(peakMid  / (float) MAX_AMPLITUDE, 1.0f);
         float normHigh = Math.min(peakHigh / (float) MAX_AMPLITUDE, 1.0f);
 
-        normLow  = normLow  * (0.2f + 0.8f * volumeLevel);  // 0.8 加权 → 音量敏感
+        normLow  = normLow  * (0.2f + 0.8f * volumeLevel);
         normMid  = normMid  * (0.2f + 0.8f * volumeLevel);
         normHigh = normHigh * (0.2f + 0.8f * volumeLevel);
 
@@ -163,7 +160,7 @@ public class MusicVisualizerView extends View {
             mLastCalibrateTime = now;
         }
 
-        // ---------- 5. 计算目标高度 ----------
+        // ---------- 5. 计算目标高度（谷底杀手版） ----------
         float maxH = getHeight() * 0.95f;
         if (maxH <= 0) maxH = 100f;
 
@@ -176,15 +173,15 @@ public class MusicVisualizerView extends View {
             float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
             float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
 
-            // 主导浪加权，压制非主导浪的干扰 → 浪尖更锐利
+            // 主导浪强压制旁浪 → 谷底更干净
             float dominantWeight = Math.max(wLow, Math.max(wMid, wHigh));
             float totalWeight;
             if (dominantWeight == wLow) {
-                totalWeight = wLow + wMid * 0.25f + wHigh * 0.15f;
+                totalWeight = wLow + wMid * 0.15f + wHigh * 0.10f;
             } else if (dominantWeight == wMid) {
-                totalWeight = wLow * 0.25f + wMid + wHigh * 0.25f;
+                totalWeight = wLow * 0.15f + wMid + wHigh * 0.15f;
             } else {
-                totalWeight = wLow * 0.15f + wMid * 0.25f + wHigh;
+                totalWeight = wLow * 0.10f + wMid * 0.15f + wHigh;
             }
 
             float combinedRatio;
@@ -194,8 +191,17 @@ public class MusicVisualizerView extends View {
                 combinedRatio = 0f;
             }
 
-            // ===== 对比度拉伸：pow(0.5) → 浪尖高、低谷低 =====
-            float contrastRatio = (float) Math.pow(Math.min(combinedRatio, 1.0f), CONTRAST_POWER);
+            // ===== 阈值截断对比度：谷底压死，浪尖拉高 =====
+            float rawRatio = Math.min(combinedRatio, 1.0f);
+            float contrastRatio;
+            if (rawRatio < 0.12f) {
+                contrastRatio = rawRatio * 0.2f;                                  // 谷底压到 1/5
+            } else if (rawRatio < 0.30f) {
+                contrastRatio = 0.12f * 0.2f + (rawRatio - 0.12f) * 1.5f;        // 过渡区
+            } else {
+                contrastRatio = 0.12f * 0.2f + 0.18f * 1.5f + (rawRatio - 0.30f) * 2.0f; // 浪尖拉高
+            }
+            contrastRatio = Math.min(contrastRatio, 1.0f);
 
             mTargetHeights[i] = Math.min(contrastRatio * maxH, maxH);
             mAmplitudeLevels[i] = Math.min(contrastRatio * 3.0f, 1.0f);
@@ -231,7 +237,7 @@ public class MusicVisualizerView extends View {
     }
 
     // ================================================================
-    // 动画（lerpFactor=0.65 → 上升快，回落靠 DECAY 控制）
+    // 动画（非对称 lerp：上升有冲击感，回落快速贴底）
     // ================================================================
     private void startAnimation() {
         if (mAnimator != null) {
@@ -240,8 +246,13 @@ public class MusicVisualizerView extends View {
         mAnimator = ValueAnimator.ofFloat(0f, 1f);
         mAnimator.setDuration(ANIMATION_DURATION);
         mAnimator.addUpdateListener(animation -> {
-            float lerpFactor = 0.65f;
             for (int i = 0; i < BAR_COUNT; i++) {
+                float lerpFactor;
+                if (mTargetHeights[i] < mBarHeights[i] * 0.5f) {
+                    lerpFactor = 0.80f;  // 回落：快速贴底
+                } else {
+                    lerpFactor = 0.55f;  // 上升：有冲击感的弹起
+                }
                 mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * lerpFactor;
             }
             postInvalidate();
