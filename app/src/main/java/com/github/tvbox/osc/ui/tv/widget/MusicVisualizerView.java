@@ -130,7 +130,7 @@ public class MusicVisualizerView extends View {
      * 调小 → 影响范围更窄，波浪更尖更集中
      * 推荐范围：0.12~0.30，当前 0.18。
      */
-    private static final float DISTANCE_SIGMA = 0.16f;
+    private static final float DISTANCE_SIGMA = 0.2f;
 
     // ============================================================
     // ★ 核心高度映射参数（最重要！）
@@ -142,7 +142,7 @@ public class MusicVisualizerView extends View {
      * 调小 → 频段之间互相影响更多，波浪更融合
      * 推荐范围：1.0~4.0，当前 2.0。
      */
-    private static final float SHARP = 2.8f;
+    private static final float SHARP = 1.5f;
 
     /**
      * ★★★ 抬升增益 ★★★
@@ -151,7 +151,7 @@ public class MusicVisualizerView extends View {
      * 调小 → 低值被压得更低，差距拉大，但高值可能到不了顶
      * 推荐范围：1.5~2.5，当前 1.8（甜区）。
      */
-    private static final float GAIN = 1.8f;
+    private static final float GAIN = 1.5f;
 
     /**
      * ★★★ 曲线陡峭度 ★★★
@@ -276,9 +276,9 @@ public class MusicVisualizerView extends View {
         float normMid  = Math.min(peakMid  / (float) MAX_AMPLITUDE, 1.0f);
         float normHigh = Math.min(peakHigh / (float) MAX_AMPLITUDE, 1.0f);
 
-        normLow  = normLow  * (0.2f + 0.8f * volumeLevel);
-        normMid  = normMid  * (0.2f + 0.8f * volumeLevel);
-        normHigh = normHigh * (0.2f + 0.8f * volumeLevel);
+        normLow  = normLow  * (0.1f + 0.9f * volumeLevel);
+        normMid  = normMid  * (0.1f + 0.9f * volumeLevel);
+        normHigh = normHigh * (0.1f + 0.9f * volumeLevel);
 
         // ---------- 3. 峰值检测 ----------
         if (normLow > mPeakLow) mPeakLow = normLow;
