@@ -14,9 +14,9 @@ public class MusicVisualizerView extends View {
     private static final int ANIMATION_DURATION = 40;
 
     // ===== 三浪中心（均分 22 根柱）=====
-    private int mCenterLow = 4;
-    private int mCenterMid = 11;
-    private int mCenterHigh = 18;
+    private int mCenterLow = 4;   // 低频浪尖（左）
+    private int mCenterMid = 11;  // 中频浪尖（中）
+    private int mCenterHigh = 18; // 高频浪尖（右）
 
     // ===== 颜色 =====
     private int[][] colorSchemes = new int[3][3];
@@ -50,16 +50,13 @@ public class MusicVisualizerView extends View {
     private float mPeakMid = 0.02f;
     private float mPeakHigh = 0.02f;
 
-    // ===== 衰减（快回落：低频0.25 / 中频0.35 / 高频0.45）=====
-    private static final float PEAK_DECAY_LOW = 0.45f;
-    private static final float PEAK_DECAY_MID = 0.45f;
+    // 衰减：翻倍加快，下降更干脆
+    private static final float PEAK_DECAY_LOW = 0.25f;
+    private static final float PEAK_DECAY_MID = 0.35f;
     private static final float PEAK_DECAY_HIGH = 0.45f;
 
-    // ===== σ=0.10 → 浪窄且尖，三浪清晰分离 =====
-    private static final float DISTANCE_SIGMA = 0.05f;
-
-    // 对比度拉伸指数（0.5 → 浪尖锐利，低谷压低）
-    private static final float CONTRAST_POWER = 0.9f;
+    // σ 缩小到 0.12 → 三个浪尖清晰分离
+    private static final float DISTANCE_SIGMA = 0.12f;
 
     // 校准
     private final float[] mEnergyAccum = new float[BAR_COUNT];
@@ -121,20 +118,21 @@ public class MusicVisualizerView extends View {
             if (mag > peakHigh) peakHigh = mag;
         }
 
-        // ---------- 2. 归一化 + 音量加权 ----------
+        // ---------- 2. 归一化 ----------
         float normLow  = Math.min(peakLow  / (float) MAX_AMPLITUDE, 1.0f);
         float normMid  = Math.min(peakMid  / (float) MAX_AMPLITUDE, 1.0f);
         float normHigh = Math.min(peakHigh / (float) MAX_AMPLITUDE, 1.0f);
 
-        normLow  = normLow  * (0.05f + 0.95f * volumeLevel);  // 0.8 加权 → 音量敏感
-        normMid  = normMid  * (0.05f + 0.95f * volumeLevel);
-        normHigh = normHigh * (0.05f + 0.95f * volumeLevel);
+        normLow  = normLow  * (0.3f + 0.7f * volumeLevel);
+        normMid  = normMid  * (0.3f + 0.7f * volumeLevel);
+        normHigh = normHigh * (0.3f + 0.7f * volumeLevel);
 
-        // ---------- 3. 峰值检测（瞬态保持 + 快速衰减） ----------
+        // ---------- 3. 峰值检测 ----------
         if (normLow > mPeakLow) mPeakLow = normLow;
         if (normMid > mPeakMid) mPeakMid = normMid;
         if (normHigh > mPeakHigh) mPeakHigh = normHigh;
 
+        // 衰减（翻倍速度）
         mPeakLow -= mPeakLow * PEAK_DECAY_LOW;
         mPeakMid -= mPeakMid * PEAK_DECAY_MID;
         mPeakHigh -= mPeakHigh * PEAK_DECAY_HIGH;
@@ -176,17 +174,7 @@ public class MusicVisualizerView extends View {
             float wMid  = (float) Math.exp(-(dMid  * dMid)  / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
             float wHigh = (float) Math.exp(-(dHigh * dHigh) / (2 * DISTANCE_SIGMA * DISTANCE_SIGMA));
 
-            // 主导浪加权，压制非主导浪的干扰 → 浪尖更锐利
-            float dominantWeight = Math.max(wLow, Math.max(wMid, wHigh));
-            float totalWeight;
-            if (dominantWeight == wLow) {
-                totalWeight = wLow + wMid * 0.25f + wHigh * 0.15f;
-            } else if (dominantWeight == wMid) {
-                totalWeight = wLow * 0.25f + wMid + wHigh * 0.25f;
-            } else {
-                totalWeight = wLow * 0.15f + wMid * 0.25f + wHigh;
-            }
-
+            float totalWeight = wLow + wMid + wHigh;
             float combinedRatio;
             if (totalWeight > 0.001f) {
                 combinedRatio = (mPeakLow * wLow + mPeakMid * wMid + mPeakHigh * wHigh) / totalWeight;
@@ -194,11 +182,8 @@ public class MusicVisualizerView extends View {
                 combinedRatio = 0f;
             }
 
-            // ===== 对比度拉伸：pow(0.5) → 浪尖高、低谷低 =====
-            float contrastRatio = (float) Math.pow(Math.min(combinedRatio, 1.0f), CONTRAST_POWER);
-
-            mTargetHeights[i] = Math.min(contrastRatio * maxH, maxH);
-            mAmplitudeLevels[i] = Math.min(contrastRatio * 3.0f, 1.0f);
+            mTargetHeights[i] = Math.min(combinedRatio * maxH, maxH);
+            mAmplitudeLevels[i] = Math.min(combinedRatio * 3.0f, 1.0f);
         }
 
         startAnimation();
@@ -231,7 +216,7 @@ public class MusicVisualizerView extends View {
     }
 
     // ================================================================
-    // 动画（lerpFactor=0.65 → 上升快，回落靠 DECAY 控制）
+    // 动画（lerpFactor 0.65 → 上升几乎一帧到位）
     // ================================================================
     private void startAnimation() {
         if (mAnimator != null) {
@@ -240,7 +225,7 @@ public class MusicVisualizerView extends View {
         mAnimator = ValueAnimator.ofFloat(0f, 1f);
         mAnimator.setDuration(ANIMATION_DURATION);
         mAnimator.addUpdateListener(animation -> {
-            float lerpFactor = 0.65f;
+            float lerpFactor = 0.65f; // 快速追上目标
             for (int i = 0; i < BAR_COUNT; i++) {
                 mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * lerpFactor;
             }
