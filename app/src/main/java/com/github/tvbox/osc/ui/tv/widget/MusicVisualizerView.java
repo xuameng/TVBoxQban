@@ -116,17 +116,25 @@ public class MusicVisualizerView extends View {
         normMid  = normMid  * (0.2f + 0.8f * volumeLevel);
         normHigh = normHigh * (0.2f + 0.8f * volumeLevel);
 
-        // ---------- 3. 峰值检测 ----------
-        if (normLow > mPeakLow) mPeakLow = normLow;
-        if (normMid > mPeakMid) mPeakMid = normMid;
-        if (normHigh > mPeakHigh) mPeakHigh = normHigh;
+// ---------- 3. 峰值检测 + 动态衰减 ----------
+if (normLow > mPeakLow) mPeakLow = normLow;
+if (normMid > mPeakMid) mPeakMid = normMid;
+if (normHigh > mPeakHigh) mPeakHigh = normHigh;
 
-        mPeakLow -= mPeakLow * PEAK_DECAY_LOW;
-        mPeakMid -= mPeakMid * PEAK_DECAY_MID;
-        mPeakHigh -= mPeakHigh * PEAK_DECAY_HIGH;
-        if (mPeakLow < 0.02f) mPeakLow = 0.02f;
-        if (mPeakMid < 0.02f) mPeakMid = 0.02f;
-        if (mPeakHigh < 0.02f) mPeakHigh = 0.02f;
+// 动态 decay：peak 越高，衰减越快
+// 基础 0.35（比之前慢一点，保节奏感）
+// peak 接近 1.0 时 decay 可达 0.85（快速回落）
+float decayLow  = 0.35f + 0.50f * mPeakLow;
+float decayMid  = 0.35f + 0.50f * mPeakMid;
+float decayHigh = 0.35f + 0.50f * mPeakHigh;
+
+mPeakLow  -= mPeakLow  * decayLow;
+mPeakMid  -= mPeakMid  * decayMid;
+mPeakHigh -= mPeakHigh * decayHigh;
+
+if (mPeakLow < 0.02f) mPeakLow = 0.02f;
+if (mPeakMid < 0.02f) mPeakMid = 0.02f;
+if (mPeakHigh < 0.02f) mPeakHigh = 0.02f;
 
         // ---------- 4. 校准 ----------
         for (int i = 0; i < BAR_COUNT; i++) {
