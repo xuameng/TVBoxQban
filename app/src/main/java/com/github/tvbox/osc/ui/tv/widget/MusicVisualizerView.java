@@ -32,7 +32,7 @@ public class MusicVisualizerView extends View {
      * 调小 → 柱子整体变高（更容易到顶）
      * 一般不用动，10222 是经验值。
      */
-    private static final int MAX_AMPLITUDE = 10222;
+    private static final int MAX_AMPLITUDE = 9222;
 
     /**
      * 音柱总数量。
@@ -130,7 +130,7 @@ public class MusicVisualizerView extends View {
      * 调小 → 影响范围更窄，波浪更尖更集中
      * 推荐范围：0.12~0.30，当前 0.18。
      */
-    private static final float DISTANCE_SIGMA = 0.2f;
+    private static final float DISTANCE_SIGMA = 0.12f;
 
     // ============================================================
     // ★ 核心高度映射参数（最重要！）
@@ -142,16 +142,16 @@ public class MusicVisualizerView extends View {
      * 调小 → 频段之间互相影响更多，波浪更融合
      * 推荐范围：1.0~4.0，当前 2.0。
      */
-    private static final float SHARP = 1.5f;
+    private static final float SHARP = 3.0f;
 
     /**
      * ★★★ 抬升增益 ★★★
      * 把 combinedRatio 乘以这个数再 clamp 到 1.0。
      * 调大 → 所有柱子变高，高值更容易到顶，但差距缩小
      * 调小 → 低值被压得更低，差距拉大，但高值可能到不了顶
-     * 推荐范围：1.5~2.5，当前 1.8（甜区）。
+     * 推荐范围：1.5~2.5，当前 1.5（甜区）。
      */
-    private static final float GAIN = 1.5f;
+    private static final float GAIN = 1.2f;
 
     /**
      * ★★★ 曲线陡峭度 ★★★
