@@ -30,7 +30,7 @@ public class MusicVisualizerView extends View {
     private static final int BAR_COUNT = 22;
 
     // xuameng 音柱动画时长
-    private static final int ANIMATION_DURATION = 80;
+    private static final int ANIMATION_DURATION = 50;
 
     /**
      * 峰值衰减率
@@ -65,8 +65,8 @@ public class MusicVisualizerView extends View {
 
     // xuameng 山峰模式
     private static final int PEAK_COUNT = 3;               // 每帧最多山峰数量
-    private static final float PEAK_RADIUS = 1.5f;          // 山峰影响半径（bar 数），1.5=窄而陡
-    private static final float PEAK_DECAY_POWER = 4.0f;     // 山峰衰减曲线（越大越尖），4.0=陡峭
+    private static final float PEAK_RADIUS = 3.0f;          // 山峰影响半径（bar 数）
+    private static final float PEAK_DECAY_POWER = 2.5f;     // 山峰衰减曲线（越大越尖）
 
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
@@ -131,7 +131,7 @@ public class MusicVisualizerView extends View {
             int barIndex;
             // xuameng 修改：低频采样右移，让第一个山峰峰顶落在第3~4根，整体山脉居中
             if (i < BAR_COUNT / 3) {
-                barIndex = 4 + i * 2;  // 从 bin 4 开始
+                barIndex = 4 + i * 2;  // ← 右移：从 bin 4 开始
             } else {
                 barIndex = 4 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
             }
@@ -145,13 +145,13 @@ public class MusicVisualizerView extends View {
                 float weight;
                 // xuameng 修改：低频权重加大，配合右移让峰顶居中
                 if (i < BAR_COUNT / 4) {
-                    weight = 3.5f;  // 低频权重加大
+                    weight = 2.0f;  // ← 低频权重加大
                 } else if (i < BAR_COUNT / 2) {
                     weight = 2.5f;
                 } else {
                     // xuameng 修改：高频衰减，避免右侧过多半高死柱
                     float freqFactor = (float) Math.pow(1.6, (i - BAR_COUNT / 2) / 2.0);
-                    weight = 5.0f * freqFactor;
+                    weight = 7.5f * freqFactor;
                 }
 
                 float norm = Math.min(magnitude / (float) MAX_AMPLITUDE, 1.0f);
@@ -222,8 +222,8 @@ public class MusicVisualizerView extends View {
             float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
 
             // ===== 全局连续斜坡底座 =====
-            // xuameng 找最远峰
-            int farthestPeakPos = 0;
+            // xuameng 找最远峰（带最小偏移确保山脉居中）
+            int farthestPeakPos = Math.max(7, 0);
             float farthestPeakEnergy = 0;
             for (int p = 0; p < PEAK_COUNT; p++) {
                 if (rawEnergy[p] < 0.05f) break;
@@ -232,21 +232,36 @@ public class MusicVisualizerView extends View {
                     farthestPeakEnergy = rawEnergy[p];
                 }
             }
-            if (farthestPeakPos < 7) farthestPeakPos = 7;
 
-            float baseRatio = MIN_VISIBLE_RATIO;  // 恒为 0.02，山谷就是底线
+            // xuameng 峰底高度限幅：避免太高导致斜坡过平、太低导致贴地
+            float peakFloor = Math.min(
+                    Math.max(farthestPeakEnergy * 0.15f, MIN_VISIBLE_RATIO * 2.0f),
+                    MIN_VISIBLE_RATIO * 4.0f
+            );
 
+            float baseRatio = 0f;
             if (i >= farthestPeakPos) {
-                // xuameng 右侧：从峰能量立方曲线快速降到 MIN_VISIBLE_RATIO
+                // xuameng 最后一个峰右侧：从峰底圆润降到 MIN_VISIBLE_RATIO（末端最低）
                 int slopeLength = BAR_COUNT - 1 - farthestPeakPos;
                 if (slopeLength > 0) {
                     float slopeProgress = (float)(i - farthestPeakPos) / slopeLength;
-                    float curveProgress = slopeProgress * slopeProgress * slopeProgress;  // 立方：峰脚快降
-                    baseRatio = MIN_VISIBLE_RATIO + (farthestPeakEnergy * 0.4f) * (1.0f - curveProgress);
+                    // slopeProgress=0 在峰底(高)，=1 在末端(低=MIN_VISIBLE_RATIO)
+                    baseRatio = peakFloor + (MIN_VISIBLE_RATIO - peakFloor) * slopeProgress;
+                } else {
+                    baseRatio = MIN_VISIBLE_RATIO;
+                }
+            } else {
+                // xuameng 最后一个峰左侧：从 MIN_VISIBLE_RATIO 渐入到峰底，保证无消失柱
+                int slopeLength = farthestPeakPos;
+                if (slopeLength > 0) {
+                    float slopeProgress = 1.0f - (float)i / slopeLength;
+                    baseRatio = MIN_VISIBLE_RATIO + (peakFloor - MIN_VISIBLE_RATIO) * slopeProgress;
+                } else {
+                    baseRatio = MIN_VISIBLE_RATIO;
                 }
             }
-            // 左侧：baseRatio = MIN_VISIBLE_RATIO，不渐入不抬升
 
+            // 最终高度 = 山峰高度 + 斜坡底座，取大值（保证每根 ≥ MIN_VISIBLE_RATIO）
             float finalRatio = Math.max(heightRatio, baseRatio);
 
             mTargetHeights[i] = Math.min(finalRatio * maxH, maxH * 0.95f);
