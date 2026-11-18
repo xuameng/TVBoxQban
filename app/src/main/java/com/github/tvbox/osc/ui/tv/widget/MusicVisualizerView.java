@@ -12,7 +12,7 @@ public class MusicVisualizerView extends View {
 
     private static final int MAX_AMPLITUDE = 9222;
     private static final int BAR_COUNT = 22;
-    private static final int ANIMATION_DURATION = 60;
+    private static final int ANIMATION_DURATION = 50;
 
     // ★ 去掉了 GAIN，用最低可见高度兜底
 
@@ -107,12 +107,12 @@ public class MusicVisualizerView extends View {
                 // ★ 中高频 weight 拉大
                 float weight;
                 if (i < BAR_COUNT / 4) {
-                    weight = 1.0f;
+                    weight = 1.5f;
                 } else if (i < BAR_COUNT / 2) {
-                    weight = 6.0f;
+                    weight = 4.5.0f;
                 } else {
                     float freqFactor = (float) Math.pow(2.0, (i - BAR_COUNT / 2) / 2.0);
-                    weight = 8.0f * freqFactor;
+                    weight = 8.5f * freqFactor;
                 }
 
                 // 归一化
@@ -134,9 +134,9 @@ public class MusicVisualizerView extends View {
                 // ★ 中高频衰减更慢，撑得更久
                 float decay = BAR_PEAK_DECAY;
                 if (i >= BAR_COUNT / 2) {
-                    decay = 0.28f;
+                    decay = 0.45f;
                 } else if (i >= BAR_COUNT / 4) {
-                    decay = 0.38f;
+                    decay = 0.5f;
                 }
                 mBarPeaks[i] -= mBarPeaks[i] * decay;
                 if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
