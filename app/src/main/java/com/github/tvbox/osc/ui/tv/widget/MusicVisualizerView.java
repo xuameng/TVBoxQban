@@ -30,7 +30,7 @@ public class MusicVisualizerView extends View {
     private static final int BAR_COUNT = 22;
 
     // xuameng 音柱动画时长
-    private static final int ANIMATION_DURATION = 80;
+    private static final int ANIMATION_DURATION = 50;
 
     /**
      * 峰值衰减率
@@ -63,12 +63,10 @@ public class MusicVisualizerView extends View {
     private int mSegmentCount = 20; // 每个音柱的分段数
     private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
 
-
-// xuameng 山峰模式
-private static final int PEAK_COUNT = 3;               // 每帧最多山峰数量
-private static final float PEAK_RADIUS = 3.0f;          // 山峰影响半径（bar 数）
-private static final float PEAK_DECAY_POWER = 2.5f;     // 山峰衰减曲线（越大越尖）
-
+    // xuameng 山峰模式
+    private static final int PEAK_COUNT = 3;               // 每帧最多山峰数量
+    private static final float PEAK_RADIUS = 3.0f;          // 山峰影响半径（bar 数）
+    private static final float PEAK_DECAY_POWER = 2.5f;     // 山峰衰减曲线（越大越尖）
 
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
@@ -113,155 +111,159 @@ private static final float PEAK_DECAY_POWER = 2.5f;     // 山峰衰减曲线（
     public void setSegmentCount(int count) { mSegmentCount = Math.max(1, count); postInvalidate(); }
     public void setSegmentSpacingFixed(float spacing) { mSegmentSpacingFixed = Math.max(0f, spacing); postInvalidate(); }
 
-public void updateVisualizer(byte[] fft, float volumeLevel) {
-    if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+    public void updateVisualizer(byte[] fft, float volumeLevel) {
+        if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
 
-    // xuameng处理静音状态重置音柱
-    if (volumeLevel <= 0.001f) {
-        reset();
-        return;
-    }
-
-    float maxH = getHeight();
-    if (maxH <= 0) maxH = 100f;
-
-    // xuameng 先计算每个频点能量
-    float[] rawEnergy = new float[BAR_COUNT];
-    int[] rawIndex = new int[BAR_COUNT];
-
-    for (int i = 0; i < BAR_COUNT; i++) {
-        int barIndex;
-        if (i < BAR_COUNT / 3) {
-            barIndex = 2 + i * 2;
-        } else {
-            barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+        // xuameng处理静音状态重置音柱
+        if (volumeLevel <= 0.001f) {
+            reset();
+            return;
         }
 
-        if (barIndex < fft.length - 1) {
-            byte rfk = fft[barIndex];
-            byte ifk = fft[barIndex + 1];
-            float magnitude = (rfk * rfk + ifk * ifk);
+        float maxH = getHeight();
+        if (maxH <= 0) maxH = 100f;
 
-            // xuameng改进的频率加权策略（三段式加权）
-            float weight;
-            if (i < BAR_COUNT / 4) {
-                weight = 2.0f;
-            } else if (i < BAR_COUNT / 2) {
-                weight = 2.5f;
-            } else {
-                float freqFactor = (float) Math.pow(2.0, (i - BAR_COUNT / 2) / 2.0);
-                weight = 7.5f * freqFactor;
-            }
-
-            float norm = Math.min(magnitude / (float) MAX_AMPLITUDE, 1.0f);
-            norm = norm * (0.15f + 0.85f * volumeLevel);
-
-            if (i >= BAR_COUNT / 4 && i < BAR_COUNT / 2) {
-                norm = Math.min(norm * 3.0f, 1.0f);
-            } else if (i >= BAR_COUNT / 2) {
-                norm = Math.min(norm * 5.0f, 1.0f);
-            }
-
-            rawEnergy[i] = norm;
-            rawIndex[i] = i;
-        }
-    }
-
-    // xuameng 找前 PEAK_COUNT 个最强音柱（山峰）
-    for (int i = 0; i < BAR_COUNT - 1; i++) {
-        for (int j = i + 1; j < BAR_COUNT; j++) {
-            if (rawEnergy[j] > rawEnergy[i]) {
-                float tmpE = rawEnergy[i];
-                rawEnergy[i] = rawEnergy[j];
-                rawEnergy[j] = tmpE;
-
-                int tmpI = rawIndex[i];
-                rawIndex[i] = rawIndex[j];
-                rawIndex[j] = tmpI;
-            }
-        }
-    }
-
-    // xuameng 山峰衰减叠加
-    float[] mountainHeight = new float[BAR_COUNT];
-
-    for (int p = 0; p < PEAK_COUNT; p++) {
-        int peakIndex = rawIndex[p];
-        float peakEnergy = rawEnergy[p];
-
-        if (peakEnergy < 0.05f) break;
+        // xuameng 先计算每个频点能量
+        float[] rawEnergy = new float[BAR_COUNT];
+        int[] rawIndex = new int[BAR_COUNT];
 
         for (int i = 0; i < BAR_COUNT; i++) {
-            float distance = Math.abs(i - peakIndex);
-            if (distance > PEAK_RADIUS) continue;
+            int barIndex;
+            // xuameng 修改：低频采样右移，让第一个山峰峰顶落在第3~4根，整体山脉居中
+            if (i < BAR_COUNT / 3) {
+                barIndex = 4 + i * 2;  // ← 右移：从 bin 4 开始
+            } else {
+                barIndex = 4 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+            }
 
-            float falloff = 1.0f - (distance / PEAK_RADIUS);
-            falloff = (float) Math.pow(falloff, PEAK_DECAY_POWER);
+            if (barIndex < fft.length - 1) {
+                byte rfk = fft[barIndex];
+                byte ifk = fft[barIndex + 1];
+                float magnitude = (rfk * rfk + ifk * ifk);
 
-            mountainHeight[i] += peakEnergy * falloff;
+                // xuameng改进的频率加权策略（三段式加权）
+                float weight;
+                // xuameng 修改：低频权重加大，配合右移让峰顶居中
+                if (i < BAR_COUNT / 4) {
+                    weight = 2.0f;  // ← 低频权重加大
+                } else if (i < BAR_COUNT / 2) {
+                    weight = 2.5f;
+                } else {
+                    // xuameng 修改：高频衰减，避免右侧过多半高死柱
+                    float freqFactor = (float) Math.pow(1.6, (i - BAR_COUNT / 2) / 2.0);
+                    weight = 7.5f * freqFactor;
+                }
+
+                float norm = Math.min(magnitude / (float) MAX_AMPLITUDE, 1.0f);
+                norm = norm * (0.15f + 0.85f * volumeLevel);
+
+                if (i >= BAR_COUNT / 4 && i < BAR_COUNT / 2) {
+                    norm = Math.min(norm * 3.0f, 1.0f);
+                } else if (i >= BAR_COUNT / 2) {
+                    // xuameng 修改：保持高频增益但配合 weight 降低
+                    norm = Math.min(norm * 5.0f, 1.0f);
+                }
+
+                rawEnergy[i] = norm;
+                rawIndex[i] = i;
+            }
         }
-    }
 
-// xuameng 写入目标高度 & 振幅（全局连续高度场）
-for (int i = 0; i < BAR_COUNT; i++) {
-    float norm = Math.min(mountainHeight[i], 1.0f);
+        // xuameng 找前 PEAK_COUNT 个最强音柱（山峰）
+        for (int i = 0; i < BAR_COUNT - 1; i++) {
+            for (int j = i + 1; j < BAR_COUNT; j++) {
+                if (rawEnergy[j] > rawEnergy[i]) {
+                    float tmpE = rawEnergy[i];
+                    rawEnergy[i] = rawEnergy[j];
+                    rawEnergy[j] = tmpE;
 
-    // 峰值保持 + 衰减
-    if (norm > mBarPeaks[i]) {
-        mBarPeaks[i] = norm;
-    }
-    float decay = BAR_PEAK_DECAY;
-    if (i >= BAR_COUNT / 2) decay = 0.45f;
-    else if (i >= BAR_COUNT / 4) decay = 0.55f;
-
-    mBarPeaks[i] -= mBarPeaks[i] * decay;
-    if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
-
-    float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
-
-    // ===== 全局连续斜坡底座 =====
-    // 找到最远的峰的位置
-    int farthestPeakPos = 0;
-    float farthestPeakEnergy = 0;
-    for (int p = 0; p < PEAK_COUNT; p++) {
-        if (rawEnergy[p] < 0.05f) break;
-        if (rawIndex[p] > farthestPeakPos) {
-            farthestPeakPos = rawIndex[p];
-            farthestPeakEnergy = rawEnergy[p];
+                    int tmpI = rawIndex[i];
+                    rawIndex[i] = rawIndex[j];
+                    rawIndex[j] = tmpI;
+                }
+            }
         }
-    }
 
-    // 从最远峰位置到 BAR_COUNT-1 之间：线性斜坡从峰底降到 MIN_VISIBLE_RATIO
-    float baseRatio = 0f;
-    if (i >= farthestPeakPos) {
-        // 在最后一个峰右侧：线性斜坡
-        int slopeLength = BAR_COUNT - 1 - farthestPeakPos;
-        if (slopeLength > 0) {
-            float slopeProgress = (float)(i - farthestPeakPos) / slopeLength;
-            // 最远峰处 = 峰的自然衰减底，末端 = MIN_VISIBLE_RATIO
-            float peakFloor = Math.max(farthestPeakEnergy * 0.15f, 0f);
-            baseRatio = peakFloor + (MIN_VISIBLE_RATIO - peakFloor) * slopeProgress;
-        } else {
-            baseRatio = MIN_VISIBLE_RATIO;
+        // xuameng 山峰衰减叠加
+        float[] mountainHeight = new float[BAR_COUNT];
+
+        for (int p = 0; p < PEAK_COUNT; p++) {
+            int peakIndex = rawIndex[p];
+            float peakEnergy = rawEnergy[p];
+
+            if (peakEnergy < 0.05f) break;
+
+            for (int i = 0; i < BAR_COUNT; i++) {
+                float distance = Math.abs(i - peakIndex);
+                if (distance > PEAK_RADIUS) continue;
+
+                float falloff = 1.0f - (distance / PEAK_RADIUS);
+                falloff = (float) Math.pow(falloff, PEAK_DECAY_POWER);
+
+                mountainHeight[i] += peakEnergy * falloff;
+            }
         }
-    } else {
-        // 在最后一个峰左侧：也加一个微弱全局底座（从 0 渐入）
-        int slopeLength = farthestPeakPos;
-        if (slopeLength > 0) {
-            float slopeProgress = 1.0f - (float)i / slopeLength;
-            baseRatio = MIN_VISIBLE_RATIO * 0.3f * slopeProgress;
+
+        // xuameng 写入目标高度 & 振幅（全局连续高度场）
+        for (int i = 0; i < BAR_COUNT; i++) {
+            float norm = Math.min(mountainHeight[i], 1.0f);
+
+            // 峰值保持 + 衰减
+            if (norm > mBarPeaks[i]) {
+                mBarPeaks[i] = norm;
+            }
+            float decay = BAR_PEAK_DECAY;
+            if (i >= BAR_COUNT / 2) decay = 0.45f;
+            else if (i >= BAR_COUNT / 4) decay = 0.55f;
+
+            mBarPeaks[i] -= mBarPeaks[i] * decay;
+            if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
+
+            float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
+
+            // ===== 全局连续斜坡底座 =====
+            // xuameng 修改：最小偏移，确保山脉居中，整体右移
+            int farthestPeakPos = Math.max(7, 0); // ← 最小偏移，确保山脉居中
+            float farthestPeakEnergy = 0;
+            for (int p = 0; p < PEAK_COUNT; p++) {
+                if (rawEnergy[p] < 0.05f) break;
+                if (rawIndex[p] > farthestPeakPos) {
+                    farthestPeakPos = rawIndex[p];
+                    farthestPeakEnergy = rawEnergy[p];
+                }
+            }
+
+            // 从最远峰位置到 BAR_COUNT-1 之间：线性斜坡从峰底降到 MIN_VISIBLE_RATIO
+            float baseRatio = 0f;
+            if (i >= farthestPeakPos) {
+                // 在最后一个峰右侧：线性斜坡
+                int slopeLength = BAR_COUNT - 1 - farthestPeakPos;
+                if (slopeLength > 0) {
+                    float slopeProgress = (float)(i - farthestPeakPos) / slopeLength;
+                    // xuameng 修改：降低峰底起始高度，右侧不再有半高死柱
+                    float peakFloor = Math.max(farthestPeakEnergy * 0.05f, 0f); // ← 从 0.15 降到 0.05
+                    baseRatio = peakFloor + (MIN_VISIBLE_RATIO - peakFloor) * slopeProgress;
+                } else {
+                    baseRatio = MIN_VISIBLE_RATIO;
+                }
+            } else {
+                // 在最后一个峰左侧：也加一个微弱全局底座（从 0 渐入）
+                int slopeLength = farthestPeakPos;
+                if (slopeLength > 0) {
+                    float slopeProgress = 1.0f - (float)i / slopeLength;
+                    baseRatio = MIN_VISIBLE_RATIO * 0.3f * slopeProgress;
+                }
+            }
+
+            // 最终高度 = 山峰高度 + 斜坡底座，取大值
+            float finalRatio = Math.max(heightRatio, baseRatio);
+
+            mTargetHeights[i] = Math.min(finalRatio * maxH, maxH * 0.95f);
+            mAmplitudeLevels[i] = finalRatio;
         }
+
+        startAnimation();
     }
-
-    // 最终高度 = 山峰高度 + 斜坡底座，取大值
-    float finalRatio = Math.max(heightRatio, baseRatio);
-
-    mTargetHeights[i] = Math.min(finalRatio * maxH, maxH * 0.95f);
-    mAmplitudeLevels[i] = finalRatio;
-}
-
-    startAnimation();
-}
 
     // 动画控制器
     private void startAnimation() {
