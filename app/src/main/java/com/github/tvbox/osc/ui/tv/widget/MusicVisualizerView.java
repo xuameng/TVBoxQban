@@ -65,10 +65,6 @@ public class MusicVisualizerView extends View {
     private boolean mShowStripes = true; // 是否显示分段效果
     private int mSegmentCount = 20; // 每个音柱的分段数
     private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
-private float mFloorDb = -75f;
-private float mCeilDb = -12f;
-private float mAutoGain = 1f;
-private float mSmoothEnergy = 0f;
 
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
@@ -113,139 +109,85 @@ private float mSmoothEnergy = 0f;
     public void setSegmentCount(int count) { mSegmentCount = Math.max(1, count); postInvalidate(); }
     public void setSegmentSpacingFixed(float spacing) { mSegmentSpacingFixed = Math.max(0f, spacing); postInvalidate(); }
 
-public void updateVisualizer(byte[] fft, float volumeLevel) {
-    if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-
-    // 静音直接重置
-    if (volumeLevel <= 0f) {
-        reset();
-        return;
-    }
-
-    mVisible = true;
-
-    float maxH = getHeight();
-    if (maxH <= 0) maxH = 100f;
-
-    // ===== AGC 相关（类成员变量，需补在类里）=====
-    // private float mFloorDb = -75f;
-    // private float mCeilDb = -12f;
-    // private float mAutoGain = 1f;
-    // private float mSmoothEnergy = 0f;
-
-    float frameMaxDb = -120f;
-    float frameAvgDb = 0f;
-
-    // ===== 1. 先算 dB =====
-    for (int i = 0; i < BAR_COUNT; i++) {
-        int barIndex;
-        if (i < BAR_COUNT / 3) {
-            barIndex = 2 + i * 2;
-        } else {
-            barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+    public void updateVisualizer(byte[] fft, float volumeLevel) {
+        if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+        // xuameng处理静音状态重置音柱
+        if (volumeLevel <= 0f) {
+            reset();  
+            return;
         }
+        mVisible = true; // xuameng 有数据就显示
+        float maxH = getHeight();
+        if (maxH <= 0) maxH = 100f;
 
-        if (barIndex >= fft.length - 1) continue;
+        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
+        for (int i = 0; i < BAR_COUNT; i++) {
+            int barIndex;
+            if (i < BAR_COUNT / 3) {
+                // 低频段密集采样（每2点取1）
+                barIndex = 2 + i * 2;
+            } else {
+                // 中高频段间隔采样（每4点取1）
+                barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+            }
+            if (barIndex < fft.length - 1) {
+                byte rfk = fft[barIndex];
+                byte ifk = fft[barIndex + 1];
+                float magnitude = (rfk * rfk + ifk * ifk);
 
-        byte rfk = fft[barIndex];
-        byte ifk = fft[barIndex + 1];
-        float magnitude = (rfk * rfk + ifk * ifk);
+                // xuameng改进的频率加权策略（三段式加权）
+                // ★ 中高频 weight 拉大
+                float weight;
+                if (i < BAR_COUNT / 4) {
+                    // xuameng 超低频段(0-200Hz)增益
+                    weight = 2.0f;
+                } else if (i < BAR_COUNT / 2) {
+                    // xuameng 中低频段(200-800Hz)基准值增益
+                    weight = 2.5f;
+                } else {
+                    // xuameng 高频段(800Hz+)指数增强
+                    float freqFactor = (float) Math.pow(2.0, (i - BAR_COUNT / 2) / 2.0);
+                    weight = 7.5f * freqFactor;
+                }
 
-        float db = magnitude > 0
-                ? 10f * (float) Math.log10(magnitude)
-                : -120f;
+                // xuameng判断音量大小
+                // 归一化
+                float norm = Math.min(magnitude / (float) MAX_AMPLITUDE, 1.0f);
+                norm = norm * (0.25f + 1.85f * volumeLevel);
 
-        frameMaxDb = Math.max(frameMaxDb, db);
-        frameAvgDb += db;
-    }
-    frameAvgDb /= BAR_COUNT;
+                // ★ 中高频额外补偿
+                if (i >= BAR_COUNT / 4 && i < BAR_COUNT / 2) {
+                    norm = Math.min(norm * 3.0f, 1.0f);
+                } else if (i >= BAR_COUNT / 2) {
+                    norm = Math.min(norm * 5.0f, 1.0f);
+                }
 
-    // ===== 2. 动态范围自适应 =====
-    if (frameMaxDb > mCeilDb) {
-        mCeilDb += (frameMaxDb - mCeilDb) * 0.1f;
-    } else {
-        mCeilDb += (-20f - mCeilDb) * 0.01f; // 慢慢回落
-    }
+                // 峰值保持 + 衰减
+                if (norm > mBarPeaks[i]) {
+                    mBarPeaks[i] = norm;
+                }
 
-    if (frameAvgDb > mFloorDb) {
-        mFloorDb += (frameAvgDb - mFloorDb) * 0.05f;
-    } else {
-        mFloorDb += (-70f - mFloorDb) * 0.02f;
-    }
+                // xuameng 节拍衰减控制
+                // ★ 中高频衰减更慢，撑得更久
+                float decay = BAR_PEAK_DECAY;
+                if (i >= BAR_COUNT / 2) {
+                    decay = 0.50f;
+                } else if (i >= BAR_COUNT / 4) {
+                    decay = 0.45f;
+                }
+                mBarPeaks[i] -= mBarPeaks[i] * decay;
+                if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
 
-    mCeilDb = Math.min(mCeilDb, -6f);
-    mFloorDb = Math.max(mFloorDb, -80f);
+                // ★ 高度映射（pow + 最低可见兜底）
+                float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
+                heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
 
-    // ===== 3. 自动增益 =====
-    float energyRatio = (frameAvgDb - mFloorDb) / (mCeilDb - mFloorDb);
-    energyRatio = Math.max(0f, Math.min(1f, energyRatio));
-
-    mSmoothEnergy += (energyRatio - mSmoothEnergy) * 0.05f;
-
-    float targetGain = 1f + (1f - mSmoothEnergy) * 2.5f;
-    targetGain = Math.max(1f, Math.min(targetGain, 3.5f));
-    mAutoGain += (targetGain - mAutoGain) * 0.08f;
-
-    // ===== 4. 正式算每个 bar =====
-    for (int i = 0; i < BAR_COUNT; i++) {
-        int barIndex;
-        if (i < BAR_COUNT / 3) {
-            barIndex = 2 + i * 2;
-        } else {
-            barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+                mTargetHeights[i] = Math.min(heightRatio * maxH, maxH * 0.95f);
+                mAmplitudeLevels[i] = heightRatio;
+            }
         }
-
-        if (barIndex >= fft.length - 1) continue;
-
-        byte rfk = fft[barIndex];
-        byte ifk = fft[barIndex + 1];
-        float magnitude = (rfk * rfk + ifk * ifk);
-
-        float db = magnitude > 0
-                ? 10f * (float) Math.log10(magnitude)
-                : -120f;
-
-        // 归一化
-        float norm = (db - mFloorDb) / (mCeilDb - mFloorDb);
-        norm = Math.max(0f, Math.min(1f, norm));
-
-        // 音量加权
-        norm *= (0.3f + 1.2f * volumeLevel);
-
-        // 频段补偿（克制版）
-        if (i < BAR_COUNT / 4) {
-            norm *= 1.3f; // 低频
-        } else if (i < BAR_COUNT / 2) {
-            norm *= 1.1f; // 中频
-        } else {
-            norm *= 1.5f; // 高频
-        }
-
-        norm = Math.min(norm, 1f);
-
-        // 峰值保持
-        if (norm > mBarPeaks[i]) {
-            mBarPeaks[i] = norm;
-        }
-
-        float decay = (i >= BAR_COUNT / 2) ? 0.45f : 0.55f;
-        mBarPeaks[i] -= mBarPeaks[i] * decay;
-        if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
-
-        // 高度映射
-        float heightRatio = (float) Math.pow(mBarPeaks[i], 0.45f);
-        heightRatio = Math.max(heightRatio, 0.05f); // 最小可见
-
-        mTargetHeights[i] = Math.min(
-                heightRatio * maxH * mAutoGain,
-                maxH * 0.95f
-        );
-
-        mAmplitudeLevels[i] = heightRatio;
+        startAnimation();
     }
-
-    startAnimation();
-}
 
     // 动画控制器
     private void startAnimation() {
