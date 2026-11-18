@@ -2041,7 +2041,6 @@ public class VodController extends BaseController {
                 if (fullPreview){   //xuameng 全屏时自动暂停时调用
                     mPauseIngXu();
                 }
-                customVisualizer.reset();  //xuameng暂停隐藏音柱
                 break;
             case VideoView.STATE_ERROR:
                 imageHide();  //xuameng 隐藏图片
@@ -2843,6 +2842,7 @@ public class VodController extends BaseController {
                         Runnable updateTask = () -> {
                             try {
                                 if (customVisualizer != null) {
+                                    //xuameng暂停时隐藏音柱
                                     if (isInPlaybackState() && !mControlWrapper.isPlaying()) {
                                         customVisualizer.reset();
                                         return;
