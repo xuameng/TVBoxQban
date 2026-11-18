@@ -30,7 +30,7 @@ public class MusicVisualizerView extends View {
     private static final int BAR_COUNT = 22;
 
     // xuameng 音柱动画时长
-    private static final int ANIMATION_DURATION = 30;
+    private static final int ANIMATION_DURATION = 80;
 
     /**
      * 峰值衰减率
