@@ -140,14 +140,14 @@ public class MusicVisualizerView extends View {
                 float weight;
                 if (i < BAR_COUNT / 4) {
                     // xuameng 超低频段(0-200Hz)增益
-                    weight = 2.0f;
+                    weight = 3.0f;
                 } else if (i < BAR_COUNT / 2) {
                     // xuameng 中低频段(200-800Hz)基准值增益
                     weight = 2.5f;
                 } else {
                     // xuameng 高频段(800Hz+)指数增强
                     float freqFactor = (float) Math.pow(2.0, (i - BAR_COUNT / 2) / 2.0);
-                    weight = 3.5f * freqFactor;
+                    weight = 1.5f * freqFactor;
                 }
 
                 // xuameng判断音量大小
