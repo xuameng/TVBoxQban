@@ -111,10 +111,10 @@ public class MusicVisualizerView extends View {
 
     public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-
         // xuameng处理静音状态重置音柱
-        if(volumeLevel == 0f || volumeLevel == 0.0f || volumeLevel == 0.00f) {
-            reset(); //xuameng处理静音状态重置音柱
+        if (volumeLevel <= 0f) {
+            reset();  
+            return;
         }
         mVisible = true; // xuameng 有数据就显示
         float maxH = getHeight();
@@ -122,14 +122,11 @@ public class MusicVisualizerView extends View {
 
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
-            int barIndex;
-            if (i < BAR_COUNT / 3) {
-                // 低频段密集采样（每2点取1）
-                barIndex = 2 + i * 2;
-            } else {
-                // 中高频段间隔采样（每4点取1）
-                barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
-            }
+    // 全 3 点均匀采样
+    int barIndex = 2 + i * 3;
+    if (barIndex > fft.length - 2) {
+        barIndex = fft.length - 2;
+    }
             if (barIndex < fft.length - 1) {
                 byte rfk = fft[barIndex];
                 byte ifk = fft[barIndex + 1];
