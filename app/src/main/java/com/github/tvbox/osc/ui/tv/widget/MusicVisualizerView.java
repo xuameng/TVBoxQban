@@ -153,7 +153,7 @@ public class MusicVisualizerView extends View {
                 // xuameng判断音量大小
                 // 归一化
                 float norm = Math.min(magnitude / (float) MAX_AMPLITUDE, 1.0f);
-                float volumeBoost = 0.25f + 1.5f * volumeLevel;
+                float volumeBoost = 0.50f + 3.5f * volumeLevel;
                 norm = norm * volumeBoost;
 
                 // ★ 中高频额外补偿
