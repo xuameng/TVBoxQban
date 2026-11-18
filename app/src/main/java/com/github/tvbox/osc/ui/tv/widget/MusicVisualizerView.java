@@ -38,7 +38,7 @@ public class MusicVisualizerView extends View {
      * 调小 → 拖尾更长
      * 当前 0.55
      */
-    private static final float BAR_PEAK_DECAY = 0.7f;
+    private static final float BAR_PEAK_DECAY = 0.55f;
 
     /**
      * 最低可见高度比例（防止小音量时柱子消失）
@@ -168,15 +168,15 @@ public class MusicVisualizerView extends View {
                 // ★ 中高频衰减更慢，撑得更久
                 float decay = BAR_PEAK_DECAY;
                 if (i >= BAR_COUNT / 2) {
-                    decay = 0.75f;
+                    decay = 0.50f;
                 } else if (i >= BAR_COUNT / 4) {
-                    decay = 0.85f;
+                    decay = 0.45f;
                 }
                 mBarPeaks[i] -= mBarPeaks[i] * decay;
                 if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
 
                 // ★ 高度映射（pow + 最低可见兜底）
-                float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.7f);
+                float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
                 heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
 
                 mTargetHeights[i] = Math.min(heightRatio * maxH, maxH * 0.95f);
@@ -305,7 +305,7 @@ public class MusicVisualizerView extends View {
             mAmplitudeLevels[i] = 0;
             mBarPeaks[i] = 0;
         }
-        postInvalidate();
+        invalidate(); // xuameng 改用 invalidate 立即重绘
     }
 
     public void release() {
