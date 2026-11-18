@@ -2041,6 +2041,9 @@ public class VodController extends BaseController {
                 if (fullPreview){   //xuameng 全屏时自动暂停时调用
                     mPauseIngXu();
                 }
+                if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
+                    mVisualizer.reset();  //xuameng暂停隐藏音柱
+                }
                 break;
             case VideoView.STATE_ERROR:
                 imageHide();  //xuameng 隐藏图片
