@@ -68,7 +68,7 @@ public class MusicVisualizerView extends View {
      * 值越小坡越陡（集中），越大越宽（分散）
      * 推荐 6.0~10.0，当前 8.0
      */
-    private static final float GAUSS_SIGMA = 8.0f;
+    private static final float GAUSS_SIGMA = 4.0f;
 
     /**
      * 软混合比例
