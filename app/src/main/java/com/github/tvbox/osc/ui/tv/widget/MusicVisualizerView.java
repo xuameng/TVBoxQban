@@ -109,10 +109,10 @@ public class MusicVisualizerView extends View {
                 if (i < BAR_COUNT / 4) {
                     weight = 1.5f;
                 } else if (i < BAR_COUNT / 2) {
-                    weight = 4.5.0f;
+                    weight = 4.5f;
                 } else {
                     float freqFactor = (float) Math.pow(2.0, (i - BAR_COUNT / 2) / 2.0);
-                    weight = 8.5f * freqFactor;
+                    weight = 7.5f * freqFactor;
                 }
 
                 // 归一化
