@@ -2042,7 +2042,7 @@ public class VodController extends BaseController {
                     mPauseIngXu();
                 }
                 if(customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
-                    mVisualizer.reset();  //xuameng暂停隐藏音柱
+                    customVisualizer.reset();  //xuameng暂停隐藏音柱
                 }
                 break;
             case VideoView.STATE_ERROR:
