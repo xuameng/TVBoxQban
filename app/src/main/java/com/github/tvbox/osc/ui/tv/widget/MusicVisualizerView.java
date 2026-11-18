@@ -10,9 +10,9 @@ import android.animation.ValueAnimator;
 
 public class MusicVisualizerView extends View {
 
-    private static final int MAX_AMPLITUDE = 10222;
+    private static final int MAX_AMPLITUDE = 9222;
     private static final int BAR_COUNT = 22;
-    private static final int ANIMATION_DURATION = 40;
+    private static final int ANIMATION_DURATION = 60;
 
     // ★ 去掉了 GAIN，用最低可见高度兜底
 
@@ -28,7 +28,7 @@ public class MusicVisualizerView extends View {
      * 最低可见高度比例（防止小音量时柱子消失）
      * 调大 → 最小柱子更高
      * 调小 → 差距更大但可能消失
-     * 当前 0.04（4%）
+     * 当前 0.02（2%）
      */
     private static final float MIN_VISIBLE_RATIO = 0.02f;
 
@@ -104,30 +104,46 @@ public class MusicVisualizerView extends View {
                 byte ifk = fft[barIndex + 1];
                 float magnitude = (rfk * rfk + ifk * ifk);
 
+                // ★ 中高频 weight 拉大
                 float weight;
                 if (i < BAR_COUNT / 4) {
                     weight = 1.0f;
                 } else if (i < BAR_COUNT / 2) {
-                    weight = 2.5f;
+                    weight = 6.0f;
                 } else {
-                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
-                    weight = 3.5f * freqFactor;
+                    float freqFactor = (float) Math.pow(2.0, (i - BAR_COUNT / 2) / 2.0);
+                    weight = 8.0f * freqFactor;
                 }
 
                 // 归一化
                 float norm = Math.min(magnitude / (float) MAX_AMPLITUDE, 1.0f);
                 norm = norm * (0.15f + 0.85f * volumeLevel);
 
+                // ★ 中高频额外补偿
+                if (i >= BAR_COUNT / 4 && i < BAR_COUNT / 2) {
+                    norm = Math.min(norm * 3.0f, 1.0f);
+                } else if (i >= BAR_COUNT / 2) {
+                    norm = Math.min(norm * 5.0f, 1.0f);
+                }
+
                 // 峰值保持 + 衰减
                 if (norm > mBarPeaks[i]) {
                     mBarPeaks[i] = norm;
                 }
-                mBarPeaks[i] -= mBarPeaks[i] * BAR_PEAK_DECAY;
+
+                // ★ 中高频衰减更慢，撑得更久
+                float decay = BAR_PEAK_DECAY;
+                if (i >= BAR_COUNT / 2) {
+                    decay = 0.28f;
+                } else if (i >= BAR_COUNT / 4) {
+                    decay = 0.38f;
+                }
+                mBarPeaks[i] -= mBarPeaks[i] * decay;
                 if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
 
-                // ★ 高度映射（去掉 GAIN，用 pow + 最低可见兜底）
+                // ★ 高度映射（pow + 最低可见兜底）
                 float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
-                heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO); // ★ 兜底，不消失
+                heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
 
                 mTargetHeights[i] = Math.min(heightRatio * maxH, maxH * 0.95f);
                 mAmplitudeLevels[i] = heightRatio;
