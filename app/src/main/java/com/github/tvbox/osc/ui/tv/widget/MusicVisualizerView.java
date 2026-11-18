@@ -24,7 +24,7 @@ import android.animation.ValueAnimator;
 public class MusicVisualizerView extends View {
 
     // xuameng判断音量大小
-    private static final int MAX_AMPLITUDE = 6222;
+    private static final int MAX_AMPLITUDE = 2222;
 
     // xuameng 音柱数量
     private static final int BAR_COUNT = 22;
