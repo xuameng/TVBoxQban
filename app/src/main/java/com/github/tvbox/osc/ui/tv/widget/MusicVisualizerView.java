@@ -20,13 +20,6 @@ import android.animation.ValueAnimator;
  * 6，新增音柱分段效果
  * 7，新增节奏感增强
  * 8，新增动画丝滑
- *
- * 【备份/历史备注保留区 START】
- * 原逻辑：无能量柱子全部趴在底部 MIN_VISIBLE_RATIO 一条平线
- * 改1：山峰左侧缓坡（解决最左侧前几根断崖）
- * 改2：山峰右侧更缓下降（右侧允许更大落差，自然退坡）
- * 改3：相邻音柱双向最大落差限制，防止突变断崖
- * 【备份/历史备注保留区 END】
  */
 public class MusicVisualizerView extends View {
 
@@ -69,12 +62,6 @@ public class MusicVisualizerView extends View {
     private boolean mShowStripes = true; // 是否显示分段效果
     private int mSegmentCount = 20; // 每个音柱的分段数
     private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
-
-    // xuameng 山峰模式
-    // 以下常量保留但本版本未使用山峰叠加，保留以兼容原注释
-    private static final int PEAK_COUNT = 3;
-    private static final float PEAK_RADIUS = 3.0f;
-    private static final float PEAK_DECAY_POWER = 2.5f;
 
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
@@ -192,52 +179,6 @@ public class MusicVisualizerView extends View {
                 // ★ 高度映射（pow + 最低可见兜底）
                 float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
                 heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
-
-                // ===== 新增：左右平滑下降逻辑 START =====
-
-                // 1. 找当前主峰（全局最高能量柱）
-                float mainPeakEnergy = 0f;
-                int mainPeakIdx = 0;
-                for (int p = 0; p < BAR_COUNT; p++) {
-                    if (mBarPeaks[p] > mainPeakEnergy) {
-                        mainPeakEnergy = mBarPeaks[p];
-                        mainPeakIdx = p;
-                    }
-                }
-
-                // 2. 主峰左侧缓坡（解决最左侧前几根断崖）
-                if (i < mainPeakIdx) {
-                    int distToPeak = mainPeakIdx - i;
-                    // 每根递减约 15%，保证缓坡不突兀
-                    float leftSlope = mainPeakEnergy * (1.0f - distToPeak * 0.15f);
-                    leftSlope = Math.max(leftSlope, MIN_VISIBLE_RATIO);
-                    heightRatio = Math.max(heightRatio, leftSlope);
-                }
-
-                // 3. 相邻音柱最大落差限制（双向）
-                // 与左侧比较（默认 15% 落差，补偿 12%）
-                if (i > 0) {
-                    float leftFinal = Math.min(mTargetHeights[i - 1] / maxH, 1.0f);
-                    if (leftFinal - heightRatio > 0.15f) {
-                        heightRatio = Math.max(heightRatio, leftFinal - 0.12f);
-                    }
-                }
-
-                // 4. 与右侧比较（右侧更缓：允许 20% 落差，补偿 15%）
-                if (i < BAR_COUNT - 1) {
-                    // 用下一根的原始峰值预估右侧高度
-                    float rightPeak = Math.min(mBarPeaks[i + 1], 1.0f);
-                    float rightFinal = Math.max(rightPeak, MIN_VISIBLE_RATIO);
-                    if (rightFinal - heightRatio > 0.20f) {
-                        heightRatio = Math.max(heightRatio, rightFinal - 0.15f);
-                    }
-                }
-
-                // 5. 最终保底
-                heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
-                heightRatio = Math.min(heightRatio, 1.0f);
-
-                // ===== 新增：左右平滑下降逻辑 END =====
 
                 mTargetHeights[i] = Math.min(heightRatio * maxH, maxH * 0.95f);
                 mAmplitudeLevels[i] = heightRatio;
