@@ -24,7 +24,7 @@ import android.animation.ValueAnimator;
 public class MusicVisualizerView extends View {
 
     // xuameng判断音量大小
-    private static final int MAX_AMPLITUDE = 2222;
+    private static final int MAX_AMPLITUDE = 10222;
 
     // xuameng 音柱数量
     private static final int BAR_COUNT = 22;
@@ -151,39 +151,10 @@ public class MusicVisualizerView extends View {
                 }
 
                 // xuameng判断音量大小
-                // 归一化
-                float norm = Math.min(magnitude / (float) MAX_AMPLITUDE, 1.0f);
-                norm = norm * (0.25f + 1.25f * volumeLevel);
-
-                // ★ 中高频额外补偿
-                if (i >= BAR_COUNT / 4 && i < BAR_COUNT / 2) {
-                    norm = Math.min(norm * 3.0f, 1.0f);
-                } else if (i >= BAR_COUNT / 2) {
-                    norm = Math.min(norm * 5.0f, 1.0f);
-                }
-
-                // 峰值保持 + 衰减
-                if (norm > mBarPeaks[i]) {
-                    mBarPeaks[i] = norm;
-                }
-
-                // xuameng 节拍衰减控制
-                // ★ 中高频衰减更慢，撑得更久
-                float decay = BAR_PEAK_DECAY;
-                if (i >= BAR_COUNT / 2) {
-                    decay = 0.50f;
-                } else if (i >= BAR_COUNT / 4) {
-                    decay = 0.45f;
-                }
-                mBarPeaks[i] -= mBarPeaks[i] * decay;
-                if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
-
-                // ★ 高度映射（pow + 最低可见兜底）
-                float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
-                heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
-
-                mTargetHeights[i] = Math.min(heightRatio * maxH, maxH * 0.95f);
-                mAmplitudeLevels[i] = heightRatio;
+                mTargetHeights[i] = Math.min(
+                    (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, //xuameng判断音量大小
+                    getHeight() * 0.95f);
+                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
             }
         }
         startAnimation();
