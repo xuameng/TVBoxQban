@@ -20,14 +20,6 @@ import android.animation.ValueAnimator;
  * 6，新增音柱分段效果
  * 7，新增节奏感增强
  * 8，新增动画丝滑
- *
- * 【备份/历史备注保留区 START】
- * 原逻辑：无能量柱子全部趴在底部 MIN_VISIBLE_RATIO 一条平线
- * 改1：山峰左侧缓坡（解决最左侧前几根断崖）
- * 改2：山峰右侧更缓下降（右侧允许更大落差，自然退坡）
- * 改3：相邻音柱双向最大落差限制，防止突变断崖
- * 改4：高斯对称缓坡替换硬max左坡，左右完全对称钟形山
- * 【备份/历史备注保留区 END】
  */
 public class MusicVisualizerView extends View {
 
@@ -38,7 +30,7 @@ public class MusicVisualizerView extends View {
     private static final int BAR_COUNT = 22;
 
     // xuameng 音柱动画时长
-    private static final int ANIMATION_DURATION = 80;
+    private static final int ANIMATION_DURATION = 50;
 
     /**
      * 峰值衰减率
@@ -62,33 +54,6 @@ public class MusicVisualizerView extends View {
      */
     private static final float LERP_FACTOR = 0.40f;
 
-    // ========= 高斯对称缓坡参数（改4新增） =========
-    /**
-     * 高斯分布方差
-     * 值越小坡越陡（集中），越大越宽（分散）
-     * 推荐 6.0~10.0，当前 8.0
-     */
-    private static final float GAUSS_SIGMA = 4.0f;
-
-    /**
-     * 软混合比例
-     * 0=完全用权重原值, 1=完全用高斯缓坡
-     * 0.6 最自然，解决左侧硬跳
-     */
-    private static final float GAUSS_BLEND = 0.6f;
-
-    /**
-     * 高斯影响强度（乘以主峰能量）
-     * 0.5~0.7 视觉最佳，当前 0.6
-     */
-    private static final float GAUSS_STRENGTH = 0.35f;
-
-    /**
-     * 缓坡上限截断（不超过主峰能量的倍数，防顶满）
-     * 当前 1.05（允许主峰微超5%，缓坡绝不超）
-     */
-    private static final float PEAK_LIMIT_PAD = 1.3f;
-
     // 颜色系统
     // 改为非静态变量实现动态刷新
     private int[][] colorSchemes = new int[3][3];
@@ -97,12 +62,6 @@ public class MusicVisualizerView extends View {
     private boolean mShowStripes = true; // 是否显示分段效果
     private int mSegmentCount = 20; // 每个音柱的分段数
     private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
-
-    // xuameng 山峰模式
-    // 以下常量保留但本版本未使用山峰叠加，保留以兼容原注释
-    private static final int PEAK_COUNT = 3;
-    private static final float PEAK_RADIUS = 3.0f;
-    private static final float PEAK_DECAY_POWER = 2.5f;
 
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
@@ -151,9 +110,8 @@ public class MusicVisualizerView extends View {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
 
         // xuameng处理静音状态重置音柱
-        if (volumeLevel <= 0.001f) {
-            reset();
-            return;
+        if(volumeLevel == 0f || volumeLevel == 0.0f || volumeLevel == 0.00f) {
+            reset(); //xuameng处理静音状态重置音柱
         }
 
         float maxH = getHeight();
@@ -220,42 +178,6 @@ public class MusicVisualizerView extends View {
                 // ★ 高度映射（pow + 最低可见兜底）
                 float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
                 heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
-
-                // ===== 改4：高斯对称缓坡（替换原硬max左坡） START =====
-
-                // 1. 找当前主峰（全局最高能量柱）
-                float mainPeakEnergy = 0f;
-                int mainPeakIdx = 0;
-                for (int p = 0; p < BAR_COUNT; p++) {
-                    if (mBarPeaks[p] > mainPeakEnergy) {
-                        mainPeakEnergy = mBarPeaks[p];
-                        mainPeakIdx = p;
-                    }
-                }
-
-                // 2. 高斯对称缓坡（左右完全对称，钟形山）
-                if (mainPeakEnergy > 0f) {
-                    int distFromPeak = Math.abs(i - mainPeakIdx);
-
-                    // 高斯衰减：exp(-(距离^2) / (2 * 方差))
-                    float gaussian = (float) Math.exp(-(distFromPeak * distFromPeak) / (2.0f * GAUSS_SIGMA));
-
-                    // 高斯缓坡目标高度
-                    float gaussSlope = mainPeakEnergy * gaussian * GAUSS_STRENGTH;
-
-                    // 软混合（lerp）：解决原左坡硬跳问题
-                    float blendedHeight = heightRatio * (1.0f - GAUSS_BLEND) + gaussSlope * GAUSS_BLEND;
-
-                    // 取最大值（保留权重突发），但强制截断防顶满
-                    heightRatio = Math.max(heightRatio, blendedHeight);
-                    heightRatio = Math.min(heightRatio, mainPeakEnergy * PEAK_LIMIT_PAD);
-                }
-
-                // ===== 改4：高斯对称缓坡 END =====
-
-                // 最终保底
-                heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
-                heightRatio = Math.min(heightRatio, 1.0f);
 
                 mTargetHeights[i] = Math.min(heightRatio * maxH, maxH * 0.95f);
                 mAmplitudeLevels[i] = heightRatio;
@@ -374,6 +296,9 @@ public class MusicVisualizerView extends View {
     }
 
     public void reset() {
+        if (mAnimator != null) {
+            mAnimator.cancel();
+        }
         for (int i = 0; i < BAR_COUNT; i++) {
             mBarHeights[i] = 0;
             mTargetHeights[i] = 0;
