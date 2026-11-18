@@ -65,9 +65,9 @@ public class MusicVisualizerView extends View {
 
 
 // xuameng 山峰模式
-private static final int PEAK_COUNT = 3;               // 每帧最多山峰数量
-private static final float PEAK_RADIUS = 3.0f;          // 山峰影响半径（bar 数）
-private static final float PEAK_DECAY_POWER = 2.5f;     // 山峰衰减曲线（越大越尖）
+private static final int PEAK_COUNT = 4;               // 每帧最多山峰数量
+private static final float PEAK_RADIUS = 2.2f;          // 山峰影响半径（bar 数）
+private static final float PEAK_DECAY_POWER = 2.8f;     // 山峰衰减曲线（越大越尖）
 
 
     // 新增颜色方案刷新方法
