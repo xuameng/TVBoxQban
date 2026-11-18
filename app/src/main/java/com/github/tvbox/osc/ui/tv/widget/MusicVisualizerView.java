@@ -63,6 +63,13 @@ public class MusicVisualizerView extends View {
     private int mSegmentCount = 20; // 每个音柱的分段数
     private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
 
+
+// xuameng 山峰模式
+private static final int PEAK_COUNT = 3;               // 每帧最多山峰数量
+private static final float PEAK_RADIUS = 3.0f;          // 山峰影响半径（bar 数）
+private static final float PEAK_DECAY_POWER = 2.5f;     // 山峰衰减曲线（越大越尖）
+
+
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
         for (int i = 0; i < 3; i++) {
@@ -106,86 +113,123 @@ public class MusicVisualizerView extends View {
     public void setSegmentCount(int count) { mSegmentCount = Math.max(1, count); postInvalidate(); }
     public void setSegmentSpacingFixed(float spacing) { mSegmentSpacingFixed = Math.max(0f, spacing); postInvalidate(); }
 
-    public void updateVisualizer(byte[] fft, float volumeLevel) {
-        if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+public void updateVisualizer(byte[] fft, float volumeLevel) {
+    if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
 
-        // xuameng处理静音状态重置音柱
-        if (volumeLevel <= 0.001f) {
-            reset();
-            return;
-        }
-
-        float maxH = getHeight();
-        if (maxH <= 0) maxH = 100f;
-
-        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
-        for (int i = 0; i < BAR_COUNT; i++) {
-            int barIndex;
-            if (i < BAR_COUNT / 3) {
-                // 低频段密集采样（每2点取1）
-                barIndex = 2 + i * 2;
-            } else {
-                // 中高频段间隔采样（每4点取1）
-                barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
-            }
-            if (barIndex < fft.length - 1) {
-                byte rfk = fft[barIndex];
-                byte ifk = fft[barIndex + 1];
-                float magnitude = (rfk * rfk + ifk * ifk);
-
-                // xuameng改进的频率加权策略（三段式加权）
-                // ★ 中高频 weight 拉大
-                float weight;
-                if (i < BAR_COUNT / 4) {
-                    // xuameng 超低频段(0-200Hz)增益
-                    weight = 2.0f;
-                } else if (i < BAR_COUNT / 2) {
-                    // xuameng 中低频段(200-800Hz)基准值增益
-                    weight = 2.5f;
-                } else {
-                    // xuameng 高频段(800Hz+)指数增强
-                    float freqFactor = (float) Math.pow(2.0, (i - BAR_COUNT / 2) / 2.0);
-                    weight = 7.5f * freqFactor;
-                }
-
-                // xuameng判断音量大小
-                // 归一化
-                float norm = Math.min(magnitude / (float) MAX_AMPLITUDE, 1.0f);
-                norm = norm * (0.15f + 0.85f * volumeLevel);
-
-                // ★ 中高频额外补偿
-                if (i >= BAR_COUNT / 4 && i < BAR_COUNT / 2) {
-                    norm = Math.min(norm * 3.0f, 1.0f);
-                } else if (i >= BAR_COUNT / 2) {
-                    norm = Math.min(norm * 5.0f, 1.0f);
-                }
-
-                // 峰值保持 + 衰减
-                if (norm > mBarPeaks[i]) {
-                    mBarPeaks[i] = norm;
-                }
-
-                // xuameng 节拍衰减控制
-                // ★ 中高频衰减更慢，撑得更久
-                float decay = BAR_PEAK_DECAY;
-                if (i >= BAR_COUNT / 2) {
-                    decay = 0.45f;
-                } else if (i >= BAR_COUNT / 4) {
-                    decay = 0.55f;
-                }
-                mBarPeaks[i] -= mBarPeaks[i] * decay;
-                if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
-
-                // ★ 高度映射（pow + 最低可见兜底）
-                float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
-                heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
-
-                mTargetHeights[i] = Math.min(heightRatio * maxH, maxH * 0.95f);
-                mAmplitudeLevels[i] = heightRatio;
-            }
-        }
-        startAnimation();
+    // xuameng处理静音状态重置音柱
+    if (volumeLevel <= 0.001f) {
+        reset();
+        return;
     }
+
+    float maxH = getHeight();
+    if (maxH <= 0) maxH = 100f;
+
+    // xuameng 先计算每个频点能量
+    float[] rawEnergy = new float[BAR_COUNT];
+    int[] rawIndex = new int[BAR_COUNT];
+
+    for (int i = 0; i < BAR_COUNT; i++) {
+        int barIndex;
+        if (i < BAR_COUNT / 3) {
+            barIndex = 2 + i * 2;
+        } else {
+            barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+        }
+
+        if (barIndex < fft.length - 1) {
+            byte rfk = fft[barIndex];
+            byte ifk = fft[barIndex + 1];
+            float magnitude = (rfk * rfk + ifk * ifk);
+
+            // xuameng改进的频率加权策略（三段式加权）
+            float weight;
+            if (i < BAR_COUNT / 4) {
+                weight = 2.0f;
+            } else if (i < BAR_COUNT / 2) {
+                weight = 2.5f;
+            } else {
+                float freqFactor = (float) Math.pow(2.0, (i - BAR_COUNT / 2) / 2.0);
+                weight = 7.5f * freqFactor;
+            }
+
+            float norm = Math.min(magnitude / (float) MAX_AMPLITUDE, 1.0f);
+            norm = norm * (0.15f + 0.85f * volumeLevel);
+
+            if (i >= BAR_COUNT / 4 && i < BAR_COUNT / 2) {
+                norm = Math.min(norm * 3.0f, 1.0f);
+            } else if (i >= BAR_COUNT / 2) {
+                norm = Math.min(norm * 5.0f, 1.0f);
+            }
+
+            rawEnergy[i] = norm;
+            rawIndex[i] = i;
+        }
+    }
+
+    // xuameng 找前 PEAK_COUNT 个最强音柱（山峰）
+    for (int i = 0; i < BAR_COUNT - 1; i++) {
+        for (int j = i + 1; j < BAR_COUNT; j++) {
+            if (rawEnergy[j] > rawEnergy[i]) {
+                float tmpE = rawEnergy[i];
+                rawEnergy[i] = rawEnergy[j];
+                rawEnergy[j] = tmpE;
+
+                int tmpI = rawIndex[i];
+                rawIndex[i] = rawIndex[j];
+                rawIndex[j] = tmpI;
+            }
+        }
+    }
+
+    // xuameng 山峰衰减叠加
+    float[] mountainHeight = new float[BAR_COUNT];
+
+    for (int p = 0; p < PEAK_COUNT; p++) {
+        int peakIndex = rawIndex[p];
+        float peakEnergy = rawEnergy[p];
+
+        if (peakEnergy < 0.05f) break;
+
+        for (int i = 0; i < BAR_COUNT; i++) {
+            float distance = Math.abs(i - peakIndex);
+            if (distance > PEAK_RADIUS) continue;
+
+            float falloff = 1.0f - (distance / PEAK_RADIUS);
+            falloff = (float) Math.pow(falloff, PEAK_DECAY_POWER);
+
+            mountainHeight[i] += peakEnergy * falloff;
+        }
+    }
+
+    // xuameng 写入目标高度 & 振幅
+    for (int i = 0; i < BAR_COUNT; i++) {
+        float norm = Math.min(mountainHeight[i], 1.0f);
+
+        // 峰值保持 + 衰减
+        if (norm > mBarPeaks[i]) {
+            mBarPeaks[i] = norm;
+        }
+
+        float decay = BAR_PEAK_DECAY;
+        if (i >= BAR_COUNT / 2) {
+            decay = 0.45f;
+        } else if (i >= BAR_COUNT / 4) {
+            decay = 0.55f;
+        }
+
+        mBarPeaks[i] -= mBarPeaks[i] * decay;
+        if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
+
+        float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
+        heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
+
+        mTargetHeights[i] = Math.min(heightRatio * maxH, maxH * 0.95f);
+        mAmplitudeLevels[i] = heightRatio;
+    }
+
+    startAnimation();
+}
 
     // 动画控制器
     private void startAnimation() {
