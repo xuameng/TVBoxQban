@@ -65,6 +65,10 @@ public class MusicVisualizerView extends View {
     private boolean mShowStripes = true; // 是否显示分段效果
     private int mSegmentCount = 20; // 每个音柱的分段数
     private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
+private float mFloorDb = -75f;
+private float mCeilDb = -12f;
+private float mAutoGain = 1f;
+private float mSmoothEnergy = 0f;
 
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
