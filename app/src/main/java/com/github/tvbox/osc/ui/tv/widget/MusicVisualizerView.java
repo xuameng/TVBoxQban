@@ -111,76 +111,79 @@ public class MusicVisualizerView extends View {
 
     public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-    
+        // xuameng处理静音状态重置音柱
         if (volumeLevel <= 0f) {
-            reset();
+            reset();  
             return;
         }
-
+        mVisible = true; // xuameng 有数据就显示
         float maxH = getHeight();
         if (maxH <= 0) maxH = 100f;
 
-        // 判断是否为小音量模式
-        boolean isLowVolume = volumeLevel < 0.2f;
-
+        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
             int barIndex;
             if (i < BAR_COUNT / 3) {
+                // 低频段密集采样（每2点取1）
                 barIndex = 2 + i * 2;
             } else {
+                // 中高频段间隔采样（每4点取1）
                 barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
             }
-
             if (barIndex < fft.length - 1) {
                 byte rfk = fft[barIndex];
                 byte ifk = fft[barIndex + 1];
                 float magnitude = (rfk * rfk + ifk * ifk);
 
+                // xuameng改进的频率加权策略（三段式加权）
+                // ★ 中高频 weight 拉大
                 float weight;
                 if (i < BAR_COUNT / 4) {
-                    weight = 1.0f;
+                    // xuameng 超低频段(0-200Hz)增益
+                    weight = 2.0f;
                 } else if (i < BAR_COUNT / 2) {
+                    // xuameng 中低频段(200-800Hz)基准值增益
                     weight = 2.5f;
                 } else {
-                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
-                    weight = 3.5f * freqFactor;
+                    // xuameng 高频段(800Hz+)指数增强
+                    float freqFactor = (float) Math.pow(2.0, (i - BAR_COUNT / 2) / 2.0);
+                    weight = 7.5f * freqFactor;
                 }
 
-                if (isLowVolume) {
-                    // ★ 小音量：直接线性映射（老代码逻辑）
-                    mTargetHeights[i] = Math.min(
-                        (magnitude * maxH * weight * (0.5f + volumeLevel)) / MAX_AMPLITUDE,
-                        maxH * 0.95f
-                    );
-                } else {
-                    // ★ 大音量：峰值模式（新代码逻辑）
-                    float norm = Math.min(magnitude / (float) MAX_AMPLITUDE, 1.0f);
-                    norm = norm * (0.25f + 1.85f * volumeLevel);
+                // xuameng判断音量大小
+                // 归一化
+                float norm = Math.min(magnitude / (float) MAX_AMPLITUDE, 1.0f);
+                norm = norm * (0.25f + 1.25f * volumeLevel);
 
-                    if (i >= BAR_COUNT / 4 && i < BAR_COUNT / 2) {
-                        norm = Math.min(norm * 3.0f, 1.0f);
-                    } else if (i >= BAR_COUNT / 2) {
-                        norm = Math.min(norm * 5.0f, 1.0f);
-                    }
-
-                    if (norm > mBarPeaks[i]) {
-                        mBarPeaks[i] = norm;
-                    }
-
-                    float decay = BAR_PEAK_DECAY;
-                    if (i >= BAR_COUNT / 2) decay = 0.50f;
-                    else if (i >= BAR_COUNT / 4) decay = 0.45f;
-
-                    mBarPeaks[i] -= mBarPeaks[i] * decay;
-                    if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
-
-                    float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
-                    heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
-
-                    mTargetHeights[i] = Math.min(heightRatio * maxH, maxH * 0.95f);
+                // ★ 中高频额外补偿
+                if (i >= BAR_COUNT / 4 && i < BAR_COUNT / 2) {
+                    norm = Math.min(norm * 3.0f, 1.0f);
+                } else if (i >= BAR_COUNT / 2) {
+                    norm = Math.min(norm * 5.0f, 1.0f);
                 }
 
-                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
+                // 峰值保持 + 衰减
+                if (norm > mBarPeaks[i]) {
+                    mBarPeaks[i] = norm;
+                }
+
+                // xuameng 节拍衰减控制
+                // ★ 中高频衰减更慢，撑得更久
+                float decay = BAR_PEAK_DECAY;
+                if (i >= BAR_COUNT / 2) {
+                    decay = 0.50f;
+                } else if (i >= BAR_COUNT / 4) {
+                    decay = 0.45f;
+                }
+                mBarPeaks[i] -= mBarPeaks[i] * decay;
+                if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
+
+                // ★ 高度映射（pow + 最低可见兜底）
+                float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
+                heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
+
+                mTargetHeights[i] = Math.min(heightRatio * maxH, maxH * 0.95f);
+                mAmplitudeLevels[i] = heightRatio;
             }
         }
         startAnimation();
