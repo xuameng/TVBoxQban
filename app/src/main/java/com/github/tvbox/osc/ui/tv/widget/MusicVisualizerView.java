@@ -124,11 +124,11 @@ public class MusicVisualizerView extends View {
         for (int i = 0; i < BAR_COUNT; i++) {
             int barIndex;
             if (i < BAR_COUNT / 3) {
-                // 低频段密集采样（每4点取1）
-                barIndex = 2 + i * 4;
+                // 低频段密集采样（每2点取1）
+                barIndex = 2 + i * 2;
             } else {
-                // 中高频段间隔采样（每2点取1）
-                barIndex = 2 + (BAR_COUNT / 3) * 4 + (i - BAR_COUNT / 3) * 2;
+                // 中高频段间隔采样（每4点取1）
+                barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
             }
             if (barIndex < fft.length - 1) {
                 byte rfk = fft[barIndex];
