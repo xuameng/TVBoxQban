@@ -81,13 +81,13 @@ public class MusicVisualizerView extends View {
      * 高斯影响强度（乘以主峰能量）
      * 0.5~0.7 视觉最佳，当前 0.6
      */
-    private static final float GAUSS_STRENGTH = 0.6f;
+    private static final float GAUSS_STRENGTH = 0.35f;
 
     /**
      * 缓坡上限截断（不超过主峰能量的倍数，防顶满）
      * 当前 1.05（允许主峰微超5%，缓坡绝不超）
      */
-    private static final float PEAK_LIMIT_PAD = 1.05f;
+    private static final float PEAK_LIMIT_PAD = 1.3f;
 
     // 颜色系统
     // 改为非静态变量实现动态刷新
