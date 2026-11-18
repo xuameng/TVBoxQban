@@ -32,6 +32,9 @@ public class MusicVisualizerView extends View {
     // xuameng 音柱动画时长
     private static final int ANIMATION_DURATION = 50;
 
+    // xuameng 是否应该绘制音柱
+    private boolean mVisible = true;
+
     /**
      * 峰值衰减率
      * 调大 → 掉更快节拍利落
@@ -113,7 +116,7 @@ public class MusicVisualizerView extends View {
         if(volumeLevel == 0f || volumeLevel == 0.0f || volumeLevel == 0.00f) {
             reset(); //xuameng处理静音状态重置音柱
         }
-
+        mVisible = true; // xuameng 有数据就显示
         float maxH = getHeight();
         if (maxH <= 0) maxH = 100f;
 
@@ -208,6 +211,10 @@ public class MusicVisualizerView extends View {
         super.onDraw(canvas);
         if (mBarHeights == null) return;
 
+        // xuameng 静音/暂停时不画
+        if (!mVisible) {
+            return;
+        }
         // 检查是否需要切换颜色方案
         checkColorCycleSwitch();
 
@@ -305,6 +312,7 @@ public class MusicVisualizerView extends View {
             mAmplitudeLevels[i] = 0;
             mBarPeaks[i] = 0;
         }
+        mVisible = false;
         invalidate(); // xuameng 改用 invalidate 立即重绘
     }
 
