@@ -122,11 +122,14 @@ public class MusicVisualizerView extends View {
 
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
-    // 全 3 点均匀采样
-    int barIndex = 2 + i * 3;
-    if (barIndex > fft.length - 2) {
-        barIndex = fft.length - 2;
-    }
+            int barIndex;
+            if (i < BAR_COUNT / 3) {
+                // 低频段密集采样（每4点取1）
+                barIndex = 2 + i * 4;
+            } else {
+                // 中高频段间隔采样（每2点取1）
+                barIndex = 2 + (BAR_COUNT / 3) * 4 + (i - BAR_COUNT / 3) * 2;
+            }
             if (barIndex < fft.length - 1) {
                 byte rfk = fft[barIndex];
                 byte ifk = fft[barIndex + 1];
