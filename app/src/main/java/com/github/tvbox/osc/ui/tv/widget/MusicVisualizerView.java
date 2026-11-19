@@ -161,29 +161,30 @@ public class MusicVisualizerView extends View {
                     weight = 3.5f * freqFactor;
                 }
 
-            // xuameng直接映射高度（和老代码一致）
-            float target = (magnitude * weight * volumeLevel * maxH) / MAX_AMPLITUDE;
+                // xuameng直接映射高度（和老代码一致）
+                float target = (magnitude * weight * volumeLevel * maxH) / MAX_AMPLITUDE;
 
-            // 峰值保持（节奏感来源）
-            if (target > mBarPeaks[i]) {
-                mBarPeaks[i] = target;
+                // 峰值保持（节奏感来源）
+                if (target > mBarPeaks[i]) {
+                    mBarPeaks[i] = target;
+                }
+
+                // 弱回落（不假、不肉）
+                mBarPeaks[i] -= mBarPeaks[i] * BAR_PEAK_DECAY;
+                if (mBarPeaks[i] < maxH * 0.003f) {
+                    mBarPeaks[i] = 0f;
+                }
+
+                // 最小高度兜底
+                float minHeight = maxH * MIN_VISIBLE_RATIO;
+                if (mBarPeaks[i] < minHeight) {
+                    mBarPeaks[i] = minHeight;
+                }
+
+                mTargetHeights[i] = Math.min(mBarPeaks[i], maxH * 0.95f);
+
+                mAmplitudeLevels[i] = Math.min(mBarPeaks[i] / maxH, 1.0f);
             }
-
-            // 弱回落（不假、不肉）
-            mBarPeaks[i] -= mBarPeaks[i] * BAR_PEAK_DECAY;
-            if (mBarPeaks[i] < maxH * 0.003f) {
-                mBarPeaks[i] = 0f;
-            }
-
-            // 最小高度兜底
-            float minHeight = maxH * MIN_VISIBLE_RATIO;
-            if (mBarPeaks[i] < minHeight) {
-                mBarPeaks[i] = minHeight;
-            }
-
-            mTargetHeights[i] = Math.min(mBarPeaks[i], maxH * 0.95f);
-
-            mAmplitudeLevels[i] = Math.min(mBarPeaks[i] / maxH, 1.0f);
         }
         startAnimation();
     }
