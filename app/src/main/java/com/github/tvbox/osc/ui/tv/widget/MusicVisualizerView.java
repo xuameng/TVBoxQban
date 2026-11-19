@@ -141,7 +141,7 @@ public class MusicVisualizerView extends View {
                 // xuameng改进的频率加权策略（三段式加权）
                 float weight;
                 if (i < BAR_COUNT / 4) {
-                    weight = 0.8f; // xuameng 超低频段(0-200Hz)增益
+                    weight = 1.0f; // xuameng 超低频段(0-200Hz)增益
                 } else if (i < BAR_COUNT / 2) {
                     weight = 1.8f; // xuameng 中低频段(200-800Hz)基准值增益
                 } else {
