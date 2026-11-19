@@ -34,7 +34,7 @@ public class MusicVisualizerView extends View {
     // 强音扩散半径（向左右各影响几个音柱）
     private static final int BEAT_SPREAD_RADIUS = 10;
     // 扩散衰减系数（越大衰减越慢，扩散越远，0~1之间）
-    private static final float BEAT_DECAY = 0.85f;
+    private static final float BEAT_DECAY = 0.80f;
     // =====================================================================
 
     /**
