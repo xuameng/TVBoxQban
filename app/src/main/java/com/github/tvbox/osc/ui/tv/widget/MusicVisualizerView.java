@@ -88,8 +88,10 @@ public class MusicVisualizerView extends View {
     }
     public void updateVisualizer(byte[] fft, float volumeLevel) {
         if(fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-        if(volumeLevel == 0f || volumeLevel == 0.0f || volumeLevel == 0.00f) {
-            reset(); //xuameng处理静音状态重置音柱
+        // xuameng处理静音状态重置音柱
+        if (volumeLevel <= 0f) {
+            reset();  
+            return;
         }
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for(int i = 0; i < BAR_COUNT; i++) {
@@ -133,10 +135,10 @@ public class MusicVisualizerView extends View {
             for (int i = 0; i < BAR_COUNT; i++) {
                 if (mTargetHeights[i] > mBarHeights[i]) {
                     // 起跳快（缓出感）
-                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.60f;
+                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.55f;
                 } else {
                     // 下落慢（拖尾感）
-                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.25f;
+                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.15f;
                 }
             }
             postInvalidate();
