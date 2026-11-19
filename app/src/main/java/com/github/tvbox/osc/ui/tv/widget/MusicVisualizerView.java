@@ -23,7 +23,7 @@ import android.animation.ValueAnimator;
  */
 public class MusicVisualizerView extends View {
 
-    private static final int MAX_AMPLITUDE = 11222;  // xuameng判断音量大小
+    private static final int MAX_AMPLITUDE = 12222;  // xuameng判断音量大小
     private static final int BAR_COUNT = 22;          // xuameng 音柱数量
     private static final int ANIMATION_DURATION = 60; // xuameng 音柱动画时长
 
@@ -34,7 +34,7 @@ public class MusicVisualizerView extends View {
     // 强音扩散半径（向左右各影响几个音柱）
     private static final int BEAT_SPREAD_RADIUS = 3;
     // 扩散衰减系数（越大衰减越慢，扩散越远，0~1之间）
-    private static final float BEAT_DECAY = 0.70f;
+    private static final float BEAT_DECAY = 0.85f;
     // =====================================================================
 
     /**
@@ -141,12 +141,12 @@ public class MusicVisualizerView extends View {
                 // xuameng改进的频率加权策略（三段式加权）
                 float weight;
                 if (i < BAR_COUNT / 4) {
-                    weight = 0.7f; // xuameng 超低频段(0-200Hz)增益
+                    weight = 0.8f; // xuameng 超低频段(0-200Hz)增益
                 } else if (i < BAR_COUNT / 2) {
-                    weight = 2.0f; // xuameng 中低频段(200-800Hz)基准值增益
+                    weight = 1.8f; // xuameng 中低频段(200-800Hz)基准值增益
                 } else {
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0); // xuameng 高频段(800Hz+)指数增强
-                    weight = 3.0f * freqFactor;
+                    weight = 2.8f * freqFactor;
                 }
 
                 mTargetHeights[i] = Math.min(
