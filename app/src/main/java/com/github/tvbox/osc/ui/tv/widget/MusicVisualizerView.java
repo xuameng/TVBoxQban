@@ -1,5 +1,4 @@
 package com.github.tvbox.osc.ui.tv.widget;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -7,7 +6,6 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 import android.animation.ValueAnimator;
-
 /**
 xuameng
 音乐可视化视图组件（带振幅颜色渐变）
@@ -20,36 +18,15 @@ xuameng
 6，新增音柱分段效果
 */
 public class MusicVisualizerView extends View {
-
-    private static final int MAX_AMPLITUDE = 6222;  //xuameng判断音量大小 越小音柱越高
+    private static final int MAX_AMPLITUDE = 12222;  //xuameng判断音量大小
     private static final int BAR_COUNT = 22;   //xuameng 音柱数量
-    private static final int ANIMATION_DURATION = 50; //xuameng 音柱动画时长 越小更新越快
-
-    // xuameng 是否应该绘制音柱
-    private boolean mVisible = true;
-
-    // xuameng 峰值衰减率（节奏感） 越大音柱落的越快
-    private static final float BAR_PEAK_DECAY = 0.55f;
-
-    // xuameng 动画插值因子（丝滑）越大越不丝滑
-    private static final float LERP_FACTOR = 0.40f; 
-
-    /**
-     * 最低可见高度比例（防止小音量时柱子消失）
-     * 调大 → 最小柱子更高
-     * 调小 → 差距更大但可能消失
-     * 当前 0.02（2%）
-     */
-    private static final float MIN_VISIBLE_RATIO = 0.02f;
-
+    private static final int ANIMATION_DURATION = 80; //xuameng 音柱动画时长
     // 改为非静态变量实现动态刷新
     private int[][] colorSchemes = new int[3][3];
-
     // 新增音柱分段效果相关变量
     private boolean mShowStripes = true; // 是否显示分段效果
     private int mSegmentCount = 20; // 每个音柱的分段数
     private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
-
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
         for(int i = 0; i < 3; i++) {
@@ -70,71 +47,50 @@ public class MusicVisualizerView extends View {
         }
         postInvalidate(); // 新增：立即刷新视图
     }
-
     private static final long COLOR_CYCLE_DURATION = (long)(0.1 * 60 * 1000); // 6秒切换
     private int currentSchemeIndex = 0;
     private long lastSwitchTime = 0;
-
     // 绘图工具
     private final Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final float[] mBarHeights = new float[BAR_COUNT];
     private final float[] mTargetHeights = new float[BAR_COUNT];
     private final float[] mAmplitudeLevels = new float[BAR_COUNT]; // 存储各柱振幅强度
-
-    // xuameng 新增：峰值保持数组（用于节奏感衰减）
-    private final float[] mBarPeaks = new float[BAR_COUNT];
-
     // 动画控制器
     private ValueAnimator mAnimator;
-
     public MusicVisualizerView(Context context) {
         super(context);
         init();
     }
-
     public MusicVisualizerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
-
     public MusicVisualizerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
-
     private void init() {
         mBarPaint.setStyle(Paint.Style.FILL);
         refreshColorSchemes(); // 新增：初始化时预加载颜色方案
     }
-
     // 新增音柱分段效果设置方法
     public void setShowStripes(boolean show) {
         mShowStripes = show;
         postInvalidate();
     }
-
     public void setSegmentCount(int count) {
         mSegmentCount = Math.max(1, count); // 至少1段
         postInvalidate();
     }
-
     public void setSegmentSpacingFixed(float spacing) {
         mSegmentSpacingFixed = Math.max(0f, spacing); // 确保非负值
         postInvalidate();
     }
-
     public void updateVisualizer(byte[] fft, float volumeLevel) {
         if(fft == null || fft.length < BAR_COUNT * 2 + 2) return;
-
-        // xuameng处理静音状态重置音柱
-        if (volumeLevel <= 0f) {
-            reset();  
-            return;
+        if(volumeLevel == 0f || volumeLevel == 0.0f || volumeLevel == 0.00f) {
+            reset(); //xuameng处理静音状态重置音柱
         }
-        mVisible = true; // xuameng 有数据就显示
-        float maxH = getHeight();
-        if (maxH <= 0) maxH = 100f;
-
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for(int i = 0; i < BAR_COUNT; i++) {
             int barIndex;
@@ -149,7 +105,6 @@ public class MusicVisualizerView extends View {
                 byte rfk = fft[barIndex];
                 byte ifk = fft[barIndex + 1];
                 float magnitude = (rfk * rfk + ifk * ifk);
-
                 // xuameng改进的频率加权策略（三段式加权）
                 float weight;
                 if(i < BAR_COUNT / 4) {
@@ -160,82 +115,55 @@ public class MusicVisualizerView extends View {
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0); //xuameng 高频段(800Hz+)指数增强
                     weight = 3.5f * freqFactor;
                 }
-
-                // xuameng直接映射高度（和老代码一致）
-                float target = (magnitude * weight * volumeLevel * maxH) / MAX_AMPLITUDE;
-
-                // 峰值保持（节奏感来源）
-                if (target > mBarPeaks[i]) {
-                    mBarPeaks[i] = target;
-                }
-
-                // 弱回落（不假、不肉）
-                mBarPeaks[i] -= mBarPeaks[i] * BAR_PEAK_DECAY;
-                if (mBarPeaks[i] < maxH * 0.003f) {
-                    mBarPeaks[i] = 0f;
-                }
-
-                // 最小高度兜底
-                float minHeight = maxH * MIN_VISIBLE_RATIO;
-                if (mBarPeaks[i] < minHeight) {
-                    mBarPeaks[i] = minHeight;
-                }
-
-                mTargetHeights[i] = Math.min(mBarPeaks[i], maxH * 0.95f);
-
-                mAmplitudeLevels[i] = Math.min(mBarPeaks[i] / maxH, 1.0f);
+                mTargetHeights[i] = Math.min(
+                    (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, //xuameng判断音量大小
+                    getHeight() * 0.95f);
+                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
             }
         }
         startAnimation();
     }
-
     private void startAnimation() {
-        if(mAnimator != null) {
+        if (mAnimator != null) {
             mAnimator.cancel();
         }
         mAnimator = ValueAnimator.ofFloat(0f, 1f);
         mAnimator.setDuration(ANIMATION_DURATION);
         mAnimator.addUpdateListener(animation -> {
-            // xuameng 使用 LERP_FACTOR 实现丝滑动画插值
-            for(int i = 0; i < BAR_COUNT; i++) {
-                mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * LERP_FACTOR;
+            for (int i = 0; i < BAR_COUNT; i++) {
+                if (mTargetHeights[i] > mBarHeights[i]) {
+                    // 起跳快（缓出感）
+                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.60f;
+                } else {
+                    // 下落慢（拖尾感）
+                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.25f;
+                }
             }
             postInvalidate();
         });
         mAnimator.start();
     }
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if(mBarHeights == null) return;
-
-        // xuameng 静音/暂停时不画
-        if (!mVisible) {
-            return;
-        }
         // 检查是否需要切换颜色方案
         checkColorCycleSwitch();
-
         final int width = getWidth();
         final int height = getHeight();
         final float barWidth = width / (float) BAR_COUNT;
         final float gap = barWidth * 0.2f;
         final float barUnitWidth = barWidth - gap;
-
         // 新增：定义分段效果的最小高度阈值（例如4像素）
         final float MIN_HEIGHT_FOR_STRIPES = 20f;
-
         for(int i = 0; i < BAR_COUNT; i++) {
             float left = i * barWidth + gap / 2;
             float right = left + barUnitWidth;
             float barHeight = Math.min(mBarHeights[i], height * 0.9f);
             float top = height - barHeight;
-
             // 根据当前颜色方案和振幅强度计算颜色
             int color = getDynamicColor(mAmplitudeLevels[i], colorSchemes[currentSchemeIndex]);
             mBarPaint.setColor(color);
-
             // 分段绘制音柱（实现"一段一段"效果）
             // 修改点：分段绘制音柱（仅当音柱高度达到最小阈值时才显示分段效果）
             if(mShowStripes && barHeight >= MIN_HEIGHT_FOR_STRIPES) {
@@ -244,10 +172,8 @@ public class MusicVisualizerView extends View {
                 int actualSegmentCount = (int)(barHeight / segmentHeightWithSpacing);
                 actualSegmentCount = Math.min(actualSegmentCount, mSegmentCount);
                 actualSegmentCount = Math.max(1, actualSegmentCount); // 至少显示1段
-
                 // 计算实际段高度（考虑固定间距）
                 float actualSegmentHeight = (barHeight - (actualSegmentCount - 1) * mSegmentSpacingFixed) / actualSegmentCount;
-
                 // 从下往上绘制各个段
                 for(int segment = 0; segment < actualSegmentCount; segment++) {
                     float segmentTop = height - (segment + 1) * (actualSegmentHeight + mSegmentSpacingFixed);
@@ -263,7 +189,6 @@ public class MusicVisualizerView extends View {
             }
         }
     }
-
     // 修改调用方式
     private void checkColorCycleSwitch() {
         long now = System.currentTimeMillis();
@@ -274,8 +199,8 @@ public class MusicVisualizerView extends View {
             refreshColorSchemes();
         }
     }
-
     /**
+
     根据振幅强度计算渐变颜色
     */
     private int getDynamicColor(float amplitude, int[] currentScheme) {
@@ -286,8 +211,8 @@ public class MusicVisualizerView extends View {
             return interpolateColor((amplitude - 0.3f) / 0.7f, currentScheme[1], currentScheme[2]);
         }
     }
-
     /**
+
     颜色插值计算
     */
     private int interpolateColor(float ratio, int startColor, int endColor) {
@@ -297,21 +222,14 @@ public class MusicVisualizerView extends View {
         int blue = (int)(Color.blue(startColor) + (Color.blue(endColor) - Color.blue(startColor)) * ratio);
         return Color.argb(alpha, red, green, blue);
     }
-
     public void reset() {
-        if (mAnimator != null) {
-            mAnimator.cancel();
-        }
         for(int i = 0; i < BAR_COUNT; i++) {
             mBarHeights[i] = 0;
             mTargetHeights[i] = 0;
             mAmplitudeLevels[i] = 0;
-            mBarPeaks[i] = 0; // xuameng 重置峰值
         }
-        mVisible = false;
         postInvalidate();
     }
-
     public void release() {
         if(mAnimator != null) {
             mAnimator.cancel();
