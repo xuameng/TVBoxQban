@@ -21,7 +21,7 @@ xuameng
 */
 public class MusicVisualizerView extends View {
 
-    private static final int MAX_AMPLITUDE = 2222;  //xuameng判断音量大小 越小音柱越高
+    private static final int MAX_AMPLITUDE = 9222;  //xuameng判断音量大小 越小音柱越高
     private static final int BAR_COUNT = 22;   //xuameng 音柱数量
     private static final int ANIMATION_DURATION = 50; //xuameng 音柱动画时长 越小更新越快
 
@@ -173,12 +173,12 @@ public class MusicVisualizerView extends View {
                 }
 
                 // xuameng 使用 BAR_PEAK_DECAY 做节奏衰减
-                mBarPeaks[i] -= mBarPeaks[i] * BAR_PEAK_DECAY;
+             //   mBarPeaks[i] -= mBarPeaks[i] * BAR_PEAK_DECAY;
                 if(mBarPeaks[i] < 0.003f) {
                     mBarPeaks[i] = 0f;
                 }
 
-                // xuameng 仅新增：最低可见高度兜底
+                // xuameng 仅新增：最低可见高度兜
                 float minHeight = getHeight() * MIN_VISIBLE_RATIO;
                 float target = mBarPeaks[i] * getHeight();
                 if (target < minHeight) {
