@@ -31,7 +31,7 @@ public class MusicVisualizerView extends View {
     // 强音扩散半径（向左右各影响几个音柱）
     private static final int BEAT_SPREAD_RADIUS = 3;
     // 扩散衰减系数（越大衰减越慢，扩散越远，0~1之间）
-    private static final float BEAT_DECAY = 0.65f;
+    private static final float BEAT_DECAY = 0.70f;
     // =====================================================================
 
     // 改为非静态变量实现动态刷新
@@ -129,7 +129,7 @@ public class MusicVisualizerView extends View {
                 // xuameng改进的频率加权策略（三段式加权）
                 float weight;
                 if (i < BAR_COUNT / 4) {
-                    weight = 0.7f; // xuameng 超低频段(0-200Hz)增益
+                    weight = 0.6f; // xuameng 超低频段(0-200Hz)增益
                 } else if (i < BAR_COUNT / 2) {
                     weight = 2.5f; // xuameng 中低频段(200-800Hz)基准值增益
                 } else {
