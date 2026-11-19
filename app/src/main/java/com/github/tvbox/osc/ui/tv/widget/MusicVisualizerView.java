@@ -143,10 +143,10 @@ public class MusicVisualizerView extends View {
                 if (i < BAR_COUNT / 4) {
                     weight = 0.7f; // xuameng 超低频段(0-200Hz)增益
                 } else if (i < BAR_COUNT / 2) {
-                    weight = 2.5f; // xuameng 中低频段(200-800Hz)基准值增益
+                    weight = 2.0f; // xuameng 中低频段(200-800Hz)基准值增益
                 } else {
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0); // xuameng 高频段(800Hz+)指数增强
-                    weight = 3.5f * freqFactor;
+                    weight = 3.0f * freqFactor;
                 }
 
                 mTargetHeights[i] = Math.min(
