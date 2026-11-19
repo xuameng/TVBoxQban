@@ -161,7 +161,7 @@ public class MusicVisualizerView extends View {
                 } else if (i >= BAR_COUNT / 2) {
                     norm = Math.min(norm * 4.0f, 1.0f);
                 } else {
-                    norm = Math.min(norm * 1.05f, 1.0f);        
+                    norm = Math.min(norm * 0.95f, 1.0f);        
                 }
                 // 峰值保持 + 衰减
                 if (norm > mBarPeaks[i]) {
@@ -180,7 +180,7 @@ public class MusicVisualizerView extends View {
                 if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
 
                 // ★ 高度映射（pow + 最低可见兜底）
-                float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.4f);
+                float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 1.2f);
                 heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
 
                 mTargetHeights[i] = Math.min(heightRatio * maxH, maxH * 0.95f);
