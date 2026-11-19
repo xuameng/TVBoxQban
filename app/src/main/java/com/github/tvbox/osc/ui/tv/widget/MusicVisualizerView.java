@@ -23,15 +23,15 @@ import android.animation.ValueAnimator;
  */
 public class MusicVisualizerView extends View {
 
-    private static final int MAX_AMPLITUDE = 12222;  // xuameng判断音量大小
+    private static final int MAX_AMPLITUDE = 11222;  // xuameng判断音量大小
     private static final int BAR_COUNT = 22;          // xuameng 音柱数量
     private static final int ANIMATION_DURATION = 80; // xuameng 音柱动画时长
 
     // ==================== xuameng 新增：强音扩散参数 ====================
     // 强音扩散半径（向左右各影响几个音柱）
-    private static final int BEAT_SPREAD_RADIUS = 2;
+    private static final int BEAT_SPREAD_RADIUS = 3;
     // 扩散衰减系数（越大衰减越快，0~1之间）
-    private static final float BEAT_DECAY = 0.55f;
+    private static final float BEAT_DECAY = 0.50f;
     // =====================================================================
 
     // 改为非静态变量实现动态刷新
