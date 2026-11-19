@@ -23,7 +23,7 @@ import android.animation.ValueAnimator;
  */
 public class MusicVisualizerView extends View {
 
-    private static final int MAX_AMPLITUDE = 10222;  // xuameng判断音量大小
+    private static final int MAX_AMPLITUDE = 12222;  // xuameng判断音量大小
     private static final int BAR_COUNT = 22;          // xuameng 音柱数量
     private static final int ANIMATION_DURATION = 60; // xuameng 音柱动画时长
 
@@ -141,7 +141,7 @@ public class MusicVisualizerView extends View {
                 // xuameng改进的频率加权策略（三段式加权）
                 float weight;
                 if (i < BAR_COUNT / 4) {
-                    weight = 0.6f; // xuameng 超低频段(0-200Hz)增益
+                    weight = 1.0f; // xuameng 超低频段(0-200Hz)增益
                 } else if (i < BAR_COUNT / 2) {
                     weight = 2.5f; // xuameng 中低频段(200-800Hz)基准值增益
                 } else {
