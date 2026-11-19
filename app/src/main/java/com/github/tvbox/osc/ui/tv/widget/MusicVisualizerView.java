@@ -20,10 +20,11 @@ import android.animation.ValueAnimator;
  * 5，三种颜色随机变化
  * 6，新增音柱分段效果
  * 7，强音扩散算法：强节奏时主柱+相邻柱协同弹起，距离越远越矮（xuameng 新增）
+ * 8，节奏检测触发扩散：检测能量突变只在Beat发生时扩散，避免误触发（xuameng 升级）
  */
 public class MusicVisualizerView extends View {
 
-    private static final int MAX_AMPLITUDE = 10222;  // xuameng判断音量大小
+    private static final int MAX_AMPLITUDE = 9222;  // xuameng判断音量大小
     private static final int BAR_COUNT = 22;          // xuameng 音柱数量
     private static final int ANIMATION_DURATION = 60; // xuameng 音柱动画时长
 
@@ -33,6 +34,28 @@ public class MusicVisualizerView extends View {
     // 扩散衰减系数（越大衰减越慢，扩散越远，0~1之间）
     private static final float BEAT_DECAY = 0.65f;
     // =====================================================================
+
+    // ==================== xuameng 新增：节奏检测参数（方案C） ====================
+    // 节奏检测灵敏度（当前帧能量 / 历史平均能量的比值超过此值才判定为Beat）
+    // 1.3 = 极灵敏（电子乐/快歌）  1.6 = 标准（流行/摇滚）  2.0 = 迟钝（只响应重鼓）
+    private static final float BEAT_SENSITIVITY = 1.6f;
+    // Beat触发后的冷却时间(ms)，防止同一拍触发多次扩散
+    // 120ms ≈ 500BPM极限速度，正常歌曲不会超过
+    private static final long BEAT_COOLDOWN = 120;
+    // 历史能量平滑系数（指数移动平均），控制阈值跟随速度
+    // 越小 = 阈值越稳定适合稳定节奏  越大 = 阈值跟得快适合变速音乐
+    private static final float ENERGY_SMOOTHING = 0.08f;
+    // 最低能量门槛：当前帧总能量必须超过视图总高度的这个比例才允许触发
+    // 防止极弱信号误判为Beat
+    private static final float MIN_BEAT_ENERGY_RATIO = 0.05f;
+    // 能量突增比例门槛：当前能量/历史能量必须超过此值
+    // 进一步验证"是不是真的突然变大了"而不是缓慢爬升
+    private static final float ENERGY_SPIKE_RATIO = 1.3f;
+
+    // 节奏检测内部状态变量
+    private float mEnergyHistory = 0f;        // 历史能量均值（指数移动平均）
+    private long mLastBeatTime = 0;           // 上次Beat发生的时间戳(ms)
+    // =========================================================================
 
     // 改为非静态变量实现动态刷新
     private int[][] colorSchemes = new int[3][3];
@@ -108,7 +131,10 @@ public class MusicVisualizerView extends View {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
         // xuameng处理静音状态重置音柱
         if (volumeLevel <= 0f) {
-            reset();  
+            reset();
+            // xuameng 静音时重置节奏检测状态
+            mEnergyHistory = 0f;
+            mLastBeatTime = 0;
             return;
         }
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
@@ -129,7 +155,7 @@ public class MusicVisualizerView extends View {
                 // xuameng改进的频率加权策略（三段式加权）
                 float weight;
                 if (i < BAR_COUNT / 4) {
-                    weight = 0.7f; // xuameng 超低频段(0-200Hz)增益
+                    weight = 1.0f; // xuameng 超低频段(0-200Hz)增益
                 } else if (i < BAR_COUNT / 2) {
                     weight = 2.5f; // xuameng 中低频段(200-800Hz)基准值增益
                 } else {
@@ -145,58 +171,101 @@ public class MusicVisualizerView extends View {
             }
         }
 
-        // ==================== xuameng 新增：强音扩散算法 ====================
-        // 找到当前能量最强的主音柱
-        int dominantIndex = 0;
-        float maxTarget = 0f;
+        // ==================== xuameng 升级：节奏检测触发扩散算法（方案C） ====================
+        // 原理：检测"能量突变"而非"绝对值大小"，只在Beat发生时扩散
+        // 人耳对节奏的感知是"突然变大声"而不是"声音大"，所以检测突变最准确
+
+        // 1. 计算当前帧总能量（所有音柱高度之和）
+        float currentEnergy = 0f;
         for (int i = 0; i < BAR_COUNT; i++) {
-            if (mTargetHeights[i] > maxTarget) {
-                maxTarget = mTargetHeights[i];
-                dominantIndex = i;
+            currentEnergy += mTargetHeights[i];
+        }
+
+        // 2. 更新历史能量均值（指数移动平均，让阈值能自适应不同歌曲的音量）
+        mEnergyHistory = mEnergyHistory * (1 - ENERGY_SMOOTHING)
+                       + currentEnergy * ENERGY_SMOOTHING;
+
+        // 3. 计算动态阈值 = 历史均值 × 灵敏度系数
+        float beatThreshold = mEnergyHistory * BEAT_SENSITIVITY;
+
+        // 4. 节奏检测：判断是否满足Beat触发条件
+        long now = System.currentTimeMillis();
+        boolean isBeat = false;
+
+        // 条件A：当前能量超过动态阈值
+        // 条件B：当前能量超过最低绝对门槛（防止极弱信号误判）
+        // 条件C：距离上次Beat已超过冷却时间（防止同一拍触发多次）
+        if (currentEnergy > beatThreshold
+                && currentEnergy > getHeight() * BAR_COUNT * MIN_BEAT_ENERGY_RATIO
+                && (now - mLastBeatTime) > BEAT_COOLDOWN) {
+
+            // 5. 额外验证：能量突增比例（确认是"突然变大"而非缓慢爬升）
+            float energyRatio = currentEnergy / Math.max(mEnergyHistory, 1f);
+            if (energyRatio > ENERGY_SPIKE_RATIO) {
+                // ✅ 确认为Beat！
+                isBeat = true;
+                mLastBeatTime = now;
             }
         }
 
-        // 只对明显强音做扩散（避免微弱信号也扩散导致乱跳）
-        // 阈值：主柱高度超过视图高度的15%才触发扩散
-        float spreadThreshold = getHeight() * 0.15f;
-        if (maxTarget > spreadThreshold) {
-            // 创建临时数组存储扩散后的高度，不破坏原始计算结果
-            float[] spreadHeights = new float[BAR_COUNT];
-            for (int i = 0; i < BAR_COUNT; i++) {
-                spreadHeights[i] = mTargetHeights[i];
+        // 6. 只在Beat确认时执行扩散
+        if (isBeat) {
+            // 6a. 找能量最强的低频柱作为扩散中心（鼓点通常在低频段）
+            int dominantIndex = 0;
+            float maxLowFreq = 0f;
+
+            // 优先从前1/3低频段找主音柱（鼓点集中在低频）
+            int searchEnd = Math.min(BAR_COUNT / 3, BAR_COUNT);
+            for (int i = 0; i < searchEnd; i++) {
+                if (mTargetHeights[i] > maxLowFreq) {
+                    maxLowFreq = mTargetHeights[i];
+                    dominantIndex = i;
+                }
             }
 
-            // 以主音柱为中心，向左右扩散
+            // 6b. 如果低频段整体不够强（比如某些歌曲低频弱），退而求其次找全局最高柱
+            if (maxLowFreq < getHeight() * 0.1f) {
+                maxLowFreq = 0f;
+                for (int i = 0; i < BAR_COUNT; i++) {
+                    if (mTargetHeights[i] > maxLowFreq) {
+                        maxLowFreq = mTargetHeights[i];
+                        dominantIndex = i;
+                    }
+                }
+            }
+
+            // 6c. 创建临时数组存储扩散后的高度，不破坏原始计算结果
+            float[] spreadHeights = new float[BAR_COUNT];
+            System.arraycopy(mTargetHeights, 0, spreadHeights, 0, BAR_COUNT);
+
+            // 6d. 以主音柱为中心，向左右扩散能量
             for (int i = 0; i < BAR_COUNT; i++) {
                 int distance = Math.abs(i - dominantIndex);
-                float spreadFactor;
+                if (distance == 0) continue; // 主柱本身不处理，保持最高
 
-                if (distance == 0) {
-                    // 主音柱本身不受影响，保持最高
-                    spreadFactor = 1.0f;
-                } else if (distance <= BEAT_SPREAD_RADIUS) {
-                    // 相邻柱：距离越近衰减越小，越近越高
-                    spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
-                } else {
-                    // 超出扩散半径不参与
-                    spreadFactor = 0f;
-                }
-
-                if (distance > 0 && spreadFactor > 0f) {
-                    // 相邻柱在自身原始高度基础上叠加主柱能量的衰减部分
+                if (distance <= BEAT_SPREAD_RADIUS) {
+                    // 相邻柱：距离越近衰减越小，弹得越高
+                    float spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
+                    // 在自身原始高度基础上叠加主柱能量的衰减部分
                     // 0.85f 控制扩散强度，避免叠加后过高
                     spreadHeights[i] = mTargetHeights[i]
-                            + maxTarget * spreadFactor * 0.85f;
+                            + maxLowFreq * spreadFactor * 0.85f;
                 }
 
                 // 限制最大高度不超过视图的95%
                 spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
             }
 
-            // 将扩散结果写回目标高度数组
+            // 6e. 主音柱额外加强15%（增强打击感，让Beat更醒目）
+            spreadHeights[dominantIndex] = Math.min(
+                    spreadHeights[dominantIndex] * 1.15f,
+                    getHeight() * 0.95f
+            );
+
+            // 6f. 将扩散结果写回目标高度数组
             System.arraycopy(spreadHeights, 0, mTargetHeights, 0, BAR_COUNT);
         }
-        // ==================== 强音扩散算法结束 ====================
+        // ==================== 节奏检测扩散算法结束 ====================
 
         startAnimation();
     }
