@@ -29,10 +29,10 @@ public class MusicVisualizerView extends View {
     private boolean mVisible = true;
 
     // xuameng 峰值衰减率（节奏感） 越大音柱落的越快
-    private static final float BAR_PEAK_DECAY = 0.55f;
+    private static final float BAR_PEAK_DECAY = 0.40f;
 
     // xuameng 动画插值因子（丝滑）越大越不丝滑
-    private static final float LERP_FACTOR = 0.40f; 
+    private static final float LERP_FACTOR = 0.55f; 
 
     /**
      * 最低可见高度比例（防止小音量时柱子消失）
@@ -123,74 +123,70 @@ public class MusicVisualizerView extends View {
         postInvalidate();
     }
 
-    public void updateVisualizer(byte[] fft, float volumeLevel) {
-        if(fft == null || fft.length < BAR_COUNT * 2 + 2) return;
+public void updateVisualizer(byte[] fft, float volumeLevel) {
+    if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
 
-        // xuameng处理静音状态重置音柱
-        if (volumeLevel <= 0f) {
-            reset();  
-            return;
-        }
-        mVisible = true; // xuameng 有数据就显示
-        float maxH = getHeight();
-        if (maxH <= 0) maxH = 100f;
-
-        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
-        for(int i = 0; i < BAR_COUNT; i++) {
-            int barIndex;
-            if(i < BAR_COUNT / 3) {
-                // 低频段密集采样（每2点取1）
-                barIndex = 2 + i * 2;
-            } else {
-                // 中高频段间隔采样（每4点取1）
-                barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
-            }
-            if(barIndex < fft.length - 1) {
-                byte rfk = fft[barIndex];
-                byte ifk = fft[barIndex + 1];
-                float magnitude = (rfk * rfk + ifk * ifk);
-
-                // xuameng改进的频率加权策略（三段式加权）
-                float weight;
-                if(i < BAR_COUNT / 4) {
-                    weight = 1.0f; //xuameng 超低频段(0-200Hz)增益
-                } else if(i < BAR_COUNT / 2) {
-                    weight = 2.5f; //xuameng 中低频段(200-800Hz)基准值增益
-                } else {
-                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0); //xuameng 高频段(800Hz+)指数增强
-                    weight = 3.5f * freqFactor;
-                }
-
-                // xuameng 峰值保持 + 衰减逻辑
-                float norm = Math.min(
-                        (magnitude * weight * volumeLevel) / MAX_AMPLITUDE,
-                        1.0f
-                );
-
-                // 峰值保持
-                if(norm > mBarPeaks[i]) {
-                    mBarPeaks[i] = norm;
-                }
-
-                // xuameng 使用 BAR_PEAK_DECAY 做节奏衰减
-             //   mBarPeaks[i] -= mBarPeaks[i] * BAR_PEAK_DECAY;
-                if(mBarPeaks[i] < 0.003f) {
-                    mBarPeaks[i] = 0f;
-                }
-
-                // xuameng 仅新增：最低可见高度兜
-                float minHeight = getHeight() * MIN_VISIBLE_RATIO;
-                float target = mBarPeaks[i] * getHeight();
-                if (target < minHeight) {
-                    target = minHeight;
-                }
-                mTargetHeights[i] = Math.min(target, getHeight() * 0.95f);
-
-                mAmplitudeLevels[i] = Math.min(mBarPeaks[i], 1.0f);
-            }
-        }
-        startAnimation();
+    if (volumeLevel <= 0f) {
+        reset();
+        return;
     }
+
+    mVisible = true;
+    float maxH = getHeight();
+    if (maxH <= 0) maxH = 100f;
+
+    for (int i = 0; i < BAR_COUNT; i++) {
+
+        int barIndex;
+        if (i < BAR_COUNT / 3) {
+            barIndex = 2 + i * 2;
+        } else {
+            barIndex = 2 + (BAR_COUNT / 3) * 2 + (i - BAR_COUNT / 3) * 4;
+        }
+
+        if (barIndex < fft.length - 1) {
+            byte rfk = fft[barIndex];
+            byte ifk = fft[barIndex + 1];
+            float magnitude = (rfk * rfk + ifk * ifk);
+
+            // 频率加权
+            float weight;
+            if (i < BAR_COUNT / 4) {
+                weight = 1.0f;
+            } else if (i < BAR_COUNT / 2) {
+                weight = 2.5f;
+            } else {
+                float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0);
+                weight = 3.5f * freqFactor;
+            }
+
+            // ✅ 关键：直接映射高度（和老代码一致）
+            float target = (magnitude * weight * volumeLevel * maxH) / MAX_AMPLITUDE;
+
+            // 峰值保持（节奏感来源）
+            if (target > mBarPeaks[i]) {
+                mBarPeaks[i] = target;
+            }
+
+            // ✅ 弱回落（不假、不肉）
+            mBarPeaks[i] -= mBarPeaks[i] * BAR_PEAK_DECAY;
+            if (mBarPeaks[i] < maxH * 0.003f) {
+                mBarPeaks[i] = 0f;
+            }
+
+            // 最小高度兜底
+            float minHeight = maxH * MIN_VISIBLE_RATIO;
+            if (mBarPeaks[i] < minHeight) {
+                mBarPeaks[i] = minHeight;
+            }
+
+            mTargetHeights[i] = Math.min(mBarPeaks[i], maxH * 0.95f);
+            mAmplitudeLevels[i] = Math.min(mBarPeaks[i] / maxH, 1.0f);
+        }
+    }
+
+    startAnimation();
+}
 
     private void startAnimation() {
         if(mAnimator != null) {
