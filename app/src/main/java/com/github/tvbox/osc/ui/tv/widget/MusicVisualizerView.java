@@ -180,7 +180,7 @@ public class MusicVisualizerView extends View {
                 if (mBarPeaks[i] < 0.003f) mBarPeaks[i] = 0f;
 
                 // ★ 高度映射（pow + 最低可见兜底）
-                float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 1.2f);
+                float heightRatio = (float) Math.pow(Math.min(mBarPeaks[i], 1.0f), 0.2f);
                 heightRatio = Math.max(heightRatio, MIN_VISIBLE_RATIO);
 
                 mTargetHeights[i] = Math.min(heightRatio * maxH, maxH * 0.95f);
