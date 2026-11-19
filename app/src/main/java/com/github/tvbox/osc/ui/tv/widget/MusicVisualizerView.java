@@ -27,12 +27,23 @@ public class MusicVisualizerView extends View {
     private static final int BAR_COUNT = 22;          // xuameng 音柱数量
     private static final int ANIMATION_DURATION = 60; // xuameng 音柱动画时长
 
+    // xuameng 是否应该绘制音柱
+    private boolean mVisible = true;
+
     // ==================== xuameng 新增：强音扩散参数 ====================
     // 强音扩散半径（向左右各影响几个音柱）
     private static final int BEAT_SPREAD_RADIUS = 3;
     // 扩散衰减系数（越大衰减越慢，扩散越远，0~1之间）
     private static final float BEAT_DECAY = 0.70f;
     // =====================================================================
+
+    /**
+     * 最低可见高度比例（防止小音量时柱子消失）
+     * 调大 → 最小柱子更高
+     * 调小 → 差距更大但可能消失
+     * 当前 0.02（2%）
+     */
+    private static final float MIN_VISIBLE_RATIO = 0.02f;
 
     // 改为非静态变量实现动态刷新
     private int[][] colorSchemes = new int[3][3];
@@ -111,6 +122,7 @@ public class MusicVisualizerView extends View {
             reset();  
             return;
         }
+        mVisible = true; // xuameng 有数据就显示
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
             int barIndex;
@@ -198,6 +210,28 @@ public class MusicVisualizerView extends View {
         }
         // ==================== 强音扩散算法结束 ====================
 
+        // ==================== xuameng 新增：最低可见高度托底 ====================
+        float maxH = getHeight();
+        if (maxH <= 0) maxH = 100f;
+
+        float minVisibleHeight = maxH * MIN_VISIBLE_RATIO;
+
+        for (int i = 0; i < BAR_COUNT; i++) {
+            // 1. 先限制最大高度
+            mTargetHeights[i] = Math.min(mTargetHeights[i], maxH * 0.95f);
+   
+            // 2. 小音量托底（防止柱子消失）
+            if (mTargetHeights[i] < minVisibleHeight) {
+                mTargetHeights[i] = minVisibleHeight;
+            }
+
+            // 3. 同步振幅强度（用于颜色渐变）
+            mAmplitudeLevels[i] = Math.max(
+                    mAmplitudeLevels[i],
+                    MIN_VISIBLE_RATIO
+            );
+        }
+        // ==================== 托底逻辑结束 ====================
         startAnimation();
     }
 
@@ -237,7 +271,10 @@ public class MusicVisualizerView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (mBarHeights == null) return;
-
+        // xuameng 静音/暂停时不画
+        if (!mVisible) {
+            return;
+        }
         // 检查是否需要切换颜色方案
         checkColorCycleSwitch();
 
@@ -328,6 +365,7 @@ public class MusicVisualizerView extends View {
             mTargetHeights[i] = 0;
             mAmplitudeLevels[i] = 0;
         }
+        mVisible = false;
         postInvalidate();
     }
 
