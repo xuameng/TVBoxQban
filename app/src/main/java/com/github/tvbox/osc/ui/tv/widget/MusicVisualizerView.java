@@ -21,15 +21,26 @@ xuameng
 */
 public class MusicVisualizerView extends View {
 
-    private static final int MAX_AMPLITUDE = 12222;  //xuameng判断音量大小
+    private static final int MAX_AMPLITUDE = 6222;  //xuameng判断音量大小
     private static final int BAR_COUNT = 22;   //xuameng 音柱数量
     private static final int ANIMATION_DURATION = 50; //xuameng 音柱动画时长
+
+    // xuameng 是否应该绘制音柱
+    private boolean mVisible = true;
 
     // xuameng 峰值衰减率（节奏感）
     private static final float BAR_PEAK_DECAY = 0.55f;
 
     // xuameng 动画插值因子（丝滑）
     private static final float LERP_FACTOR = 0.40f;
+
+    /**
+     * 最低可见高度比例（防止小音量时柱子消失）
+     * 调大 → 最小柱子更高
+     * 调小 → 差距更大但可能消失
+     * 当前 0.02（2%）
+     */
+    private static final float MIN_VISIBLE_RATIO = 0.02f;
 
     // 改为非静态变量实现动态刷新
     private int[][] colorSchemes = new int[3][3];
@@ -120,6 +131,9 @@ public class MusicVisualizerView extends View {
             reset();  
             return;
         }
+        mVisible = true; // xuameng 有数据就显示
+        float maxH = getHeight();
+        if (maxH <= 0) maxH = 100f;
 
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for(int i = 0; i < BAR_COUNT; i++) {
@@ -164,11 +178,13 @@ public class MusicVisualizerView extends View {
                     mBarPeaks[i] = 0f;
                 }
 
-                // 目标高度使用峰值（节奏感更强）
-                mTargetHeights[i] = Math.min(
-                        mBarPeaks[i] * getHeight(),
-                        getHeight() * 0.95f
-                );
+                // xuameng 仅新增：最低可见高度兜底（不加 pow）
+                float minHeight = getHeight() * MIN_VISIBLE_RATIO;
+                float target = mBarPeaks[i] * getHeight();
+                if (target < minHeight) {
+                    target = minHeight;
+                }
+                mTargetHeights[i] = Math.min(target, getHeight() * 0.95f);
 
                 mAmplitudeLevels[i] = Math.min(mBarPeaks[i], 1.0f);
             }
@@ -197,6 +213,10 @@ public class MusicVisualizerView extends View {
         super.onDraw(canvas);
         if(mBarHeights == null) return;
 
+        // xuameng 静音/暂停时不画
+        if (!mVisible) {
+            return;
+        }
         // 检查是否需要切换颜色方案
         checkColorCycleSwitch();
 
@@ -282,12 +302,16 @@ public class MusicVisualizerView extends View {
     }
 
     public void reset() {
+        if (mAnimator != null) {
+            mAnimator.cancel();
+        }
         for(int i = 0; i < BAR_COUNT; i++) {
             mBarHeights[i] = 0;
             mTargetHeights[i] = 0;
             mAmplitudeLevels[i] = 0;
             mBarPeaks[i] = 0; // xuameng 重置峰值
         }
+        mVisible = false;
         postInvalidate();
     }
 
