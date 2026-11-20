@@ -32,8 +32,8 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.FrameLayout; 
-import android.widget.FrameLayout.LayoutParams;
+import android.widget.FrameLayout;  //xuameng 音柱全屏与小窗口时大小变化
+import android.widget.FrameLayout.LayoutParams; //xuameng 音柱全屏与小窗口时大小变化
 import com.github.tvbox.osc.util.parser.SuperParse;
 
 import androidx.annotation.NonNull;
@@ -119,7 +119,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.net.URLEncoder;
-import me.jessyan.autosize.utils.AutoSizeUtils; 
+import me.jessyan.autosize.utils.AutoSizeUtils;  //xuameng 音柱全屏与小窗口时大小变化
 import me.jessyan.autosize.AutoSize;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
@@ -3114,24 +3114,22 @@ public class PlayFragment extends BaseLazyFragment {
         0xFFEE82EE  // 亮紫色
     };
 
-    public void updateVisualizerSize(boolean isFullScreen) {
+    public void updateVisualizerSize(boolean isFullScreen) {  //xuameng 音柱全屏与小窗口时大小变化
         if (mController.customVisualizer == null) return;
-            if (mController.customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
-                FrameLayout.LayoutParams params =
-                    (FrameLayout.LayoutParams) mController.customVisualizer.getLayoutParams();
+            FrameLayout.LayoutParams params =
+                (FrameLayout.LayoutParams) mController.customVisualizer.getLayoutParams();
 
-                if (isFullScreen) {
-                // 全屏：正常尺寸
-                    params.width = AutoSizeUtils.mm2px(mContext, 800);
-                    params.height = AutoSizeUtils.mm2px(mContext, 150);
-                } else {
-                    // 小窗口：缩小一倍
-                    params.width = AutoSizeUtils.mm2px(mContext, 400);
-                    params.height = AutoSizeUtils.mm2px(mContext, 75);
-                } 
+            if (isFullScreen) {
+            // 全屏：正常尺寸
+                params.width = AutoSizeUtils.mm2px(mContext, 800);
+                params.height = AutoSizeUtils.mm2px(mContext, 150);
+            } else {
+                // 小窗口：缩小一倍
+                params.width = AutoSizeUtils.mm2px(mContext, 400);
+                params.height = AutoSizeUtils.mm2px(mContext, 75);
+            } 
 
-            mController.customVisualizer.setLayoutParams(params);
-        }
+        mController.customVisualizer.setLayoutParams(params);
     }
 
     private void loadLrcFromUrl(String lrcUrl) {        //xuameng LRC歌词从URL加载
