@@ -24,7 +24,7 @@ import android.animation.ValueAnimator;
 public class MusicVisualizerView extends View {
 
     private static final int MAX_AMPLITUDE = 10222;  // xuameng判断音量大小
-    private static final int BAR_COUNT = 22;          // xuameng 音柱数量
+    private static final int BAR_COUNT = 64;          // xuameng 音柱数量
     private static final int ANIMATION_DURATION = 60; // xuameng 音柱动画时长
 
     // xuameng 是否应该绘制音柱
@@ -126,13 +126,8 @@ public class MusicVisualizerView extends View {
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
             int barIndex;
-            if (i < BAR_COUNT / 3) {
-                // 低频段密集采样（每4点取1）
-                barIndex = 2 + i * 4;
-            } else {
-                // 中高频段间隔采样（每2点取1）
-                barIndex = 2 + (BAR_COUNT / 3) * 4 + (i - BAR_COUNT / 3) * 2;
-            }
+    // xuameng 1点取1（每根音柱对应一个复数对）
+    int barIndex = 2 + i * 2;
             if (barIndex < fft.length - 1) {
                 byte rfk = fft[barIndex];
                 byte ifk = fft[barIndex + 1];
@@ -281,7 +276,7 @@ public class MusicVisualizerView extends View {
         final int width = getWidth();
         final int height = getHeight();
         final float barWidth = width / (float) BAR_COUNT;
-        final float gap = barWidth * 0.2f;
+        final float gap = barWidth * 0.12f;
         final float barUnitWidth = barWidth - gap;
 
         // 新增：定义分段效果的最小高度阈值（例如4像素）
