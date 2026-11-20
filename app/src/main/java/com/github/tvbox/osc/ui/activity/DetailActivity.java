@@ -688,8 +688,8 @@ public class DetailActivity extends BaseActivity {
                 }
             });
         } else {
-            llPlayerFragmentContainer.post(() -> {
             playFragment.isFullPreview(false);   //xuameng 非小窗口模式返回后播放BUG
+            llPlayerFragmentContainer.post(() -> {
                 if (playFragment != null) {
                     playFragment.updateVisualizerSize(false);   //xuameng 音柱全屏与小窗口时大小变化
                     playFragment.updateMusicLogoSize(false);   //xuameng 音柱全屏与小窗口时大小变化
