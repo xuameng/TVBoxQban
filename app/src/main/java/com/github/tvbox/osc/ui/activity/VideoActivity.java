@@ -679,6 +679,7 @@ public class VideoActivity extends BaseActivity {
 
         setLoadSir(llLayout);
         if (fullWindows) {
+            setFullPreview(true);
             playFragment.isFullPreview(true);   //xuameng 非小窗口模式返回后播放BUG
             llPlayerFragmentContainer.post(() -> {
                 if (playFragment != null) {
