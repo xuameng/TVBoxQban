@@ -336,7 +336,7 @@ public class VodController extends BaseController {
     TextView mxuPlay; //xuameng 底部播放ID
     TextView mPlayrender;  //xuameng渲染方式
     TextView mPlayanimation; //xuameng音柱动画
-    private ImageView iv_circle_bg; //xuameng音乐播放时图标
+    public ImageView iv_circle_bg; //xuameng音乐播放时图标
     private FrameLayout play_speed_3; //xuameng倍速播放
     private FrameLayout mPauseContainer; // xuameng播放标题、暂停时间
     private TextView tv_slide_progress_text;  //xuameng 旧的亮度调节框已作废
@@ -473,10 +473,11 @@ public class VodController extends BaseController {
                         // xuameng如果 mLrcView 显示，则将 iv_circle_bg 置于屏幕左上角
                         params.gravity = Gravity.TOP | Gravity.LEFT;
                         // xuameng设置左上角的外边距为 30dp
+                        int margin;
                         if (fullPreview){ 
-                            int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+                            margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
                         } else {
-                            int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
+                            margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
                         }
                         params.topMargin = margin;
                         params.leftMargin = margin;
