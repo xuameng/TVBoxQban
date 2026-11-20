@@ -137,7 +137,7 @@ public class MusicVisualizerView extends View {
                 int third = BAR_COUNT / 3; // 21
                 if (i < third) {
                     // 第一段：xuameng 超低频段(0-200Hz)增益
-                    weight = 1.2f;
+                    weight = 1.0f;
                 } else if (i < third * 2) {
                     // 第二段：xuameng 中低频段(200-800Hz)基准值增益
                     weight = 2.2f;
@@ -145,7 +145,7 @@ public class MusicVisualizerView extends View {
                     // 第三段：xuameng 高频段(800Hz+)指数增强
                     float freqFactor = (float) Math.pow(1.5, (i - third * 2) / 2.0);
                     weight = 2.8f * freqFactor;
-                    weight = Math.min(weight, 5.0f); // 限制最大增益
+                    weight = Math.min(weight, 15.0f); // 限制最大增益
                 }
                 mTargetHeights[i] = Math.min(
                         (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, // xuameng判断音量大小
