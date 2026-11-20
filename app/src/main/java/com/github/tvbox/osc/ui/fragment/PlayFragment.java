@@ -3132,6 +3132,24 @@ public class PlayFragment extends BaseLazyFragment {
         mController.customVisualizer.setLayoutParams(params);
     }
 
+    public void updateMusicLogoSize(boolean isFullScreen) {  //xuameng 音乐图标全屏与小窗口时大小变化
+        if (mController.iv_circle_bg == null) return;
+            FrameLayout.LayoutParams params =
+                (FrameLayout.LayoutParams) mController.iv_circle_bg.getLayoutParams();
+
+            if (isFullScreen) {
+            // 全屏：正常尺寸
+                params.width = AutoSizeUtils.mm2px(mContext, 100);
+                params.height = AutoSizeUtils.mm2px(mContext, 100);
+            } else {
+                // 小窗口：缩小一倍
+                params.width = AutoSizeUtils.mm2px(mContext, 50);
+                params.height = AutoSizeUtils.mm2px(mContext, 50);
+            } 
+
+        mController.iv_circle_bg.setLayoutParams(params);
+    }
+
     private void loadLrcFromUrl(String lrcUrl) {        //xuameng LRC歌词从URL加载
         if (lrcUrl.contains(":9976/")) {
             // 将端口9976替换为9978
