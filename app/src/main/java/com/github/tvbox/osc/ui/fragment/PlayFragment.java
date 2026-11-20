@@ -32,6 +32,8 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.FrameLayout; 
+import android.widget.FrameLayout.LayoutParams;
 import com.github.tvbox.osc.util.parser.SuperParse;
 
 import androidx.annotation.NonNull;
@@ -3116,7 +3118,7 @@ public class PlayFragment extends BaseLazyFragment {
         if (mController.customVisualizer == null) return;
             if (mController.customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
                 FrameLayout.LayoutParams params =
-                    (FrameLayout.LayoutParams) mVisualizerView.getLayoutParams();
+                    (FrameLayout.LayoutParams) mController.customVisualizer.getLayoutParams();
 
                 if (isFullScreen) {
                 // 全屏：正常尺寸
