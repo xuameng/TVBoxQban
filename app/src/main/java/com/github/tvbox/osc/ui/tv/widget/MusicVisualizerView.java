@@ -125,7 +125,7 @@ public class MusicVisualizerView extends View {
         mVisible = true; // xuameng 有数据就显示
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
-            int barIndex;
+
     // xuameng 1点取1（每根音柱对应一个复数对）
     int barIndex = 2 + i * 2;
             if (barIndex < fft.length - 1) {
