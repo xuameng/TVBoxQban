@@ -115,7 +115,7 @@ public class MusicVisualizerView extends View {
         postInvalidate();
     }
 
-public void updateVisualizer(byte[] fft, float volumeLevel) {
+    public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
         // xuameng处理静音状态重置音柱
         if (volumeLevel <= 0f) {
@@ -123,46 +123,39 @@ public void updateVisualizer(byte[] fft, float volumeLevel) {
             return;
         }
         mVisible = true; // xuameng 有数据就显示
-
-        // ==================== xuameng 修改：对数频率映射 + 低频增强 ====================
-        // 获取最大 bin 索引
-        int maxBin = (fft.length / 2) - 1;
-
+        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
-            // 对数映射：低频密集，高频稀疏，匹配人耳感知
-            float t = (float) i / (BAR_COUNT - 1);       // 0 ~ 1 线性位置
-            float logT = (float) Math.pow(t, 0.55);       // 幂次控制曲线，0.55 让低频更密
-
-            int binIndex = 1 + (int) (logT * (maxBin - 1)); // bin 1 起跳（跳过 DC）
-            int barIndex = binIndex * 2;                   // 转成 fft 数组下标
-
+            int barIndex;
+            if (i < BAR_COUNT / 3) {
+                // 低频段密集采样（每4点取1）
+                barIndex = 2 + i * 4;
+            } else {
+                // 中高频段间隔采样（每2点取1）
+                barIndex = 2 + (BAR_COUNT / 3) * 4 + (i - BAR_COUNT / 3) * 2;
+            }
             if (barIndex < fft.length - 1) {
                 byte rfk = fft[barIndex];
                 byte ifk = fft[barIndex + 1];
                 float magnitude = (rfk * rfk + ifk * ifk);
 
-                // xuameng改进的频率加权策略（低频增强版）
+                // xuameng改进的频率加权策略（三段式加权）
                 float weight;
                 if (i < BAR_COUNT / 4) {
-                    // xuameng 超低频段(0-200Hz)：4x增益，确保鼓点能弹起来
-                    weight = 4.0f;
+                    weight = 1.3f; // xuameng 超低频段(0-200Hz)增益
                 } else if (i < BAR_COUNT / 2) {
-                    // xuameng 中低频段(200-800Hz)：2x增益
-                    weight = 2.0f;
+                    weight = 1.8f; // xuameng 中低频段(200-800Hz)基准值增益
                 } else {
-                    // xuameng 高频段(800Hz+)：轻微指数增强，保持原有听感
-                    float freqFactor = (float) Math.pow(1.3, (i - BAR_COUNT / 2) / 2.0);
-                    weight = 1.5f * freqFactor;
+                    float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0); // xuameng 高频段(800Hz+)指数增强
+                    weight = 2.8f * freqFactor;
                 }
 
                 mTargetHeights[i] = Math.min(
-                        (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE,
+                        (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, // xuameng判断音量大小
                         getHeight() * 0.95f
                 );
                 mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
             }
         }
-        // ==================== 对数映射修改结束 ====================
 
         // ==================== xuameng 新增：强音扩散算法 ====================
         // 找到当前能量最强的主音柱
