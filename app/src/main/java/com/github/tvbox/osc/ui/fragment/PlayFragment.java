@@ -117,7 +117,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.net.URLEncoder;
-
+import me.jessyan.autosize.utils.AutoSizeUtils; 
 import me.jessyan.autosize.AutoSize;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
@@ -3111,6 +3111,26 @@ public class PlayFragment extends BaseLazyFragment {
         0xFF00CED1, // 亮青色
         0xFFEE82EE  // 亮紫色
     };
+
+    public void updateVisualizerSize(boolean isFullScreen) {
+        if (mController.customVisualizer == null) return;
+            if (mController.customVisualizer.getVisibility() == View.VISIBLE) { //xuameng播放音乐柱状图
+                FrameLayout.LayoutParams params =
+                    (FrameLayout.LayoutParams) mVisualizerView.getLayoutParams();
+
+                if (isFullScreen) {
+                // 全屏：正常尺寸
+                    params.width = AutoSizeUtils.mm2px(mContext, 800);
+                    params.height = AutoSizeUtils.mm2px(mContext, 150);
+                } else {
+                    // 小窗口：缩小一倍
+                    params.width = AutoSizeUtils.mm2px(mContext, 400);
+                    params.height = AutoSizeUtils.mm2px(mContext, 75);
+                } 
+
+            mController.customVisualizer.setLayoutParams(params);
+        }
+    }
 
     private void loadLrcFromUrl(String lrcUrl) {        //xuameng LRC歌词从URL加载
         if (lrcUrl.contains(":9976/")) {
