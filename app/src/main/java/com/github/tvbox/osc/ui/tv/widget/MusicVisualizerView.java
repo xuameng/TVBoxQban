@@ -32,7 +32,7 @@ public class MusicVisualizerView extends View {
 
     // ==================== xuameng 新增：强音扩散参数 ====================
     // 强音扩散半径（向左右各影响几个音柱）
-    private static final int BEAT_SPREAD_RADIUS = 10;
+    private static final int BEAT_SPREAD_RADIUS = 11;
     // 扩散衰减系数（越大衰减越慢，扩散越远，0~1之间）
     private static final float BEAT_DECAY = 0.80f;
     // =====================================================================
@@ -270,7 +270,7 @@ weight = 1.0f + (i / (float) (BAR_COUNT - 1)) * 1.0f;
         final int width = getWidth();
         final int height = getHeight();
         final float barWidth = width / (float) BAR_COUNT;
-        final float gap = barWidth * 0.10f;
+        final float gap = barWidth * 0.15f;
         final float barUnitWidth = barWidth - gap;
 
         // 新增：定义分段效果的最小高度阈值（例如4像素）
