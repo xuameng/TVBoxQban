@@ -136,12 +136,12 @@ public class MusicVisualizerView extends View {
                 // xuameng改进的频率加权策略（三段式加权）
                 float weight;
                 if (i < BAR_COUNT / 4) {
-                    weight = 1.3f; // xuameng 超低频段(0-200Hz)增益
+                    weight = 1.0f; // xuameng 超低频段(0-200Hz)增益
                 } else if (i < BAR_COUNT / 2) {
-                    weight = 1.8f; // xuameng 中低频段(200-800Hz)基准值增益
+                    weight = 1.2f; // xuameng 中低频段(200-800Hz)基准值增益
                 } else {
                     float freqFactor = (float) Math.pow(1.5, (i - BAR_COUNT / 2) / 2.0); // xuameng 高频段(800Hz+)指数增强
-                    weight = 2.8f * freqFactor;
+                    weight = 1.2f * freqFactor;
                 }
 
                 mTargetHeights[i] = Math.min(
@@ -276,7 +276,7 @@ public class MusicVisualizerView extends View {
         final int width = getWidth();
         final int height = getHeight();
         final float barWidth = width / (float) BAR_COUNT;
-        final float gap = barWidth * 0.12f;
+        final float gap = barWidth * 0.10f;
         final float barUnitWidth = barWidth - gap;
 
         // 新增：定义分段效果的最小高度阈值（例如4像素）
