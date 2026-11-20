@@ -89,7 +89,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
-import me.jessyan.autosize.AutoSize;
 
 import android.graphics.Paint;
 import android.text.TextPaint;
@@ -681,6 +680,13 @@ public class DetailActivity extends BaseActivity {
         setLoadSir(llLayout);
         if (fullWindows) {
             setFullPreview(true);
+            playFragment.isFullPreview(true);   //xuameng 非小窗口模式返回后播放BUG
+            llPlayerFragmentContainer.post(() -> {
+                if (playFragment != null) {
+                    playFragment.updateVisualizerSize(true);   //xuameng 音柱全屏与小窗口时大小变化
+                    playFragment.updateMusicLogoSize(true);   //xuameng 音柱全屏与小窗口时大小变化
+                }
+            });
         }
     }
 
@@ -1642,17 +1648,23 @@ public class DetailActivity extends BaseActivity {
     void enterFullPreview() {
         setFullPreview(true);
         playFragment.isFullPreview(true);   //xuameng 非小窗口模式返回后播放BUG
+        llPlayerFragmentContainer.post(() -> {
+            if (playFragment != null) {
+                playFragment.updateVisualizerSize(true);   //xuameng 音柱全屏与小窗口时大小变化
+                playFragment.updateMusicLogoSize(true);   //xuameng 音柱全屏与小窗口时大小变化
+            }
+        });
     }
 
     void exitFullPreview() {
         setFullPreview(false);
         playFragment.isFullPreview(false);   //xuameng 非小窗口模式返回后播放BUG
-    llPlayerFragmentContainer.post(() -> {
-        if (playFragment != null) {
-            playFragment.updateVisualizerSize(false);
-            playFragment.updateMusicLogoSize(false);
-        }
-    });
+        llPlayerFragmentContainer.post(() -> {
+            if (playFragment != null) {
+                playFragment.updateVisualizerSize(false);   //xuameng 音柱全屏与小窗口时大小变化
+                playFragment.updateMusicLogoSize(false);   //xuameng 音柱全屏与小窗口时大小变化
+            }
+        });
     }
 
     void setFullPreview(boolean full) {
@@ -1706,12 +1718,8 @@ public class DetailActivity extends BaseActivity {
         int subtitleTextSize  = SubtitleHelper.getTextSize(this);
         if (!fullWindows) {
             subtitleTextSize *= 0.5;
-            playFragment.updateVisualizerSize(false);   //xuameng 音柱全屏与小窗口时大小变化
-            playFragment.updateMusicLogoSize(false);   //xuameng 音柱全屏与小窗口时大小变化
         }else{
             EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PAUSE_VOD, ""));   //xuameng 全屏时如果是暂停状态就显示暂停图标
-            playFragment.updateVisualizerSize(true);  //xuameng 音乐图标全屏与小窗口时大小变化
-            playFragment.updateMusicLogoSize(true);  //xuameng 音乐图标全屏与小窗口时大小变化
         }
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE, subtitleTextSize));
     }
@@ -1932,16 +1940,5 @@ public class DetailActivity extends BaseActivity {
                 t.setPriority(Thread.NORM_PRIORITY - 1);
                 return t;
             });
-
-@Override
-public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-    AutoSize.autoConvertDensityOfGlobal(this);   // 或 AutoSizeCompat.autoConvertDensityOfGlobal(getResources())
-    if (playFragment != null) {
-        playFragment.updateVisualizerSize(fullWindows);
-        playFragment.updateMusicLogoSize(fullWindows);
-    }
-}
-
 
 }
