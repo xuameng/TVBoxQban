@@ -1698,7 +1698,7 @@ public class DetailActivity extends BaseActivity {
     void toggleSubtitleTextSize() {
         int subtitleTextSize  = SubtitleHelper.getTextSize(this);
         if (!fullWindows) {
-            subtitleTextSize *= 0.6;
+            subtitleTextSize *= 0.5;
             playFragment.updateVisualizerSize(false);   //xuameng 音柱全屏与小窗口时大小变化
         }else{
             EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PAUSE_VOD, ""));   //xuameng 全屏时如果是暂停状态就显示暂停图标
