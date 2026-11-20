@@ -1699,10 +1699,10 @@ public class DetailActivity extends BaseActivity {
         int subtitleTextSize  = SubtitleHelper.getTextSize(this);
         if (!fullWindows) {
             subtitleTextSize *= 0.6;
-            playFragment.updateVisualizerSize(false);
+            playFragment.updateVisualizerSize(false);   //xuameng 音柱全屏与小窗口时大小变化
         }else{
             EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PAUSE_VOD, ""));   //xuameng 全屏时如果是暂停状态就显示暂停图标
-            playFragment.updateVisualizerSize(true);
+            playFragment.updateVisualizerSize(true);  //xuameng 音柱全屏与小窗口时大小变化
         }
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE, subtitleTextSize));
     }
