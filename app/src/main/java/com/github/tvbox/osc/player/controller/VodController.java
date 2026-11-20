@@ -1694,18 +1694,16 @@ public class VodController extends BaseController {
         int requestedOrientation = mActivity.getRequestedOrientation();
         if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
             mLandscapePortraitBtn.setText("横屏");
-            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-            customVisualizer.post(() -> {
                 customVisualizer.requestLayout();
                 updateVisualizerSize(false);  //xuameng 音柱横竖屏幕时大小变化
-            });
+
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+
         } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
             mLandscapePortraitBtn.setText("竖屏");
-            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-            customVisualizer.post(() -> {
                 customVisualizer.requestLayout();
                 updateVisualizerSize(true);  //xuameng 音柱横竖屏幕时大小变化
-            });
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         }
     }
     void setLandscapePortraitXu() { //xuameng 横竖屏显示BUG
@@ -2916,12 +2914,14 @@ public class VodController extends BaseController {
 
             if (isFullScreen) {
             // 全屏：正常尺寸
+App.showToastShort(getContext(), "full");
                 params.width = AutoSizeUtils.mm2px(getContext(), 800);
                 params.height = AutoSizeUtils.mm2px(getContext(), 150);
             } else {
                 // 小窗口：缩小一倍
                 params.width = AutoSizeUtils.mm2px(getContext(), 400);
                 params.height = AutoSizeUtils.mm2px(getContext(), 75);
+App.showToastShort(getContext(), "nofull");
             } 
 
         customVisualizer.setLayoutParams(params);
