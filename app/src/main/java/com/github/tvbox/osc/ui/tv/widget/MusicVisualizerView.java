@@ -139,7 +139,7 @@ public class MusicVisualizerView extends View {
                     weight = 1.0f;
                 } else if (i < third * 2) {
                     // 第二段：xuameng 中低频段(200-800Hz)基准值增益
-                    weight = 2.6f;
+                    weight = 3.0f;
                 } else {
                     // 第三段：xuameng 高频段(800Hz+)指数增强
                     float freqFactor = (float) Math.pow(1.5, (i - third * 2) / 2.0);
