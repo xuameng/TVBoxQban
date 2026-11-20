@@ -41,7 +41,7 @@ public class MusicVisualizerView extends View {
      * 最低可见高度比例（防止小音量时柱子消失）
      * 调大 → 最小柱子更高
      * 调小 → 差距更大但可能消失
-     * 当前 0.02（2%）
+     * 当前 0.005（0.5%）
      */
     private static final float MIN_VISIBLE_RATIO = 0.005f;
 
@@ -122,7 +122,7 @@ public class MusicVisualizerView extends View {
             return;
         }
         mVisible = true; // xuameng 有数据就显示
-        // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
+        // 修改采样策略：前1/3柱子采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
             // xuameng 1点取1（每根音柱对应一个复数对）
             int barIndex = 2 + i * 2;
@@ -139,11 +139,11 @@ public class MusicVisualizerView extends View {
                     weight = 1.0f;
                 } else if (i < third * 2) {
                     // 第二段：xuameng 中低频段(200-800Hz)基准值增益
-                    weight = 3.0f;
+                    weight = 2.8f;
                 } else {
                     // 第三段：xuameng 高频段(800Hz+)指数增强
                     float freqFactor = (float) Math.pow(1.5, (i - third * 2) / 2.0);
-                    weight = 2.6f * freqFactor;
+                    weight = 2.8f * freqFactor;
                     weight = Math.min(weight, 15.0f); // 限制最大增益
                 }
                 mTargetHeights[i] = Math.min(
@@ -165,8 +165,8 @@ public class MusicVisualizerView extends View {
         }
 
         // 只对明显强音做扩散（避免微弱信号也扩散导致乱跳）
-        // 阈值：主柱高度超过视图高度的15%才触发扩散
-        float spreadThreshold = getHeight() * 0.15f;
+        // 阈值：主柱高度超过视图高度的10%才触发扩散
+        float spreadThreshold = getHeight() * 0.10f;
         if (maxTarget > spreadThreshold) {
             // 创建临时数组存储扩散后的高度，不破坏原始计算结果
             float[] spreadHeights = new float[BAR_COUNT];
