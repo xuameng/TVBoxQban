@@ -2827,6 +2827,8 @@ public class VodController extends BaseController {
             mVisualizer = new Visualizer(sessionId);
             // 智能采样率设置
             int targetRate = Visualizer.getMaxCaptureRate() / 2;
+int[] range = Visualizer.getCaptureSizeRange();
+mVisualizer.setCaptureSize(range[1]);
             // 设置数据捕获监听器
             mVisualizer.setDataCaptureListener(
                 new Visualizer.OnDataCaptureListener() {
