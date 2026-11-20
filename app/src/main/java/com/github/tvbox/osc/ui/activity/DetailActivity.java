@@ -1646,6 +1646,12 @@ public class DetailActivity extends BaseActivity {
     void exitFullPreview() {
         setFullPreview(false);
         playFragment.isFullPreview(false);   //xuameng 非小窗口模式返回后播放BUG
+    llPlayerFragmentContainer.post(() -> {
+        if (playFragment != null) {
+            playFragment.updateVisualizerSize(false);
+            playFragment.updateMusicLogoSize(false);
+        }
+    });
     }
 
     void setFullPreview(boolean full) {
