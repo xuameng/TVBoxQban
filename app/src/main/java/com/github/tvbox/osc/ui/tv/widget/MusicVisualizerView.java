@@ -135,7 +135,8 @@ public class MusicVisualizerView extends View {
 
                 // xuameng改进的频率加权策略（三段式加权）
                 float weight;
-weight = 1.0f; // xuameng 超低频段(0-200Hz)增益
+// xuameng 线性平均分：低频1.0 → 高频2.0，平滑补偿
+weight = 1.0f + (i / (float) (BAR_COUNT - 1)) * 1.0f;
 
                 mTargetHeights[i] = Math.min(
                         (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, // xuameng判断音量大小
