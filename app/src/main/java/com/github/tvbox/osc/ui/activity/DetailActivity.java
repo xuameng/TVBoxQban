@@ -89,6 +89,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import me.jessyan.autosize.utils.AutoSizeUtils;
+import me.jessyan.autosize.AutoSize;
 
 import android.graphics.Paint;
 import android.text.TextPaint;
@@ -1931,5 +1932,16 @@ public class DetailActivity extends BaseActivity {
                 t.setPriority(Thread.NORM_PRIORITY - 1);
                 return t;
             });
+
+@Override
+public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    AutoSize.autoConvertDensityOfGlobal(this);   // 或 AutoSizeCompat.autoConvertDensityOfGlobal(getResources())
+    if (playFragment != null) {
+        playFragment.updateVisualizerSize(fullWindows);
+        playFragment.updateMusicLogoSize(fullWindows);
+    }
+}
+
 
 }
