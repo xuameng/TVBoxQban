@@ -728,7 +728,7 @@ public class VideoActivity extends BaseActivity {
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
             if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
-                HISTORY_EXECUTOR.execute(() -> insertVod(firstsourceKey, vodInfo));
+                HISTORY_EXECUTOR.execute(() -> insertVod(firstsourceKey, vodInfo)); //xuameng 历史保存用线程池 解决卡顿
             }
             bundle.putString("sourceKey", sourceKey);
             bundle.putString("videoPic", mVideo.pic);   //xuameng 新增给vod显示旋转图片用
@@ -771,7 +771,7 @@ public class VideoActivity extends BaseActivity {
             vodInfo.currentPlayIndex = vodInfo.playIndex;
             Bundle bundle = new Bundle();
             if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
-                HISTORY_EXECUTOR.execute(() -> insertVod(firstsourceKey, vodInfo));
+                HISTORY_EXECUTOR.execute(() -> insertVod(firstsourceKey, vodInfo)); //xuameng 历史保存用线程池 解决卡顿
             }
             bundle.putString("sourceKey", sourceKey);
             App.getInstance().setVodInfo(vodInfo);
@@ -1342,14 +1342,14 @@ public class VideoActivity extends BaseActivity {
                             if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
                                 final String saveSourceKey = firstsourceKey;
                                 final VodInfo finalVodInfo = saveVodInfo;
-                                HISTORY_EXECUTOR.execute(() -> insertVod(saveSourceKey, finalVodInfo));
+                                HISTORY_EXECUTOR.execute(() -> insertVod(saveSourceKey, finalVodInfo)); //xuameng 历史保存用线程池 解决卡顿
                             }
                         }
                     } else if (event.obj instanceof JSONObject) {    //xuameng保存播放器配置
                         vodInfo.playerCfg = ((JSONObject) event.obj).toString();
                         //保存历史
                         if (!TextUtils.isEmpty(realUrl) && !realUrl.startsWith("push://")) {
-                            HISTORY_EXECUTOR.execute(() -> insertVod(firstsourceKey, vodInfo));
+                            HISTORY_EXECUTOR.execute(() -> insertVod(firstsourceKey, vodInfo)); //xuameng 历史保存用线程池 解决卡顿
                         }
                     } else if (event.obj instanceof String) {
                         String url = event.obj.toString();
@@ -1698,9 +1698,13 @@ public class VideoActivity extends BaseActivity {
     void toggleSubtitleTextSize() {
         int subtitleTextSize  = SubtitleHelper.getTextSize(this);
         if (!fullWindows) {
-            subtitleTextSize *= 0.6;
+            subtitleTextSize *= 0.5;
+            playFragment.updateVisualizerSize(false);   //xuameng 音柱全屏与小窗口时大小变化
+            playFragment.updateMusicLogoSize(false);   //xuameng 音柱全屏与小窗口时大小变化
         }else{
             EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PAUSE_VOD, ""));   //xuameng 全屏时如果是暂停状态就显示暂停图标
+            playFragment.updateVisualizerSize(true);  //xuameng 音乐图标全屏与小窗口时大小变化
+            playFragment.updateMusicLogoSize(true);  //xuameng 音乐图标全屏与小窗口时大小变化
         }
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE, subtitleTextSize));
     }
@@ -1915,7 +1919,7 @@ public class VideoActivity extends BaseActivity {
         }
     };
 
-    private static final ExecutorService HISTORY_EXECUTOR =
+    private static final ExecutorService HISTORY_EXECUTOR = //xuameng 历史保存用线程池 解决卡顿
             Executors.newSingleThreadExecutor(r -> {
                 Thread t = new Thread(r, "history-writer");
                 t.setPriority(Thread.NORM_PRIORITY - 1);
