@@ -473,7 +473,11 @@ public class VodController extends BaseController {
                         // xuameng如果 mLrcView 显示，则将 iv_circle_bg 置于屏幕左上角
                         params.gravity = Gravity.TOP | Gravity.LEFT;
                         // xuameng设置左上角的外边距为 30dp
-                        int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+                        if (fullPreview){ 
+                            int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+                        } else {
+                            int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
+                        }
                         params.topMargin = margin;
                         params.leftMargin = margin;
 
@@ -1690,11 +1694,11 @@ public class VodController extends BaseController {
         if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
             mLandscapePortraitBtn.setText("横屏");
             mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-            updateVisualizerSize(true); //xuameng 音柱横竖屏幕时大小变化
+            updateVisualizerSize(false); //xuameng 音柱横竖屏幕时大小变化
         } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
             mLandscapePortraitBtn.setText("竖屏");
             mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-            updateVisualizerSize(false); //xuameng 音柱横竖屏幕时大小变化
+            updateVisualizerSize(true); //xuameng 音柱横竖屏幕时大小变化
         }
     }
     void setLandscapePortraitXu() { //xuameng 横竖屏显示BUG
