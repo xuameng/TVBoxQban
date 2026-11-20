@@ -1695,11 +1695,17 @@ public class VodController extends BaseController {
         if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
             mLandscapePortraitBtn.setText("横屏");
             mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-            updateVisualizerSize(false); //xuameng 音柱横竖屏幕时大小变化
+            customVisualizer.post(() -> {
+                customVisualizer.requestLayout();
+                updateVisualizerSize(false);  //xuameng 音柱横竖屏幕时大小变化
+            });
         } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
             mLandscapePortraitBtn.setText("竖屏");
             mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-            updateVisualizerSize(true); //xuameng 音柱横竖屏幕时大小变化
+            customVisualizer.post(() -> {
+                customVisualizer.requestLayout();
+                updateVisualizerSize(true);  //xuameng 音柱横竖屏幕时大小变化
+            });
         }
     }
     void setLandscapePortraitXu() { //xuameng 横竖屏显示BUG
