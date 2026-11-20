@@ -372,7 +372,7 @@ public class VodController extends BaseController {
     private boolean mSeekBarhasFocus = false; //xuameng seekbar是否拥有焦点
     private boolean isBufferIng = false; //xuameng 判断是否进在缓冲视频
     private Visualizer mVisualizer;  //xuameng音乐播放动画
-    private MusicVisualizerView customVisualizer; //xuameng播放音乐柱状图
+    public MusicVisualizerView customVisualizer; //xuameng播放音乐柱状图
     public boolean noHaveVideo = false;   //xuameng 判断是否有视频
     private int audioSessionId = -1; // 使用-1表示未初始化状态 //xuameng音乐播放动画
     private boolean musicAnimation = Hawk.get(HawkConfig.VOD_MUSIC_ANIMATION, false);     //xuameng 音柱动画 加载设置
