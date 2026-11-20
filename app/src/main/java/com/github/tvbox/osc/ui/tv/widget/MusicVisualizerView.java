@@ -137,10 +137,10 @@ public class MusicVisualizerView extends View {
                 int third = BAR_COUNT / 3; // 21
                 if (i < third) {
                     // 第一段：xuameng 超低频段(0-200Hz)增益
-                    weight = 1.0f;
+                    weight = 1.2f;
                 } else if (i < third * 2) {
                     // 第二段：xuameng 中低频段(200-800Hz)基准值增益
-                    weight = 1.8f;
+                    weight = 2.2f;
                 } else {
                     // 第三段：xuameng 高频段(800Hz+)指数增强
                     float freqFactor = (float) Math.pow(1.5, (i - third * 2) / 2.0);
