@@ -9,7 +9,7 @@ import android.view.View;
 import android.animation.ValueAnimator;
 
 /**
- * xuameng
+ * xuameng 20261120
  * 音乐可视化视图组件（带振幅颜色渐变）
  * <p>
  * 新增特性：
@@ -355,7 +355,6 @@ public class MusicVisualizerView extends View {
         for (int i = 0; i < BAR_COUNT; i++) {
             mBarHeights[i] = 0;
             mTargetHeights[i] = 0;
-            mAmplitudeLevels[i] = 0;
         }
         mVisible = false;
         postInvalidate();
