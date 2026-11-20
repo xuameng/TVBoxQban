@@ -1694,15 +1694,9 @@ public class VodController extends BaseController {
         int requestedOrientation = mActivity.getRequestedOrientation();
         if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
             mLandscapePortraitBtn.setText("横屏");
-                customVisualizer.requestLayout();
-                updateVisualizerSize(false);  //xuameng 音柱横竖屏幕时大小变化
-
             mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-
         } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
             mLandscapePortraitBtn.setText("竖屏");
-                customVisualizer.requestLayout();
-                updateVisualizerSize(true);  //xuameng 音柱横竖屏幕时大小变化
             mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         }
     }
@@ -2905,26 +2899,6 @@ public class VodController extends BaseController {
         } catch (Exception e) {
             Log.e(TAG, "Error releasing visualizer", e);
         }
-    }
-
-    public void updateVisualizerSize(boolean isFullScreen) {  //xuameng 音柱横竖屏幕时大小变化
-        if (customVisualizer == null) return;
-            FrameLayout.LayoutParams params =
-                (FrameLayout.LayoutParams) customVisualizer.getLayoutParams();
-
-            if (isFullScreen) {
-            // 全屏：正常尺寸
-App.showToastShort(getContext(), "full");
-                params.width = AutoSizeUtils.mm2px(getContext(), 800);
-                params.height = AutoSizeUtils.mm2px(getContext(), 150);
-            } else {
-                // 小窗口：缩小一倍
-                params.width = AutoSizeUtils.mm2px(getContext(), 400);
-                params.height = AutoSizeUtils.mm2px(getContext(), 75);
-App.showToastShort(getContext(), "nofull");
-            } 
-
-        customVisualizer.setLayoutParams(params);
     }
 
     public static float calculateVolumeLevel(Context context) {  //系统音量监控
