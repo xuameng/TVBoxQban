@@ -305,6 +305,7 @@ public class VodController extends BaseController {
             }
         };
     }
+    View rootView; 
     SeekBar mSeekBar;
     TextView mCurrentTime;
     TextView mTotalTime;
