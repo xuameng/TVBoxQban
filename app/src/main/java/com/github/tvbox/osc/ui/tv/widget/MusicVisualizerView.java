@@ -74,7 +74,6 @@ public class MusicVisualizerView extends View {
     private final Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final float[] mBarHeights = new float[BAR_COUNT];
     private final float[] mTargetHeights = new float[BAR_COUNT];
-    private final float[] mAmplitudeLevels = new float[BAR_COUNT]; // 存储各柱振幅强度
 
     // 动画控制器
     private ValueAnimator mAnimator;
@@ -140,18 +139,17 @@ public class MusicVisualizerView extends View {
                     weight = 1.0f;
                 } else if (i < third * 2) {
                     // 第二段：xuameng 中低频段(200-800Hz)基准值增益
-                    weight = 2.5f;
+                    weight = 2.6f;
                 } else {
                     // 第三段：xuameng 高频段(800Hz+)指数增强
                     float freqFactor = (float) Math.pow(1.5, (i - third * 2) / 2.0);
-                    weight = 2.8f * freqFactor;
+                    weight = 2.6f * freqFactor;
                     weight = Math.min(weight, 15.0f); // 限制最大增益
                 }
                 mTargetHeights[i] = Math.min(
                         (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, // xuameng判断音量大小
                         getHeight() * 0.95f
                 );
-                mAmplitudeLevels[i] = Math.min(magnitude / MAX_AMPLITUDE, 1.0f);
             }
         }
 
@@ -222,12 +220,6 @@ public class MusicVisualizerView extends View {
             if (mTargetHeights[i] < minVisibleHeight) {
                 mTargetHeights[i] = minVisibleHeight;
             }
-
-            // 3. 同步振幅强度（用于颜色渐变）
-            mAmplitudeLevels[i] = Math.max(
-                    mAmplitudeLevels[i],
-                    MIN_VISIBLE_RATIO
-            );
         }
         // ==================== 托底逻辑结束 ====================
         startAnimation();
@@ -291,8 +283,10 @@ public class MusicVisualizerView extends View {
             float barHeight = Math.min(mBarHeights[i], height * 0.9f);
             float top = height - barHeight;
 
-            // 根据当前颜色方案和振幅强度计算颜色
-            int color = getDynamicColor(mAmplitudeLevels[i], colorSchemes[currentSchemeIndex]);
+            // xuameng：改为按实际音柱高度计算颜色
+            float normalizedHeight = barHeight / (height > 0 ? height : 1f);
+            normalizedHeight = Math.max(0f, Math.min(1f, normalizedHeight));
+            int color = getDynamicColor(normalizedHeight, colorSchemes[currentSchemeIndex]);
             mBarPaint.setColor(color);
 
             // 分段绘制音柱（实现"一段一段"效果）
