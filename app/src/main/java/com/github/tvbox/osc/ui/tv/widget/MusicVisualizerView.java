@@ -125,9 +125,8 @@ public class MusicVisualizerView extends View {
         mVisible = true; // xuameng 有数据就显示
         // 修改采样策略：前1/3柱子重点采样低频，后2/3均匀采样中高频
         for (int i = 0; i < BAR_COUNT; i++) {
-
-    // xuameng 1点取1（每根音柱对应一个复数对）
-    int barIndex = 2 + i * 2;
+            // xuameng 1点取1（每根音柱对应一个复数对）
+            int barIndex = 2 + i * 2;
             if (barIndex < fft.length - 1) {
                 byte rfk = fft[barIndex];
                 byte ifk = fft[barIndex + 1];
@@ -135,9 +134,18 @@ public class MusicVisualizerView extends View {
 
                 // xuameng改进的频率加权策略（三段式加权）
                 float weight;
-// xuameng 线性平均分：低频1.0 → 高频2.0，平滑补偿
-weight = 1.0f + (i / (float) (BAR_COUNT - 1)) * 1.0f;
-
+                int third = BAR_COUNT / 3; // 21
+                if (i < third) {
+                    // 第一段：xuameng 超低频段(0-200Hz)增益
+                    weight = 1.0f;
+                } else if (i < third * 2) {
+                    // 第二段：xuameng 中低频段(200-800Hz)基准值增益
+                    weight = 1.8f;
+                } else {
+                    // 第三段：xuameng 高频段(800Hz+)指数增强
+                    float freqFactor = (float) Math.pow(1.5, (i - third * 2) / 2.0);
+                    weight = 2.8f * freqFactor;
+                }
                 mTargetHeights[i] = Math.min(
                         (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, // xuameng判断音量大小
                         getHeight() * 0.95f
@@ -270,7 +278,7 @@ weight = 1.0f + (i / (float) (BAR_COUNT - 1)) * 1.0f;
         final int width = getWidth();
         final int height = getHeight();
         final float barWidth = width / (float) BAR_COUNT;
-        final float gap = barWidth * 0.15f;
+        final float gap = barWidth * 0.15f;  //xuameng 音柱间距
         final float barUnitWidth = barWidth - gap;
 
         // 新增：定义分段效果的最小高度阈值（例如4像素）
