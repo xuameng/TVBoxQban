@@ -145,6 +145,7 @@ public class MusicVisualizerView extends View {
                     // 第三段：xuameng 高频段(800Hz+)指数增强
                     float freqFactor = (float) Math.pow(1.5, (i - third * 2) / 2.0);
                     weight = 2.8f * freqFactor;
+                    weight = Math.min(weight, 15.0f); // 限制最大增益
                 }
                 mTargetHeights[i] = Math.min(
                         (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, // xuameng判断音量大小
