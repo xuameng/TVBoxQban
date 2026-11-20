@@ -1700,9 +1700,11 @@ public class DetailActivity extends BaseActivity {
         if (!fullWindows) {
             subtitleTextSize *= 0.5;
             playFragment.updateVisualizerSize(false);   //xuameng 音柱全屏与小窗口时大小变化
+            playFragment.updateMusicLogoSize(false);   //xuameng 音柱全屏与小窗口时大小变化
         }else{
             EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_PAUSE_VOD, ""));   //xuameng 全屏时如果是暂停状态就显示暂停图标
-            playFragment.updateVisualizerSize(true);  //xuameng 音柱全屏与小窗口时大小变化
+            playFragment.updateVisualizerSize(true);  //xuameng 音乐图标全屏与小窗口时大小变化
+            playFragment.updateMusicLogoSize(true);  //xuameng 音乐图标全屏与小窗口时大小变化
         }
         EventBus.getDefault().post(new RefreshEvent(RefreshEvent.TYPE_SUBTITLE_SIZE_CHANGE, subtitleTextSize));
     }
