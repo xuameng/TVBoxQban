@@ -12,7 +12,6 @@ import android.os.Message;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -306,7 +305,6 @@ public class VodController extends BaseController {
             }
         };
     }
-    View rootView;
     SeekBar mSeekBar;
     TextView mCurrentTime;
     TextView mTotalTime;
@@ -671,7 +669,7 @@ public class VodController extends BaseController {
                 showLockView();
             }
         });
-        rootView = findViewById(R.id.rootView);
+        View rootView = findViewById(R.id.rootView);
         rootView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -1599,7 +1597,6 @@ public class VodController extends BaseController {
                     hideBottom();
                 }
                 setLandscapePortrait();
-                updateVisualizerAfterLayout();
             }
         });
         mxuPlay.setNextFocusRightId(R.id.seekBar); //xuameng底部菜单播放右键是进度条
@@ -2903,50 +2900,6 @@ public class VodController extends BaseController {
             Log.e(TAG, "Error releasing visualizer", e);
         }
     }
-
-    public void updateVisualizerSize(boolean isFullScreen) {  //xuameng 音柱横竖屏幕时大小变化
-        if (customVisualizer == null) return;
-            FrameLayout.LayoutParams params =
-                (FrameLayout.LayoutParams) customVisualizer.getLayoutParams();
-
-            if (isFullScreen) {
-            // 全屏：正常尺寸
-                params.width = AutoSizeUtils.mm2px(getContext(), 800);
-                params.height = AutoSizeUtils.mm2px(getContext(), 150);
-            } else {
-                // 小窗口：缩小一倍
-                params.width = AutoSizeUtils.mm2px(getContext(), 640);
-                params.height = AutoSizeUtils.mm2px(getContext(), 120);
-            } 
-
-        customVisualizer.setLayoutParams(params);
-    }
-
-private void updateVisualizerAfterLayout() {
-    rootView.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (rootView.getWidth() == 0 || rootView.getHeight() == 0) return;
-
-        int requestedOrientation = mActivity.getRequestedOrientation();
-        if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-                updateVisualizerSize(false);  //xuameng 音柱横竖屏幕时大小变化
-        } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
-                updateVisualizerSize(true);  //xuameng 音柱横竖屏幕时大小变化
-        }
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    rootView.getViewTreeObserver()
-                            .removeOnGlobalLayoutListener(this);
-                } else {
-                    rootView.getViewTreeObserver()
-                            .removeGlobalOnLayoutListener(this);
-                }
-            }
-        }
-    );
-}
 
     public static float calculateVolumeLevel(Context context) {  //系统音量监控
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
