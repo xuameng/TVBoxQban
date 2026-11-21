@@ -168,27 +168,32 @@ int highStart = third * 2;
 int highEnd   = BAR_COUNT - 1;
 
 // 2. 在指定区间内找主音柱
-class BeatInfo {
-    int index;
-    float maxTarget;
-}
-
-BeatInfo findDominant(int start, int end) {
-    BeatInfo info = new BeatInfo();
-    info.index = start;
-    info.maxTarget = 0f;
-    for (int i = start; i <= end; i++) {
-        if (mTargetHeights[i] > info.maxTarget) {
-            info.maxTarget = mTargetHeights[i];
-            info.index = i;
-        }
+int lowDominant = lowStart;
+float lowMax = 0f;
+for (int i = lowStart; i <= lowEnd; i++) {
+    if (mTargetHeights[i] > lowMax) {
+        lowMax = mTargetHeights[i];
+        lowDominant = i;
     }
-    return info;
 }
 
-BeatInfo lowBeat  = findDominant(lowStart, lowEnd);
-BeatInfo midBeat  = findDominant(midStart, midEnd);
-BeatInfo highBeat = findDominant(highStart, highEnd);
+int midDominant = midStart;
+float midMax = 0f;
+for (int i = midStart; i <= midEnd; i++) {
+    if (mTargetHeights[i] > midMax) {
+        midMax = mTargetHeights[i];
+        midDominant = i;
+    }
+}
+
+int highDominant = highStart;
+float highMax = 0f;
+for (int i = highStart; i <= highEnd; i++) {
+    if (mTargetHeights[i] > highMax) {
+        highMax = mTargetHeights[i];
+        highDominant = i;
+    }
+}
 
 // 3. 扩散阈值（主柱高度超过视图高度的10%才触发）
 float spreadThreshold = getHeight() * 0.05f;
@@ -199,14 +204,12 @@ for (int i = 0; i < BAR_COUNT; i++) {
     spreadHeights[i] = mTargetHeights[i];
 }
 
-// 5. 对单个主音进行扩散
-void applySpread(BeatInfo beat) {
-    if (beat.maxTarget <= spreadThreshold) return;
-
+// 5. 对单个主音进行扩散（内联逻辑，不用方法）
+// ---- 低频扩散 ----
+if (lowMax > spreadThreshold) {
     for (int i = 0; i < BAR_COUNT; i++) {
-        int distance = Math.abs(i - beat.index);
+        int distance = Math.abs(i - lowDominant);
         float spreadFactor;
-
         if (distance == 0) {
             spreadFactor = 1.0f;
         } else if (distance <= BEAT_SPREAD_RADIUS) {
@@ -214,24 +217,52 @@ void applySpread(BeatInfo beat) {
         } else {
             spreadFactor = 0f;
         }
-
         if (distance > 0 && spreadFactor > 0f) {
-            // 在自身原始高度基础上叠加主柱能量的衰减部分
-            spreadHeights[i] = spreadHeights[i]
-                    + beat.maxTarget * spreadFactor * 0.85f;
+            spreadHeights[i] = spreadHeights[i] + lowMax * spreadFactor * 0.85f;
         }
-
-        // 限制最大高度不超过视图的95%
         spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
     }
 }
 
-// 6. 分别对低 / 中 / 高 三个主音扩散
-applySpread(lowBeat);
-applySpread(midBeat);
-applySpread(highBeat);
+// ---- 中频扩散 ----
+if (midMax > spreadThreshold) {
+    for (int i = 0; i < BAR_COUNT; i++) {
+        int distance = Math.abs(i - midDominant);
+        float spreadFactor;
+        if (distance == 0) {
+            spreadFactor = 1.0f;
+        } else if (distance <= BEAT_SPREAD_RADIUS) {
+            spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
+        } else {
+            spreadFactor = 0f;
+        }
+        if (distance > 0 && spreadFactor > 0f) {
+            spreadHeights[i] = spreadHeights[i] + midMax * spreadFactor * 0.85f;
+        }
+        spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
+    }
+}
 
-// 7. 将扩散结果写回目标高度数组
+// ---- 高频扩散 ----
+if (highMax > spreadThreshold) {
+    for (int i = 0; i < BAR_COUNT; i++) {
+        int distance = Math.abs(i - highDominant);
+        float spreadFactor;
+        if (distance == 0) {
+            spreadFactor = 1.0f;
+        } else if (distance <= BEAT_SPREAD_RADIUS) {
+            spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
+        } else {
+            spreadFactor = 0f;
+        }
+        if (distance > 0 && spreadFactor > 0f) {
+            spreadHeights[i] = spreadHeights[i] + highMax * spreadFactor * 0.85f;
+        }
+        spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
+    }
+}
+
+// 6. 将扩散结果写回目标高度数组
 System.arraycopy(spreadHeights, 0, mTargetHeights, 0, BAR_COUNT);
 
 // ==================== 三区域强音扩散算法结束 ====================
