@@ -12,6 +12,7 @@ import android.os.Message;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -305,7 +306,6 @@ public class VodController extends BaseController {
             }
         };
     }
-    View rootView;
     SeekBar mSeekBar;
     TextView mCurrentTime;
     TextView mTotalTime;
@@ -670,7 +670,7 @@ public class VodController extends BaseController {
                 showLockView();
             }
         });
-        rootView = findViewById(R.id.rootView);
+        View rootView = findViewById(R.id.rootView);
         rootView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -1600,14 +1600,13 @@ public class VodController extends BaseController {
                 setLandscapePortrait();
         int requestedOrientation = mActivity.getRequestedOrientation();
         if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-            rootView.postDelayed(() -> {
+            customVisualizer.postDelayed(() -> {
                 updateVisualizerSize(false);  //xuameng 音柱横竖屏幕时大小变化
             }, 500);
         } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
-            rootView.requestLayout();
-			rootView.postDelayed(() -> {
+            customVisualizer.postDelayed(() -> {
                 updateVisualizerSize(true);  //xuameng 音柱横竖屏幕时大小变化
-            }, 1000);
+            }, 500);
         }
             }
         });
@@ -2930,7 +2929,20 @@ public class VodController extends BaseController {
 
         customVisualizer.setLayoutParams(params);
     }
+rootView.getViewTreeObserver().addOnGlobalLayoutListener(
+    new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            boolean isLandscape =
+                    rootView.getWidth() > rootView.getHeight();
 
+            updateVisualizerSize(!isLandscape);
+
+            rootView.getViewTreeObserver()
+                    .removeOnGlobalLayoutListener(this);
+        }
+    }
+);
     public static float calculateVolumeLevel(Context context) {  //系统音量监控
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
