@@ -503,7 +503,7 @@ public class LrcView extends View {
         }
 
         if (mLrcLines.isEmpty()) {
-            // 不显示歌词，显示提示信息
+            // 格式不识别 or 没传歌词
             String hint = "聚汇影视提示您：暂无歌词!";   //xuameng 可以加 歌词载入中...
             float textWidth = mNormalPaint.measureText(hint);
             float centerX = getWidth() / 2 - textWidth / 2;
