@@ -34,7 +34,7 @@ public class MusicVisualizerView extends View {
     // 强音扩散半径（向左右各影响几个音柱）
     private static final int BEAT_SPREAD_RADIUS = 11;
     // 扩散衰减系数（越大衰减越慢，扩散越远，0~1之间）
-    private static final float BEAT_DECAY = 0.90f;
+    private static final float BEAT_DECAY = 0.80f;
     // =====================================================================
 
     /**
@@ -51,7 +51,7 @@ public class MusicVisualizerView extends View {
     // 新增音柱分段效果相关变量
     private boolean mShowStripes = true; // 是否显示分段效果
     private int mSegmentCount = 20;      // 每个音柱的分段数
-    private float mSegmentSpacingFixed = 2.2f; // 段间距固定值（像素）
+    private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
 
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
@@ -153,97 +153,84 @@ public class MusicVisualizerView extends View {
             }
         }
 
-// ==================== xuameng 新增：强音扩散算法 ====================
-// 找到当前能量最强的主音柱
-int dominantIndex = 0;
-float maxTarget = 0f;
-for (int i = 0; i < BAR_COUNT; i++) {
-    if (mTargetHeights[i] > maxTarget) {
-        maxTarget = mTargetHeights[i];
-        dominantIndex = i;
-    }
-}
-
-// xuameng：如果最强音柱高度 <= 视图高度的40%，强制加权到40%
-float weakBeatThreshold = getHeight() * 0.40f;
-float boostTarget = getHeight() * 0.40f;
-
-if (maxTarget <= weakBeatThreshold) {
-    // 直接把主音柱拉到 0.4f，确保视觉上能“弹起来”
-    mTargetHeights[dominantIndex] = Math.max(
-            mTargetHeights[dominantIndex],
-            boostTarget
-    );
-    maxTarget = mTargetHeights[dominantIndex];
-}
-
-// 只对明显强音做扩散（避免微弱信号也扩散导致乱跳）
-// 阈值：主柱高度超过视图高度的8%才触发扩散
-float spreadThreshold = getHeight() * 0.08f;
-if (maxTarget > spreadThreshold) {
-    // 创建临时数组存储扩散后的高度，不破坏原始计算结果
-    float[] spreadHeights = new float[BAR_COUNT];
-    for (int i = 0; i < BAR_COUNT; i++) {
-        spreadHeights[i] = mTargetHeights[i];
-    }
-
-    // 以主音柱为中心，向左右扩散
-    for (int i = 0; i < BAR_COUNT; i++) {
-        int distance = Math.abs(i - dominantIndex);
-        float spreadFactor;
-
-        if (distance == 0) {
-            // 主音柱本身不受影响，保持最高
-            spreadFactor = 1.0f;
-        } else if (distance <= BEAT_SPREAD_RADIUS) {
-            // 相邻柱：距离越近衰减越小，越近越高
-            spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
-        } else {
-            // 超出扩散半径不参与
-            spreadFactor = 0f;
+        // ==================== xuameng 新增：强音扩散算法 ====================
+        // 找到当前能量最强的主音柱
+        int dominantIndex = 0;
+        float maxTarget = 0f;
+        for (int i = 0; i < BAR_COUNT; i++) {
+            if (mTargetHeights[i] > maxTarget) {
+                maxTarget = mTargetHeights[i];
+                dominantIndex = i;
+            }
         }
 
-        if (distance > 0 && spreadFactor > 0f) {
-            // 相邻柱在自身原始高度基础上叠加主柱能量的衰减部分
-            // 0.85f 控制扩散强度，避免叠加后过高
-            spreadHeights[i] = mTargetHeights[i]
-                    + maxTarget * spreadFactor * 0.85f;
-        }
-
-        // 限制最大高度不超过视图的95%
-        spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
-    }
-
-    // 将扩散结果写回目标高度数组
-    System.arraycopy(spreadHeights, 0, mTargetHeights, 0, BAR_COUNT);
-}
-// ==================== 强音扩散算法结束 ====================
-
-    // ==================== xuameng：矮柱二次加权（防死柱） ====================
-    float shortBarThreshold = getHeight() * 0.1f;   // 高度 < 10%
-    int third = BAR_COUNT / 3; // 21
-    for (int i = 0; i < BAR_COUNT; i++) {
-        if (mTargetHeights[i] < shortBarThreshold) {
-
-            float weight;
-            if (i < third) {
-                weight = 1.0f;
-            } else if (i < third * 2) {
-                weight = 12.2f;
-            } else {
-                float freqFactor = (float) Math.pow(1.5, (i - third * 2) / 2.0f);
-                weight = 12.2f * freqFactor;
-                weight = Math.min(weight, 50.0f);
+        // 只对明显强音做扩散（避免微弱信号也扩散导致乱跳）
+        // 阈值：主柱高度超过视图高度的10%才触发扩散
+        float spreadThreshold = getHeight() * 0.10f;
+        if (maxTarget > spreadThreshold) {
+            // 创建临时数组存储扩散后的高度，不破坏原始计算结果
+            float[] spreadHeights = new float[BAR_COUNT];
+            for (int i = 0; i < BAR_COUNT; i++) {
+                spreadHeights[i] = mTargetHeights[i];
             }
 
-            // ✅ 关键：限制提升上限，防止矮柱突然变高
-            float boosted = mTargetHeights[i] * weight;
-            boosted = Math.min(boosted, shortBarThreshold * 0.3f);
+            // 以主音柱为中心，向左右扩散
+            for (int i = 0; i < BAR_COUNT; i++) {
+                int distance = Math.abs(i - dominantIndex);
+                float spreadFactor;
 
-            mTargetHeights[i] = Math.max(mTargetHeights[i], boosted);
+                if (distance == 0) {
+                    // 主音柱本身不受影响，保持最高
+                    spreadFactor = 1.0f;
+                } else if (distance <= BEAT_SPREAD_RADIUS) {
+                    // 相邻柱：距离越近衰减越小，越近越高
+                    spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
+                } else {
+                    // 超出扩散半径不参与
+                    spreadFactor = 0f;
+                }
+
+                if (distance > 0 && spreadFactor > 0f) {
+                    // 相邻柱在自身原始高度基础上叠加主柱能量的衰减部分
+                    // 0.85f 控制扩散强度，避免叠加后过高
+                    spreadHeights[i] = mTargetHeights[i]
+                            + maxTarget * spreadFactor * 0.85f;
+                }
+
+                // 限制最大高度不超过视图的95%
+                spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
+            }
+
+            // 将扩散结果写回目标高度数组
+            System.arraycopy(spreadHeights, 0, mTargetHeights, 0, BAR_COUNT);
         }
-    }
-    // ==================== 矮柱二次加权结束 ====================
+        // ==================== 强音扩散算法结束 ====================
+
+        // ==================== xuameng：矮柱二次加权（防死柱） ====================
+        float shortBarThreshold = getHeight() * 0.1f;   // 高度 < 10%
+        int third = BAR_COUNT / 3; // 21
+        for (int i = 0; i < BAR_COUNT; i++) {
+            if (mTargetHeights[i] < shortBarThreshold) {
+
+                float weight;
+                if (i < third) {
+                    weight = 1.0f;
+                } else if (i < third * 2) {
+                    weight = 12.2f;
+                } else {
+                    float freqFactor = (float) Math.pow(1.5, (i - third * 2) / 2.0f);
+                    weight = 12.2f * freqFactor;
+                   weight = Math.min(weight, 50.0f);
+                }
+
+                // ✅ 关键：限制提升上限，防止矮柱突然变高
+                float boosted = mTargetHeights[i] * weight;
+                boosted = Math.min(boosted, shortBarThreshold * 0.7f);
+
+                mTargetHeights[i] = Math.max(mTargetHeights[i], boosted);
+            }
+        }
+        // ==================== 矮柱二次加权结束 ====================
 
         // ==================== xuameng 新增：最低可见高度托底 ====================
         float maxH = getHeight();
@@ -272,25 +259,54 @@ if (maxTarget > spreadThreshold) {
         mAnimator.setDuration(ANIMATION_DURATION);
         mAnimator.addUpdateListener(animation -> {
             // xuameng 找到当前主音柱（动画过程中最高的）
-            int dominantIdx = 0;
-            float maxH = 0f;
-            for (int i = 0; i < BAR_COUNT; i++) {
-                if (mBarHeights[i] > maxH) {
-                    maxH = mBarHeights[i];
-                    dominantIdx = i;
-                }
-            }
+int dominantIdx = 0;
+float maxH = 0f;
+for (int i = 0; i < BAR_COUNT; i++) {
+    if (mBarHeights[i] > maxH) {
+        maxH = mBarHeights[i];
+        dominantIdx = i;
+    }
+}
 
-            for (int i = 0; i < BAR_COUNT; i++) {
-                if (mTargetHeights[i] > mBarHeights[i]) {
-                    // 起跳快（缓出感）：主音柱起跳更快，相邻柱稍慢
-                    float boost = (i == dominantIdx) ? 0.65f : 0.60f;
-                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * boost;
-                } else {
-                    // 下落慢（拖尾感）
-                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.15f;
-                }
+int third = BAR_COUNT / 3; // 低频区边界
+
+for (int i = 0; i < BAR_COUNT; i++) {
+    float target = mTargetHeights[i];
+    float current = mBarHeights[i];
+
+    if (i < third) {
+        // ==================== 低频区专用动画 ====================
+        if (target > current) {
+            // 起跳：鼓点要“瞬间弹起”
+            float ratio = current / Math.max(target, 1f);
+            float speed = 0.55f + 0.40f * (1f - ratio);
+            current += (target - current) * speed;
+        } else {
+            // 下落：鼓声结束后快速塌缩
+            float fall;
+            if (current > getHeight() * 0.5f) {
+                fall = 0.42f;   // 高柱快速回落
+            } else if (current > getHeight() * 0.2f) {
+                fall = 0.28f;
+            } else {
+                fall = 0.15f;   // 保留一点余震
             }
+            current += (target - current) * fall;
+        }
+        // ==================== 低频区结束 ====================
+    } else {
+        // ==================== 中高频保持原逻辑 ====================
+        if (target > current) {
+            float boost = (i == dominantIdx) ? 0.65f : 0.60f;
+            current += (target - current) * boost;
+        } else {
+            current += (target - current) * 0.15f;
+        }
+        // ==================== 中高频结束 ====================
+    }
+
+    mBarHeights[i] = current;
+}
             postInvalidate();
         });
         mAnimator.start();
