@@ -153,58 +153,88 @@ public class MusicVisualizerView extends View {
             }
         }
 
-        // ==================== xuameng 新增：强音扩散算法 ====================
-        // 找到当前能量最强的主音柱
-        int dominantIndex = 0;
-        float maxTarget = 0f;
-        for (int i = 0; i < BAR_COUNT; i++) {
-            if (mTargetHeights[i] > maxTarget) {
-                maxTarget = mTargetHeights[i];
-                dominantIndex = i;
-            }
+// ==================== xuameng 新增：三区域强音扩散算法 ====================
+
+// 1. 定义低 / 中 / 高 三个区域
+int third = BAR_COUNT / 3;
+
+int lowStart  = 0;
+int lowEnd    = third - 1;
+
+int midStart  = third;
+int midEnd    = third * 2 - 1;
+
+int highStart = third * 2;
+int highEnd   = BAR_COUNT - 1;
+
+// 2. 在指定区间内找主音柱
+class BeatInfo {
+    int index;
+    float maxTarget;
+}
+
+BeatInfo findDominant(int start, int end) {
+    BeatInfo info = new BeatInfo();
+    info.index = start;
+    info.maxTarget = 0f;
+    for (int i = start; i <= end; i++) {
+        if (mTargetHeights[i] > info.maxTarget) {
+            info.maxTarget = mTargetHeights[i];
+            info.index = i;
+        }
+    }
+    return info;
+}
+
+BeatInfo lowBeat  = findDominant(lowStart, lowEnd);
+BeatInfo midBeat  = findDominant(midStart, midEnd);
+BeatInfo highBeat = findDominant(highStart, highEnd);
+
+// 3. 扩散阈值（主柱高度超过视图高度的10%才触发）
+float spreadThreshold = getHeight() * 0.05f;
+
+// 4. 创建临时数组（不破坏原始计算结果）
+float[] spreadHeights = new float[BAR_COUNT];
+for (int i = 0; i < BAR_COUNT; i++) {
+    spreadHeights[i] = mTargetHeights[i];
+}
+
+// 5. 对单个主音进行扩散
+void applySpread(BeatInfo beat) {
+    if (beat.maxTarget <= spreadThreshold) return;
+
+    for (int i = 0; i < BAR_COUNT; i++) {
+        int distance = Math.abs(i - beat.index);
+        float spreadFactor;
+
+        if (distance == 0) {
+            spreadFactor = 1.0f;
+        } else if (distance <= BEAT_SPREAD_RADIUS) {
+            spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
+        } else {
+            spreadFactor = 0f;
         }
 
-        // 只对明显强音做扩散（避免微弱信号也扩散导致乱跳）
-        // 阈值：主柱高度超过视图高度的10%才触发扩散
-        float spreadThreshold = getHeight() * 0.01f;
-        if (maxTarget > spreadThreshold) {
-            // 创建临时数组存储扩散后的高度，不破坏原始计算结果
-            float[] spreadHeights = new float[BAR_COUNT];
-            for (int i = 0; i < BAR_COUNT; i++) {
-                spreadHeights[i] = mTargetHeights[i];
-            }
-
-            // 以主音柱为中心，向左右扩散
-            for (int i = 0; i < BAR_COUNT; i++) {
-                int distance = Math.abs(i - dominantIndex);
-                float spreadFactor;
-
-                if (distance == 0) {
-                    // 主音柱本身不受影响，保持最高
-                    spreadFactor = 1.0f;
-                } else if (distance <= BEAT_SPREAD_RADIUS) {
-                    // 相邻柱：距离越近衰减越小，越近越高
-                    spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
-                } else {
-                    // 超出扩散半径不参与
-                    spreadFactor = 0f;
-                }
-
-                if (distance > 0 && spreadFactor > 0f) {
-                    // 相邻柱在自身原始高度基础上叠加主柱能量的衰减部分
-                    // 0.85f 控制扩散强度，避免叠加后过高
-                    spreadHeights[i] = mTargetHeights[i]
-                            + maxTarget * spreadFactor * 0.85f;
-                }
-
-                // 限制最大高度不超过视图的95%
-                spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
-            }
-
-            // 将扩散结果写回目标高度数组
-            System.arraycopy(spreadHeights, 0, mTargetHeights, 0, BAR_COUNT);
+        if (distance > 0 && spreadFactor > 0f) {
+            // 在自身原始高度基础上叠加主柱能量的衰减部分
+            spreadHeights[i] = spreadHeights[i]
+                    + beat.maxTarget * spreadFactor * 0.85f;
         }
-        // ==================== 强音扩散算法结束 ====================
+
+        // 限制最大高度不超过视图的95%
+        spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
+    }
+}
+
+// 6. 分别对低 / 中 / 高 三个主音扩散
+applySpread(lowBeat);
+applySpread(midBeat);
+applySpread(highBeat);
+
+// 7. 将扩散结果写回目标高度数组
+System.arraycopy(spreadHeights, 0, mTargetHeights, 0, BAR_COUNT);
+
+// ==================== 三区域强音扩散算法结束 ====================
 
 // ==================== xuameng：矮柱二次加权（防死柱） ====================
 float shortBarThreshold = getHeight() * 0.1f;   // 高度 < 10%
