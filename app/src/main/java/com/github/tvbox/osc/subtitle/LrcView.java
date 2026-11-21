@@ -59,10 +59,6 @@ public class LrcView extends View {
 
     // 新增：控制是否显示歌词的标志
     private boolean mShouldShowLyrics = false;
-
-    // 新增：字幕为空时显示提示文字
-    private boolean mShowEmptyText = false;	
-
     private static final long MIN_POSITION_TO_SHOW = 100; // 0.1秒，单位：毫秒
     // 标记是否正在初始定位
     private boolean mIsInitialPositioning = true;
@@ -325,14 +321,10 @@ public class LrcView extends View {
      * @param position 当前播放时间（毫秒）
      */
     public void updateTime(long position) {
-        if (mLrcLines.isEmpty()) {
-            mCurrentPosition = position;
-            if (mCurrentPosition > 100){
-                mShowEmptyText = true;	
-                invalidate();
-            }
-            return;
-        }
+        //  if (mLrcLines.isEmpty()) { 无歌词或不支持时显示提示词
+        //      return;
+        //  }
+
         // 检查是否达到最小显示位置
         if (position < MIN_POSITION_TO_SHOW) {
             // 进度小于1秒，不显示歌词，但保持在第一行
@@ -499,28 +491,22 @@ public class LrcView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // 检查是否应该显示歌词
+        // 检查是否应该显示歌词 播放进度0.1秒以上才允许显示
+        String hint = "";   //xuameng 可以加 歌词载入中...
+        float textWidth = mNormalPaint.measureText(hint);
+        float centerX = getWidth() / 2 - textWidth / 2;
+        float centerY = getHeight() / 2;
         if (!mShouldShowLyrics) {
             // 不显示歌词，显示提示信息
-            String hint = "";   //xuameng 可以加 歌词载入中...
-            float textWidth = mNormalPaint.measureText(hint);
-            float centerX = getWidth() / 2 - textWidth / 2;
-            float centerY = getHeight() / 2;
+            hint = "";   //xuameng 可以加 歌词载入中...
             canvas.drawText(hint, centerX, centerY, mNormalPaint);
             return;
-        }
-        if (mShowEmptyText) {
-            // 格式不识别 or 没传歌词
-            String hint = "聚汇影视提示您：暂无歌词!";   //xuameng 可以加 歌词载入中...
-            float textWidth = mNormalPaint.measureText(hint);
-            float centerX = getWidth() / 2 - textWidth / 2;
-            float centerY = getHeight() / 2;
-            canvas.drawText(hint, centerX, centerY, mNormalPaint);
-            return;
-        }
-
-        if (mLrcLines.isEmpty()) {
-            return;
+        } else {
+            if (mLrcLines.isEmpty()) {  //0.1秒以上才没有歌词显示
+                hint = "聚汇影视提示您：暂无歌词!";   //xuameng 可以加 歌词载入中...
+                canvas.drawText(hint, centerX, centerY, mNormalPaint);
+                return;
+            }
         }
 
         // 计算总高度和起始Y位置，实现垂直居中
