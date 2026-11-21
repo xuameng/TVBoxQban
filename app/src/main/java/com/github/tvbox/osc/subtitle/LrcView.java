@@ -323,6 +323,14 @@ public class LrcView extends View {
     public void updateTime(long position) {
         if (mLrcLines.isEmpty()) {
             mCurrentPosition = position;
+            if (mCurrentPosition > 100){
+                // 格式不识别 or 没传歌词
+                String hint = "聚汇影视提示您：暂无歌词!";   //xuameng 可以加 歌词载入中...
+                float textWidth = mNormalPaint.measureText(hint);
+                float centerX = getWidth() / 2 - textWidth / 2;
+                float centerY = getHeight() / 2;
+                canvas.drawText(hint, centerX, centerY, mNormalPaint);
+            }
             return;
         }
 
@@ -492,7 +500,7 @@ public class LrcView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // 检查是否应该显示歌词 进度0.1秒前的提升文字
+        // 检查是否应该显示歌词
         if (!mShouldShowLyrics) {
             // 不显示歌词，显示提示信息
             String hint = "";   //xuameng 可以加 歌词载入中...
@@ -504,12 +512,6 @@ public class LrcView extends View {
         }
 
         if (mLrcLines.isEmpty()) {
-            // 格式不识别 or 没传歌词
-            String hint = "聚汇影视提示您：暂无歌词!";   //xuameng 可以加 歌词载入中...
-            float textWidth = mNormalPaint.measureText(hint);
-            float centerX = getWidth() / 2 - textWidth / 2;
-            float centerY = getHeight() / 2;
-            canvas.drawText(hint, centerX, centerY, mNormalPaint);
             return;
         }
 
