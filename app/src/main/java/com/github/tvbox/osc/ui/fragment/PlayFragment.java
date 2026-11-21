@@ -1329,6 +1329,7 @@ public class PlayFragment extends BaseLazyFragment {
                                 } else {
                                     // 直接使用歌词文本
                                     mController.setLrcContent(lrcContent);
+                App.showToastShort(mContext, lrcContent);
                                     mController.mLrcView.setVisibility(View.VISIBLE);
                                 }
                                 playSubtitle = "";
@@ -3168,6 +3169,7 @@ public class PlayFragment extends BaseLazyFragment {
                         // 切换到主线程更新 UI
                         requireActivity().runOnUiThread(() -> {
                             mController.setLrcContent(lrcText);
+							App.showToastShort(mContext, lrcText);
                             mController.mLrcView.setVisibility(View.VISIBLE);
                         });
                     } else {
