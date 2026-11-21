@@ -1604,7 +1604,8 @@ public class VodController extends BaseController {
                 updateVisualizerSize(false);  //xuameng 音柱横竖屏幕时大小变化
             }, 500);
         } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
-            rootView.postDelayed(() -> {
+            rootView.requestLayout();
+			rootView.postDelayed(() -> {
                 updateVisualizerSize(true);  //xuameng 音柱横竖屏幕时大小变化
             }, 1000);
         }
