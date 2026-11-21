@@ -35,6 +35,8 @@ import java.lang.Math;
  * 新增：不是相邻行不不显示滚动动画
  * 新增：播放进度到当前行的上行或多行不显示滚动动画
  * 20260817 新增：高亮进度平滑滤波 解决最版exoplayer对mp3的升级后字幕卡顿问题
+ *
+ * xuameng 20260818 新增：支持同一时间戳的多行歌词同时高亮（中英文对照歌词）
  */
 public class LrcView extends View {
 
@@ -49,7 +51,10 @@ public class LrcView extends View {
 
     private List<LrcLine> mLrcLines = new ArrayList<>();
     private Paint mNormalPaint, mHighlightPaint;
-    private int mCurrentLine = 0;
+
+    // xuameng 20260818 修改：由单行改为多行，支持同一时间的多行歌词同时高亮
+    private List<Integer> mCurrentLines = new ArrayList<>();
+
     private long mCurrentPosition = 0;
 
     // 平滑滚动相关变量
@@ -66,8 +71,6 @@ public class LrcView extends View {
     private static final int MAX_SCROLL_DISTANCE = 1;
     // 新增：高亮进度平滑滤波 =====
     private float mSmoothedProgress = 0f;
-
-
 
     public LrcView(Context context) {
         super(context);
@@ -100,6 +103,9 @@ public class LrcView extends View {
         mHighlightPaint.setColor(Color.YELLOW);
         mHighlightPaint.setShadowLayer(3, 1, 1, Color.BLACK);
         mHighlightPaint.setFakeBoldText(true);
+
+        // xuameng 20260818 新增：初始化当前高亮行集合
+        mCurrentLines.add(0);
     }
 
     /**
@@ -232,7 +238,11 @@ public class LrcView extends View {
 
         // 重置所有状态
         mShouldShowLyrics = false;
-        mCurrentLine = 0; // 总是从第0行开始
+
+        // xuameng 20260818 修改：重置多行高亮状态
+        mCurrentLines.clear();
+        mCurrentLines.add(0);
+
         mScrollOffset = 0f;
         mSmoothedProgress = 0f;
         mCurrentPosition = 0;
@@ -275,12 +285,14 @@ public class LrcView extends View {
             return; // 无需滚动
         }
 
-        // 计算滚动距离（行数差）
-        int lineDiff = targetLine - mCurrentLine;
+        // xuameng 20260818 修改：使用首行作为滚动基准
+        int baseLine = mCurrentLines.isEmpty() ? 0 : mCurrentLines.get(0);
+        int lineDiff = targetLine - baseLine;
         if (lineDiff == 0) {
             return; // 无需滚动
         }
         mSmoothedProgress = 0f;
+
         // 设置动画
         mScrollAnimator = ValueAnimator.ofFloat(0f, (float) lineDiff);
         mScrollAnimator.setDuration(mScrollDuration);
@@ -297,22 +309,43 @@ public class LrcView extends View {
             @Override
             public void onAnimationEnd(Animator animation) {
                 // 动画结束后更新当前行
-                mCurrentLine = targetLine;
+                // xuameng 20260818 修改：更新为多行
+                mCurrentLines.clear();
+                mCurrentLines.add(targetLine);
                 mScrollOffset = 0f;
-                mSmoothedProgress = 0f; 
+                mSmoothedProgress = 0f;
             }
 
             @Override
             public void onAnimationCancel(Animator animation) {
                 // 动画取消时也更新当前行
-                mCurrentLine = targetLine;
+                // xuameng 20260818 修改：更新为多行
+                mCurrentLines.clear();
+                mCurrentLines.add(targetLine);
                 mScrollOffset = 0f;
-                mSmoothedProgress = 0f; 
+                mSmoothedProgress = 0f;
             }
-
         });
 
         mScrollAnimator.start();
+    }
+
+    /**
+     * xuameng 20260818 新增
+     * 初始化多行高亮进度，避免切换行时高亮从头开始
+     */
+    private void initSmoothedProgress(int line) {
+        long lineTime = mLrcLines.get(line).time;
+        long nextTime = (line + 1 < mLrcLines.size())
+                ? mLrcLines.get(line + 1).time
+                : lineTime + 5000;
+        long duration = nextTime - lineTime;
+        if (duration > 0 && mCurrentPosition >= lineTime) {
+            float initProgress = (float) (mCurrentPosition - lineTime) / duration;
+            mSmoothedProgress = Math.max(0f, Math.min(1f, initProgress));
+        } else {
+            mSmoothedProgress = 0f;
+        }
     }
 
     /**
@@ -329,7 +362,9 @@ public class LrcView extends View {
         if (position < MIN_POSITION_TO_SHOW) {
             // 进度小于1秒，不显示歌词，但保持在第一行
             mShouldShowLyrics = false;
-            mCurrentLine = 0; // 确保强制重置到第一行
+            // xuameng 20260818 修改：重置多行高亮
+            mCurrentLines.clear();
+            mCurrentLines.add(0);
             mScrollOffset = 0f; // 重置滚动偏移
             mSmoothedProgress = 0f;
             invalidate();
@@ -343,75 +378,57 @@ public class LrcView extends View {
 
         mCurrentPosition = position;
 
-        // 查找当前应该显示的行
-        int targetLine = 0;
-
-        // 如果当前时间比第一行还早，保持在第一行
+        // xuameng 20260818 新增：查找当前时间对应的所有行（支持同一时间多行）
+        List<Integer> targetLines = new ArrayList<>();
         if (position < mLrcLines.get(0).time) {
-            targetLine = 0;
+            targetLines.add(0);
         } else {
-            // 否则找到合适的时间点
             for (int i = 0; i < mLrcLines.size(); i++) {
-                if (i == mLrcLines.size() - 1 ||
-                        position >= mLrcLines.get(i).time &&
-                                position < mLrcLines.get(i + 1).time) {
-                    targetLine = i;
-                    break;
+                if (position >= mLrcLines.get(i).time) {
+                    if (i == mLrcLines.size() - 1 || position < mLrcLines.get(i + 1).time) {
+                        targetLines.add(i);
+                    }
                 }
             }
         }
 
+        // xuameng 20260818 修改：使用首行作为滚动/跳转判断基准
+        int targetLine = targetLines.isEmpty() ? 0 : targetLines.get(0);
+        int baseLine = mCurrentLines.isEmpty() ? 0 : mCurrentLines.get(0);
+
         // 关键修改：处理初始定位
         if (mIsInitialPositioning) {
             // 初始定位阶段，直接跳转到目标行，不执行滚动动画
-            mCurrentLine = targetLine;
+            mCurrentLines.clear();
+            mCurrentLines.addAll(targetLines);
             mScrollOffset = 0f;
             // 初始化新行的进度，避免高亮从头开始
-            long newLineTime = mLrcLines.get(targetLine).time;
-            long nextTime = (targetLine + 1 < mLrcLines.size())
-                    ? mLrcLines.get(targetLine + 1).time
-                    : newLineTime + 5000;
-            long duration = nextTime - newLineTime;
-            if (duration > 0 && mCurrentPosition >= newLineTime) {
-                float initProgress = (float) (mCurrentPosition - newLineTime) / duration;
-                mSmoothedProgress = Math.max(0f, Math.min(1f, initProgress));
-            } else {
-                mSmoothedProgress = 0f;
-            }
+            initSmoothedProgress(baseLine);
             mIsInitialPositioning = false; // 定位完成，退出初始状态
             invalidate();
             return;
         }
 
         // 正常播放中的滚动逻辑
-        if (targetLine != mCurrentLine) {
+        if (targetLine != baseLine) {
             // 计算目标行与当前行的距离和方向
-            int lineDiff = targetLine - mCurrentLine;
+            int lineDiff = targetLine - baseLine;
             int lineDistance = Math.abs(lineDiff);
-    
+
             // 判断滚动方向：正数表示向前（下一行），负数表示向后（上一行）
             boolean isForward = lineDiff > 0;
-    
+
             // 如果距离超过阈值（不是相邻行），直接跳转而不滚动
             if (lineDistance > MAX_SCROLL_DISTANCE) {
                 if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
                     mScrollAnimator.cancel();
                 }
                 // 直接跳转逻辑
-                mCurrentLine = targetLine;
+                mCurrentLines.clear();
+                mCurrentLines.addAll(targetLines);
                 mScrollOffset = 0f;
                 // 初始化新行的进度，避免高亮从头开始
-                long newLineTime = mLrcLines.get(targetLine).time;
-                long nextTime = (targetLine + 1 < mLrcLines.size())
-                        ? mLrcLines.get(targetLine + 1).time
-                        : newLineTime + 5000;
-                long duration = nextTime - newLineTime;
-                if (duration > 0 && mCurrentPosition >= newLineTime) {
-                    float initProgress = (float) (mCurrentPosition - newLineTime) / duration;
-                    mSmoothedProgress = Math.max(0f, Math.min(1f, initProgress));
-                } else {
-                    mSmoothedProgress = 0f;
-                }
+                initSmoothedProgress(targetLine);
                 invalidate();
             } else {
                 // 相邻行：只有向前滚动（到下一行）才执行平滑滚动
@@ -427,25 +444,21 @@ public class LrcView extends View {
                         invalidate();
                         return;
                     }
-                    mCurrentLine = targetLine;
+                    mCurrentLines.clear();
+                    mCurrentLines.addAll(targetLines);
                     mScrollOffset = 0f;
                     // 初始化新行的进度，避免高亮从头开始
-                    long newLineTime = mLrcLines.get(targetLine).time;
-                    long nextTime = (targetLine + 1 < mLrcLines.size())
-                            ? mLrcLines.get(targetLine + 1).time
-                            : newLineTime + 5000;
-                    long duration = nextTime - newLineTime;
-                    if (duration > 0 && mCurrentPosition >= newLineTime) {
-                        float initProgress = (float) (mCurrentPosition - newLineTime) / duration;
-                        mSmoothedProgress = Math.max(0f, Math.min(1f, initProgress));
-                    } else {
-                        mSmoothedProgress = 0f;
-                    }
+                    initSmoothedProgress(targetLine);
                     invalidate();
                 }
             }
         } else {
             // 行数不变，只更新进度
+            // xuameng 20260818 新增：同一时间新增的行也同步进来
+            if (!targetLines.equals(mCurrentLines)) {
+                mCurrentLines.clear();
+                mCurrentLines.addAll(targetLines);
+            }
             invalidate();
         }
     }
@@ -477,9 +490,11 @@ public class LrcView extends View {
     public void reset() {
         mShouldShowLyrics = false;
         mCurrentPosition = 0;
-        mCurrentLine = 0;
+        // xuameng 20260818 修改：重置多行高亮
+        mCurrentLines.clear();
+        mCurrentLines.add(0);
         mScrollOffset = 0f;
-        mSmoothedProgress = 0f;  
+        mSmoothedProgress = 0f;
         mIsInitialPositioning = true; // 新增：重置初始定位状态
         invalidate();
     }
@@ -519,9 +534,12 @@ public class LrcView extends View {
         // 将浮点数偏移转换为整数像素，避免亚像素渲染问题
         float scrollOffsetPixels = Math.round(mScrollOffset * lineHeight);  //滚动偏移像素
         float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;  // 计算起始Y位置，使当前行居中显示  并滚动
+
+        // xuameng 20260818 修改：使用首行作为居中基准
+        int centerLine = mCurrentLines.isEmpty() ? 0 : mCurrentLines.get(0);
         // 计算实际可见的行范围，确保不会超出歌词列表边界
-        int startLineIndex = Math.max(0, mCurrentLine - 3);
-        int endLineIndex = Math.min(mLrcLines.size() - 1, mCurrentLine + 3);
+        int startLineIndex = Math.max(0, centerLine - 3);
+        int endLineIndex = Math.min(mLrcLines.size() - 1, centerLine + 3);
 
         // 绘制当前行及前后行
         for (int i = 0; i < visibleLines; i++) {
@@ -533,7 +551,8 @@ public class LrcView extends View {
             LrcLine line = mLrcLines.get(actualIndex);
             float y = startY + i * lineHeight;
 
-            if (actualIndex == mCurrentLine) {
+            // xuameng 20260818 修改：判断是否为多行高亮中的一行
+            if (mCurrentLines.contains(actualIndex)) {
                 // 当前行：卡拉OK高亮效果
                 float targetProgress = 0f;
                 if (mCurrentPosition >= line.time) {
@@ -542,10 +561,10 @@ public class LrcView extends View {
                         : line.time + 5000;
                     long duration = nextTime - line.time;
 
-                   if (duration > 0) {
-                       targetProgress = (float) (mCurrentPosition - line.time) / duration;
-                       targetProgress = Math.max(0f, Math.min(1f, targetProgress));
-                   }
+                    if (duration > 0) {
+                        targetProgress = (float) (mCurrentPosition - line.time) / duration;
+                        targetProgress = Math.max(0f, Math.min(1f, targetProgress));
+                    }
                 }
 
                 if (targetProgress > 0.99f) {
@@ -576,13 +595,13 @@ public class LrcView extends View {
                 }
                 canvas.save();
                 // 使用精确的裁剪区域
-                canvas.clipRect(getWidth() / 2 - line.width / 2, 
+                canvas.clipRect(getWidth() / 2 - line.width / 2,
                                 textTop,
-                                getWidth() / 2 - line.width / 2 + highlightWidth, 
+                                getWidth() / 2 - line.width / 2 + highlightWidth,
                                 textBottom);
                 canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mHighlightPaint);
                 canvas.restore();
-            }else {
+            } else {
                 // 非当前行：普通显示
                 canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
             }
