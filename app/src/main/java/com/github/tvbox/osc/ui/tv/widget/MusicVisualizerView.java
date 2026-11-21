@@ -321,6 +321,8 @@ public class MusicVisualizerView extends View {
                 // ========== xuameng: 底部实柱兜底区域（不画分段） ==========
                 float minVisibleHeight = height * MIN_VISIBLE_RATIO;
                 float stripeTop = height - barHeight + minVisibleHeight; // 分段起始Y（从兜底线以上开始）
+                //第一步：画底部实心兜底柱
+                canvas.drawRect(left, height - minVisibleHeight, right, height, mBarPaint);
                 // =========================================================
                 // 动态计算实际能显示的分段数量
                 float segmentHeightWithSpacing = mSegmentSpacingFixed * 2; // 每段高度+间距
