@@ -3169,7 +3169,7 @@ public class PlayFragment extends BaseLazyFragment {
                         // 切换到主线程更新 UI
                         requireActivity().runOnUiThread(() -> {
                             mController.setLrcContent(lrcText);
-							App.showToastShort(mContext, lrcContent);
+							App.showToastShort(mContext, lrcText);
                             mController.mLrcView.setVisibility(View.VISIBLE);
                         });
                     } else {
