@@ -156,8 +156,6 @@ public class MusicVisualizerView extends View {
 // ==================== xuameng 新增：三区域强音扩散算法 ====================
 
 // 1. 定义低 / 中 / 高 三个区域
-int third = BAR_COUNT / 3;
-
 int lowStart  = 0;
 int lowEnd    = third - 1;
 
