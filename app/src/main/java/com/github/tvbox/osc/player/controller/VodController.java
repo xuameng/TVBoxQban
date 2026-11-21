@@ -2932,7 +2932,7 @@ private void updateVisualizerAfterLayout() {
                 boolean isLandscape =
                         rootView.getWidth() > rootView.getHeight();
 
-                updateVisualizerSize(!isLandscape);
+                updateVisualizerSize(isLandscape);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     rootView.getViewTreeObserver()
