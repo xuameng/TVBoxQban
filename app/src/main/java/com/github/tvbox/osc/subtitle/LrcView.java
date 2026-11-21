@@ -198,7 +198,7 @@ Log.d("LrcView_xuameng", "lrcContent length=" + (lrcContent == null ? "NULL" : l
 
         // xuameng 新增：逐字格式正则
         // 正则1：逐字格式行首 [秒.毫秒] 如 [0.570]
-        Pattern patternSec = Pattern.compile("^\\[(\\d+(?:\\.\\d+)?)\\]");
+        Pattern patternSec = Pattern.compile("\\[(\\d+)[,.](\\d+?)\\]");
         // 正则2：逐字标签 <偏移,持续,标志> 如 <0,95,0>
         Pattern patternWord = Pattern.compile("<(\\d+),(\\d+),\\d*>([^<]*)");
 
@@ -217,8 +217,9 @@ Log.d("LrcView_xuameng", "lrcContent length=" + (lrcContent == null ? "NULL" : l
             Matcher secMatcher = patternSec.matcher(line);
             if (secMatcher.find()) {
                 // 逐字格式：[0.570]<0,95,0>演<95,95,0>唱...
-                double sec = Double.parseDouble(secMatcher.group(1));
-                long lineTime = (long)(sec * 1000);
+                String secPart = secMatcher.group(1);   // "0" 或 "665"
+                String msPart = secMatcher.group(2);    // "570"
+                long lineTime = Long.parseLong(secPart) * 1000 + Long.parseLong(msPart);
 
                 String afterBracket = line.substring(secMatcher.end());
                 Matcher wordMatcher = patternWord.matcher(afterBracket);
