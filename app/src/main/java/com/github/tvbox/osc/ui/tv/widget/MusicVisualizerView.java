@@ -217,11 +217,11 @@ for (int i = 0; i < BAR_COUNT; i++) {
         if (i < third) {
             weight = 1.0f;
         } else if (i < third * 2) {
-            weight = 2.8f;
+            weight = 9.8f;
         } else {
             float freqFactor = (float) Math.pow(1.5, (i - third * 2) / 2.0f);
-            weight = 2.8f * freqFactor;
-            weight = Math.min(weight, 15.0f);
+            weight = 9.8f * freqFactor;
+            weight = Math.min(weight, 50.0f);
         }
 
         // ✅ 关键：限制提升上限，防止矮柱突然变高
