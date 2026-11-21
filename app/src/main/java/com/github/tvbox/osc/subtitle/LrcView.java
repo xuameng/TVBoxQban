@@ -484,6 +484,29 @@ public class LrcView extends View {
         invalidate();
     }
 
+/**
+ * 判断歌词是否正在"工作"：
+ * 有有效歌词 + 已到显示时间 + 当前行在推进
+ */
+public boolean isLyricsActive() {
+    if (mLrcLines.isEmpty()) {
+        return false; // 没解析到任何歌词
+    }
+    if (!mShouldShowLyrics) {
+        return false; // 进度还没到 0.1s
+    }
+    if (mCurrentLine < 0 || mCurrentLine >= mLrcLines.size()) {
+        return false; // 当前行无效
+    }
+    // 当前行的时间还没到，且没有任何一行在推进
+    LrcLine current = mLrcLines.get(mCurrentLine);
+    if (mCurrentPosition < current.time && mCurrentLine == 0) {
+        // 第一行都还没到时间，不算"在工作"
+        return false;
+    }
+    return true;
+}
+
     /**
      * 绘制卡拉OK效果
      */
@@ -491,16 +514,23 @@ public class LrcView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // 检查是否应该显示歌词
-        if (!mShouldShowLyrics) {
-            // 不显示歌词，显示提示信息
-            String hint = "";   //xuameng 可以加 歌词载入中...
-            float textWidth = mNormalPaint.measureText(hint);
-            float centerX = getWidth() / 2 - textWidth / 2;
-            float centerY = getHeight() / 2;
-            canvas.drawText(hint, centerX, centerY, mNormalPaint);
-            return;
-        }
+// 判断是否需要显示提示（没歌词 / 没进度 / 没高亮）
+if (!isLyricsActive()) {
+    String hint;
+    if (mLrcLines.isEmpty()) {
+        hint = "暂无歌词";           // 格式不识别 or 没传歌词
+    } else if (!mShouldShowLyrics) {
+        hint = "歌词载入中...aaa";      // 进度 < 0.1s
+    } else {
+        hint = "歌词载入中...bbbbbb";      // 有歌词但当前行还没推进
+    }
+
+    float textWidth = mNormalPaint.measureText(hint);
+    float centerX = getWidth() / 2f - textWidth / 2f;
+    float centerY = getHeight() / 2f;
+    canvas.drawText(hint, centerX, centerY, mNormalPaint);
+    return;
+}
 
         if (mLrcLines.isEmpty()) {
             return;
