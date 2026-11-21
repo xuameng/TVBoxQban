@@ -306,6 +306,7 @@ public class VodController extends BaseController {
             }
         };
     }
+    View rootView;
     SeekBar mSeekBar;
     TextView mCurrentTime;
     TextView mTotalTime;
@@ -670,7 +671,7 @@ public class VodController extends BaseController {
                 showLockView();
             }
         });
-        View rootView = findViewById(R.id.rootView);
+        rootView = findViewById(R.id.rootView);
         rootView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -1598,7 +1599,7 @@ public class VodController extends BaseController {
                     hideBottom();
                 }
                 setLandscapePortrait();
-    updateVisualizerAfterLayout();
+                updateVisualizerAfterLayout();
             }
         });
         mxuPlay.setNextFocusRightId(R.id.seekBar); //xuameng底部菜单播放右键是进度条
