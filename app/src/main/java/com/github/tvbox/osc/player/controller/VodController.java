@@ -1597,6 +1597,16 @@ public class VodController extends BaseController {
                     hideBottom();
                 }
                 setLandscapePortrait();
+        int requestedOrientation = mActivity.getRequestedOrientation();
+        if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+            customVisualizer.postDelayed(() -> {
+                updateVisualizerSize(false);  //xuameng 音柱横竖屏幕时大小变化
+            }, 500);
+        } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
+            customVisualizer.postDelayed(() -> {
+                updateVisualizerSize(true);  //xuameng 音柱横竖屏幕时大小变化
+            }, 500);
+        }
             }
         });
         mxuPlay.setNextFocusRightId(R.id.seekBar); //xuameng底部菜单播放右键是进度条
@@ -2899,6 +2909,24 @@ public class VodController extends BaseController {
         } catch (Exception e) {
             Log.e(TAG, "Error releasing visualizer", e);
         }
+    }
+
+    public void updateVisualizerSize(boolean isFullScreen) {  //xuameng 音柱横竖屏幕时大小变化
+        if (customVisualizer == null) return;
+            FrameLayout.LayoutParams params =
+                (FrameLayout.LayoutParams) customVisualizer.getLayoutParams();
+
+            if (isFullScreen) {
+            // 全屏：正常尺寸
+                params.width = AutoSizeUtils.mm2px(getContext(), 800);
+                params.height = AutoSizeUtils.mm2px(getContext(), 150);
+            } else {
+                // 小窗口：缩小一倍
+                params.width = AutoSizeUtils.mm2px(getContext(), 560);
+                params.height = AutoSizeUtils.mm2px(getContext(), 105);
+            } 
+
+        customVisualizer.setLayoutParams(params);
     }
 
     public static float calculateVolumeLevel(Context context) {  //系统音量监控
