@@ -600,40 +600,42 @@ public class LrcView extends View {
     /**
      * xuameng 新增：逐字卡拉OK绘制
      */
-    private void drawKaraokeLine(Canvas canvas, LrcLine line, float y) {
-        float startX = getWidth() / 2 - line.width / 2;
-        float x = startX;
+private void drawKaraokeLine(Canvas canvas, LrcLine line, float y) {
+    float startX = getWidth() / 2 - line.width / 2;
 
-        // 先画整行普通底色
-        canvas.drawText(line.text, startX, y, mNormalPaint);
+    // 1. 先画整行普通底色（和老歌词一样）
+    canvas.drawText(line.text, startX, y, mNormalPaint);
 
-        Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
-        float textTop = y + fm.top;
-        float textBottom = y + fm.bottom;
+    Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
+    float textTop = y + fm.top;
+    float textBottom = y + fm.bottom;
 
-        long lineElapsed = mCurrentPosition - line.time;
+    long lineElapsed = mCurrentPosition - line.time;
 
-        for (WordInfo w : line.words) {
-            if (lineElapsed >= w.start) {
-                float wordProgress = 1.0f;
-                if (lineElapsed < w.end) {
-                    wordProgress = (float)(lineElapsed - w.start) / (w.end - w.start);
-                    wordProgress = Math.max(0f, Math.min(1f, wordProgress));
-                }
-
-                if (wordProgress >= 0.99f) wordProgress = 1.0f;
-
-                float highlightWidth = w.width * wordProgress;
-                if (highlightWidth > 0.5f) {
-                    canvas.save();
-                    canvas.clipRect(x, textTop, x + highlightWidth, textBottom);
-                    canvas.drawText(w.text, x, y, mHighlightPaint);
-                    canvas.restore();
-                }
+    float x = startX;
+    for (WordInfo w : line.words) {
+        if (lineElapsed >= w.start) {
+            float wordProgress = 1.0f;
+            if (lineElapsed < w.end) {
+                wordProgress = (float)(lineElapsed - w.start) / (w.end - w.start);
+                wordProgress = Math.max(0f, Math.min(1f, wordProgress));
             }
-            x += w.width;
+
+            if (wordProgress >= 0.99f) wordProgress = 1.0f;
+
+            float highlightWidth = w.width * wordProgress;
+            if (highlightWidth > 0.5f) {
+                // ✅ 关键：用整行 clipRect，但只裁剪当前字的区域
+                canvas.save();
+                canvas.clipRect(x, textTop, x + highlightWidth, textBottom);
+                // ✅ 画整行文本，不是逐字！
+                canvas.drawText(line.text, startX, y, mHighlightPaint);
+                canvas.restore();
+            }
         }
+        x += w.width;
     }
+}
 
     /**
      * 绘制卡拉OK效果
