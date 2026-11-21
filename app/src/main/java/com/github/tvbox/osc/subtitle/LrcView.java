@@ -397,13 +397,17 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
      *
      * @param position 当前播放时间（毫秒）
      */
+/**
+     * 更新播放进度
+     *
+     * @param position 当前播放时间（毫秒）
+     */
     public void updateTime(long position) {
         // 检查是否达到最小显示位置
         if (position < MIN_POSITION_TO_SHOW) {
-            // 进度小于1秒，不显示歌词，但保持在第一行
             mShouldShowLyrics = false;
-            mCurrentLine = 0; // 确保强制重置到第一行
-            mScrollOffset = 0f; // 重置滚动偏移
+            mCurrentLine = 0;
+            mScrollOffset = 0f;
             mSmoothedProgress = 0f;
             invalidate();
             return;
@@ -418,22 +422,17 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
 
         // 关键：没歌词时只更新状态，不访问 mLrcLines
         if (mLrcLines == null || mLrcLines.isEmpty()) {
-            invalidate(); // 触发 onDraw 去画"暂无歌词"
+            invalidate();
             return;
         }
 
-        // 查找当前应该显示的行
+        // xuameng 修改：找最后一个 time <= position 的行
         int targetLine = 0;
-
-        // 如果当前时间比第一行还早，保持在第一行
         if (position < mLrcLines.get(0).time) {
             targetLine = 0;
         } else {
-            // 否则找到合适的时间点
-            for (int i = 0; i < mLrcLines.size(); i++) {
-                if (i == mLrcLines.size() - 1 ||
-                        position >= mLrcLines.get(i).time &&
-                                position < mLrcLines.get(i + 1).time) {
+            for (int i = mLrcLines.size() - 1; i >= 0; i--) {
+                if (position >= mLrcLines.get(i).time) {
                     targetLine = i;
                     break;
                 }
@@ -442,10 +441,8 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
 
         // 关键修改：处理初始定位
         if (mIsInitialPositioning) {
-            // 初始定位阶段，直接跳转到目标行，不执行滚动动画
             mCurrentLine = targetLine;
             mScrollOffset = 0f;
-            // 初始化新行的进度，避免高亮从头开始
             long newLineTime = mLrcLines.get(targetLine).time;
             long nextTime = (targetLine + 1 < mLrcLines.size())
                     ? mLrcLines.get(targetLine + 1).time
@@ -457,29 +454,23 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
             } else {
                 mSmoothedProgress = 0f;
             }
-            mIsInitialPositioning = false; // 定位完成，退出初始状态
+            mIsInitialPositioning = false;
             invalidate();
             return;
         }
 
         // 正常播放中的滚动逻辑
         if (targetLine != mCurrentLine) {
-            // 计算目标行与当前行的距离和方向
             int lineDiff = targetLine - mCurrentLine;
             int lineDistance = Math.abs(lineDiff);
-    
-            // 判断滚动方向：正数表示向前（下一行），负数表示向后（上一行）
             boolean isForward = lineDiff > 0;
-    
-            // 如果距离超过阈值（不是相邻行），直接跳转而不滚动
+
             if (lineDistance > MAX_SCROLL_DISTANCE) {
                 if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
                     mScrollAnimator.cancel();
                 }
-                // 直接跳转逻辑
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
-                // 初始化新行的进度，避免高亮从头开始
                 long newLineTime = mLrcLines.get(targetLine).time;
                 long nextTime = (targetLine + 1 < mLrcLines.size())
                         ? mLrcLines.get(targetLine + 1).time
@@ -493,22 +484,18 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
                 }
                 invalidate();
             } else {
-                // 相邻行：只有向前滚动（到下一行）才执行平滑滚动
                 if (isForward && targetLine > 3) {
                     smoothScrollTo(targetLine);
                 } else {
-                    // 向后滚动（到上一行）或前三行：直接跳转
                     if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
                         mScrollAnimator.cancel();
                     }
-                    // 只有前三行向前才等铺满
                     if (isForward && targetLine <= 3 && mSmoothedProgress < 1f) {
                         invalidate();
                         return;
                     }
                     mCurrentLine = targetLine;
                     mScrollOffset = 0f;
-                    // 初始化新行的进度，避免高亮从头开始
                     long newLineTime = mLrcLines.get(targetLine).time;
                     long nextTime = (targetLine + 1 < mLrcLines.size())
                             ? mLrcLines.get(targetLine + 1).time
@@ -524,7 +511,6 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
                 }
             }
         } else {
-            // 行数不变，只更新进度
             invalidate();
         }
     }
