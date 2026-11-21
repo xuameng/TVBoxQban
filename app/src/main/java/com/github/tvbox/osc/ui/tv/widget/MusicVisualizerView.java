@@ -34,7 +34,7 @@ public class MusicVisualizerView extends View {
     // 强音扩散半径（向左右各影响几个音柱）
     private static final int BEAT_SPREAD_RADIUS = 11;
     // 扩散衰减系数（越大衰减越慢，扩散越远，0~1之间）
-    private static final float BEAT_DECAY = 0.80f;
+    private static final float BEAT_DECAY = 0.90f;
     // =====================================================================
 
     /**
@@ -51,7 +51,7 @@ public class MusicVisualizerView extends View {
     // 新增音柱分段效果相关变量
     private boolean mShowStripes = true; // 是否显示分段效果
     private int mSegmentCount = 20;      // 每个音柱的分段数
-    private float mSegmentSpacingFixed = 2.5f; // 段间距固定值（像素）
+    private float mSegmentSpacingFixed = 2.2f; // 段间距固定值（像素）
 
     // 新增颜色方案刷新方法
     private void refreshColorSchemes() {
@@ -153,145 +153,84 @@ public class MusicVisualizerView extends View {
             }
         }
 
-// ==================== xuameng 新增：三区域强音扩散算法 ====================
+        // ==================== xuameng 新增：强音扩散算法 ====================
+        // 找到当前能量最强的主音柱
+        int dominantIndex = 0;
+        float maxTarget = 0f;
+        for (int i = 0; i < BAR_COUNT; i++) {
+            if (mTargetHeights[i] > maxTarget) {
+                maxTarget = mTargetHeights[i];
+                dominantIndex = i;
+            }
+        }
 
-// 1. 定义低 / 中 / 高 三个区域
-int third = BAR_COUNT / 3;
+        // 只对明显强音做扩散（避免微弱信号也扩散导致乱跳）
+        // 阈值：主柱高度超过视图高度的10%才触发扩散
+        float spreadThreshold = getHeight() * 0.10f;
+        if (maxTarget > spreadThreshold) {
+            // 创建临时数组存储扩散后的高度，不破坏原始计算结果
+            float[] spreadHeights = new float[BAR_COUNT];
+            for (int i = 0; i < BAR_COUNT; i++) {
+                spreadHeights[i] = mTargetHeights[i];
+            }
 
-int lowStart  = 0;
-int lowEnd    = third - 1;
+            // 以主音柱为中心，向左右扩散
+            for (int i = 0; i < BAR_COUNT; i++) {
+                int distance = Math.abs(i - dominantIndex);
+                float spreadFactor;
 
-int midStart  = third;
-int midEnd    = third * 2 - 1;
+                if (distance == 0) {
+                    // 主音柱本身不受影响，保持最高
+                    spreadFactor = 1.0f;
+                } else if (distance <= BEAT_SPREAD_RADIUS) {
+                    // 相邻柱：距离越近衰减越小，越近越高
+                    spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
+                } else {
+                    // 超出扩散半径不参与
+                    spreadFactor = 0f;
+                }
 
-int highStart = third * 2;
-int highEnd   = BAR_COUNT - 1;
+                if (distance > 0 && spreadFactor > 0f) {
+                    // 相邻柱在自身原始高度基础上叠加主柱能量的衰减部分
+                    // 0.85f 控制扩散强度，避免叠加后过高
+                    spreadHeights[i] = mTargetHeights[i]
+                            + maxTarget * spreadFactor * 0.85f;
+                }
 
-// 2. 在指定区间内找主音柱
-int lowDominant = lowStart;
-float lowMax = 0f;
-for (int i = lowStart; i <= lowEnd; i++) {
-    if (mTargetHeights[i] > lowMax) {
-        lowMax = mTargetHeights[i];
-        lowDominant = i;
-    }
-}
+                // 限制最大高度不超过视图的95%
+                spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
+            }
 
-int midDominant = midStart;
-float midMax = 0f;
-for (int i = midStart; i <= midEnd; i++) {
-    if (mTargetHeights[i] > midMax) {
-        midMax = mTargetHeights[i];
-        midDominant = i;
-    }
-}
+            // 将扩散结果写回目标高度数组
+            System.arraycopy(spreadHeights, 0, mTargetHeights, 0, BAR_COUNT);
+        }
+        // ==================== 强音扩散算法结束 ====================
 
-int highDominant = highStart;
-float highMax = 0f;
-for (int i = highStart; i <= highEnd; i++) {
-    if (mTargetHeights[i] > highMax) {
-        highMax = mTargetHeights[i];
-        highDominant = i;
-    }
-}
+    // ==================== xuameng：矮柱二次加权（防死柱） ====================
+    float shortBarThreshold = getHeight() * 0.1f;   // 高度 < 10%
 
-// 3. 扩散阈值（主柱高度超过视图高度的10%才触发）
-float spreadThreshold = getHeight() * 0.05f;
-
-// 4. 创建临时数组（不破坏原始计算结果）
-float[] spreadHeights = new float[BAR_COUNT];
-for (int i = 0; i < BAR_COUNT; i++) {
-    spreadHeights[i] = mTargetHeights[i];
-}
-
-// 5. 对单个主音进行扩散（内联逻辑，不用方法）
-// ---- 低频扩散 ----
-if (lowMax > spreadThreshold) {
     for (int i = 0; i < BAR_COUNT; i++) {
-        int distance = Math.abs(i - lowDominant);
-        float spreadFactor;
-        if (distance == 0) {
-            spreadFactor = 1.0f;
-        } else if (distance <= BEAT_SPREAD_RADIUS) {
-            spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
-        } else {
-            spreadFactor = 0f;
+        if (mTargetHeights[i] < shortBarThreshold) {
+
+            float weight;
+            if (i < third) {
+                weight = 1.0f;
+            } else if (i < third * 2) {
+                weight = 12.2f;
+            } else {
+                float freqFactor = (float) Math.pow(1.5, (i - third * 2) / 2.0f);
+                weight = 12.2f * freqFactor;
+                weight = Math.min(weight, 50.0f);
+            }
+
+            // ✅ 关键：限制提升上限，防止矮柱突然变高
+            float boosted = mTargetHeights[i] * weight;
+            boosted = Math.min(boosted, shortBarThreshold * 0.3f);
+
+            mTargetHeights[i] = Math.max(mTargetHeights[i], boosted);
         }
-        if (distance > 0 && spreadFactor > 0f) {
-            spreadHeights[i] = spreadHeights[i] + lowMax * spreadFactor * 0.85f;
-        }
-        spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
     }
-}
-
-// ---- 中频扩散 ----
-if (midMax > spreadThreshold) {
-    for (int i = 0; i < BAR_COUNT; i++) {
-        int distance = Math.abs(i - midDominant);
-        float spreadFactor;
-        if (distance == 0) {
-            spreadFactor = 1.0f;
-        } else if (distance <= BEAT_SPREAD_RADIUS) {
-            spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
-        } else {
-            spreadFactor = 0f;
-        }
-        if (distance > 0 && spreadFactor > 0f) {
-            spreadHeights[i] = spreadHeights[i] + midMax * spreadFactor * 0.85f;
-        }
-        spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
-    }
-}
-
-// ---- 高频扩散 ----
-if (highMax > spreadThreshold) {
-    for (int i = 0; i < BAR_COUNT; i++) {
-        int distance = Math.abs(i - highDominant);
-        float spreadFactor;
-        if (distance == 0) {
-            spreadFactor = 1.0f;
-        } else if (distance <= BEAT_SPREAD_RADIUS) {
-            spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
-        } else {
-            spreadFactor = 0f;
-        }
-        if (distance > 0 && spreadFactor > 0f) {
-            spreadHeights[i] = spreadHeights[i] + highMax * spreadFactor * 0.85f;
-        }
-        spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
-    }
-}
-
-// 6. 将扩散结果写回目标高度数组
-System.arraycopy(spreadHeights, 0, mTargetHeights, 0, BAR_COUNT);
-
-// ==================== 三区域强音扩散算法结束 ====================
-
-// ==================== xuameng：矮柱二次加权（防死柱） ====================
-float shortBarThreshold = getHeight() * 0.1f;   // 高度 < 10%
-
-for (int i = 0; i < BAR_COUNT; i++) {
-    if (mTargetHeights[i] < shortBarThreshold) {
-
-        float weight;
-        if (i < third) {
-            weight = 1.0f;
-        } else if (i < third * 2) {
-            weight = 9.8f;
-        } else {
-            float freqFactor = (float) Math.pow(1.5, (i - third * 2) / 2.0f);
-            weight = 9.8f * freqFactor;
-            weight = Math.min(weight, 50.0f);
-        }
-
-        // ✅ 关键：限制提升上限，防止矮柱突然变高
-        float boosted = mTargetHeights[i] * weight;
-        boosted = Math.min(boosted, shortBarThreshold * 0.7f);
-
-        mTargetHeights[i] = Math.max(mTargetHeights[i], boosted);
-    }
-}
-// ==================== 矮柱二次加权结束 ====================
+    // ==================== 矮柱二次加权结束 ====================
 
         // ==================== xuameng 新增：最低可见高度托底 ====================
         float maxH = getHeight();
@@ -318,48 +257,29 @@ for (int i = 0; i < BAR_COUNT; i++) {
         }
         mAnimator = ValueAnimator.ofFloat(0f, 1f);
         mAnimator.setDuration(ANIMATION_DURATION);
-mAnimator.addUpdateListener(animation -> {
-    // 找到三个区域各自的最高点
-    int third = BAR_COUNT / 3;
-    int[] dominantIndices = new int[3];
-    float[] maxHeights = new float[3];
-    
-    for (int i = 0; i < BAR_COUNT; i++) {
-        if (i < third) {
-            if (mBarHeights[i] > maxHeights[0]) {
-                maxHeights[0] = mBarHeights[i];
-                dominantIndices[0] = i;
+        mAnimator.addUpdateListener(animation -> {
+            // xuameng 找到当前主音柱（动画过程中最高的）
+            int dominantIdx = 0;
+            float maxH = 0f;
+            for (int i = 0; i < BAR_COUNT; i++) {
+                if (mBarHeights[i] > maxH) {
+                    maxH = mBarHeights[i];
+                    dominantIdx = i;
+                }
             }
-        } else if (i < third * 2) {
-            if (mBarHeights[i] > maxHeights[1]) {
-                maxHeights[1] = mBarHeights[i];
-                dominantIndices[1] = i;
-            }
-        } else {
-            if (mBarHeights[i] > maxHeights[2]) {
-                maxHeights[2] = mBarHeights[i];
-                dominantIndices[2] = i;
-            }
-        }
-    }
 
-    for (int i = 0; i < BAR_COUNT; i++) {
-        // 判断当前柱是否是某个区域的主柱
-        float boost;
-        if (i == dominantIndices[0] || i == dominantIndices[1] || i == dominantIndices[2]) {
-            boost = 0.65f; // 三个主柱都加速
-        } else {
-            boost = 0.60f;
-        }
-
-        if (mTargetHeights[i] > mBarHeights[i]) {
-            mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * boost;
-        } else {
-            mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.15f;
-        }
-    }
-    postInvalidate();
-});
+            for (int i = 0; i < BAR_COUNT; i++) {
+                if (mTargetHeights[i] > mBarHeights[i]) {
+                    // 起跳快（缓出感）：主音柱起跳更快，相邻柱稍慢
+                    float boost = (i == dominantIdx) ? 0.65f : 0.60f;
+                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * boost;
+                } else {
+                    // 下落慢（拖尾感）
+                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.15f;
+                }
+            }
+            postInvalidate();
+        });
         mAnimator.start();
     }
 
