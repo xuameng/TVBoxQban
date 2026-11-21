@@ -196,7 +196,7 @@ for (int i = highStart; i <= highEnd; i++) {
 }
 
 // 3. 扩散阈值（主柱高度超过视图高度的10%才触发）
-float spreadThreshold = getHeight() * 0.05f;
+float spreadThreshold = getHeight() * 0.01f;
 
 // 4. 创建临时数组（不破坏原始计算结果）
 float[] spreadHeights = new float[BAR_COUNT];
