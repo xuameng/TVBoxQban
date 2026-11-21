@@ -166,7 +166,7 @@ public class MusicVisualizerView extends View {
 
         // 只对明显强音做扩散（避免微弱信号也扩散导致乱跳）
         // 阈值：主柱高度超过视图高度的10%才触发扩散
-        float spreadThreshold = getHeight() * 0.10f;
+        float spreadThreshold = getHeight() * 0.01f;
         if (maxTarget > spreadThreshold) {
             // 创建临时数组存储扩散后的高度，不破坏原始计算结果
             float[] spreadHeights = new float[BAR_COUNT];
