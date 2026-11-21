@@ -207,7 +207,7 @@ public class MusicVisualizerView extends View {
         // ==================== 强音扩散算法结束 ====================
 
 // ==================== xuameng：矮柱二次加权（防死柱） ====================
-float shortBarThreshold = getHeight() * 0.01f;   // 高度 < 10%
+float shortBarThreshold = getHeight() * 0.1f;   // 高度 < 10%
 int third = BAR_COUNT / 3;
 
 for (int i = 0; i < BAR_COUNT; i++) {
@@ -226,7 +226,7 @@ for (int i = 0; i < BAR_COUNT; i++) {
 
         // ✅ 关键：限制提升上限，防止矮柱突然变高
         float boosted = mTargetHeights[i] * weight;
-        boosted = Math.min(boosted, shortBarThreshold * 0.9f);
+        boosted = Math.min(boosted, shortBarThreshold * 0.7f);
 
         mTargetHeights[i] = Math.max(mTargetHeights[i], boosted);
     }
