@@ -2929,10 +2929,12 @@ private void updateVisualizerAfterLayout() {
             public void onGlobalLayout() {
                 if (rootView.getWidth() == 0 || rootView.getHeight() == 0) return;
 
-                boolean isLandscape =
-                        rootView.getWidth() > rootView.getHeight();
-
-                updateVisualizerSize(isLandscape);
+        int requestedOrientation = mActivity.getRequestedOrientation();
+        if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                updateVisualizerSize(false);  //xuameng 音柱横竖屏幕时大小变化
+        } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
+                updateVisualizerSize(true);  //xuameng 音柱横竖屏幕时大小变化
+        }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     rootView.getViewTreeObserver()
