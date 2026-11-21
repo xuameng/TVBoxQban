@@ -321,10 +321,6 @@ public class LrcView extends View {
      * @param position 当前播放时间（毫秒）
      */
     public void updateTime(long position) {
-        //  if (mLrcLines.isEmpty()) { 无歌词或不支持时显示提示词
-        //      return;
-        //  }
-
         // 检查是否达到最小显示位置
         if (position < MIN_POSITION_TO_SHOW) {
             // 进度小于1秒，不显示歌词，但保持在第一行
@@ -342,6 +338,12 @@ public class LrcView extends View {
         }
 
         mCurrentPosition = position;
+
+        // 关键：没歌词时只更新状态，不访问 mLrcLines
+        if (mLrcLines == null || mLrcLines.isEmpty()) {
+            invalidate(); // 触发 onDraw 去画"暂无歌词"
+            return;
+        }
 
         // 查找当前应该显示的行
         int targetLine = 0;
