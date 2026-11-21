@@ -196,7 +196,7 @@ for (int i = highStart; i <= highEnd; i++) {
 }
 
 // 3. 扩散阈值（主柱高度超过视图高度的10%才触发）
-float spreadThreshold = getHeight() * 0.01f;
+float spreadThreshold = getHeight() * 0.05f;
 
 // 4. 创建临时数组（不破坏原始计算结果）
 float[] spreadHeights = new float[BAR_COUNT];
@@ -318,29 +318,48 @@ for (int i = 0; i < BAR_COUNT; i++) {
         }
         mAnimator = ValueAnimator.ofFloat(0f, 1f);
         mAnimator.setDuration(ANIMATION_DURATION);
-        mAnimator.addUpdateListener(animation -> {
-            // xuameng 找到当前主音柱（动画过程中最高的）
-            int dominantIdx = 0;
-            float maxH = 0f;
-            for (int i = 0; i < BAR_COUNT; i++) {
-                if (mBarHeights[i] > maxH) {
-                    maxH = mBarHeights[i];
-                    dominantIdx = i;
-                }
+mAnimator.addUpdateListener(animation -> {
+    // 找到三个区域各自的最高点
+    int third = BAR_COUNT / 3;
+    int[] dominantIndices = new int[3];
+    float[] maxHeights = new float[3];
+    
+    for (int i = 0; i < BAR_COUNT; i++) {
+        if (i < third) {
+            if (mBarHeights[i] > maxHeights[0]) {
+                maxHeights[0] = mBarHeights[i];
+                dominantIndices[0] = i;
             }
+        } else if (i < third * 2) {
+            if (mBarHeights[i] > maxHeights[1]) {
+                maxHeights[1] = mBarHeights[i];
+                dominantIndices[1] = i;
+            }
+        } else {
+            if (mBarHeights[i] > maxHeights[2]) {
+                maxHeights[2] = mBarHeights[i];
+                dominantIndices[2] = i;
+            }
+        }
+    }
 
-            for (int i = 0; i < BAR_COUNT; i++) {
-                if (mTargetHeights[i] > mBarHeights[i]) {
-                    // 起跳快（缓出感）：主音柱起跳更快，相邻柱稍慢
-                    float boost = (i == dominantIdx) ? 0.65f : 0.60f;
-                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * boost;
-                } else {
-                    // 下落慢（拖尾感）
-                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.15f;
-                }
-            }
-            postInvalidate();
-        });
+    for (int i = 0; i < BAR_COUNT; i++) {
+        // 判断当前柱是否是某个区域的主柱
+        float boost;
+        if (i == dominantIndices[0] || i == dominantIndices[1] || i == dominantIndices[2]) {
+            boost = 0.65f; // 三个主柱都加速
+        } else {
+            boost = 0.60f;
+        }
+
+        if (mTargetHeights[i] > mBarHeights[i]) {
+            mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * boost;
+        } else {
+            mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.15f;
+        }
+    }
+    postInvalidate();
+});
         mAnimator.start();
     }
 
