@@ -214,7 +214,7 @@ public class MusicVisualizerView extends View {
 
                 float weight;
                 if (i < third) {
-                    weight = 1.0f;
+                    weight = 1.2f;
                 } else if (i < third * 2) {
                     weight = 12.2f;
                 } else {
@@ -223,7 +223,7 @@ public class MusicVisualizerView extends View {
                    weight = Math.min(weight, 50.0f);
                 }
 
-                // ✅ 关键：限制提升上限，防止矮柱突然变高
+                // 关键：限制提升上限，防止矮柱突然变高
                 float boosted = mTargetHeights[i] * weight;
                 boosted = Math.min(boosted, shortBarThreshold * 0.7f);
 
@@ -259,54 +259,25 @@ public class MusicVisualizerView extends View {
         mAnimator.setDuration(ANIMATION_DURATION);
         mAnimator.addUpdateListener(animation -> {
             // xuameng 找到当前主音柱（动画过程中最高的）
-int dominantIdx = 0;
-float maxH = 0f;
-for (int i = 0; i < BAR_COUNT; i++) {
-    if (mBarHeights[i] > maxH) {
-        maxH = mBarHeights[i];
-        dominantIdx = i;
-    }
-}
-
-int third = BAR_COUNT / 3; // 低频区边界
-
-for (int i = 0; i < BAR_COUNT; i++) {
-    float target = mTargetHeights[i];
-    float current = mBarHeights[i];
-
-    if (i < third) {
-        // ==================== 低频区专用动画 ====================
-        if (target > current) {
-            // 起跳：鼓点要“瞬间弹起”
-            float ratio = current / Math.max(target, 1f);
-            float speed = 0.55f + 0.40f * (1f - ratio);
-            current += (target - current) * speed;
-        } else {
-            // 下落：鼓声结束后快速塌缩
-            float fall;
-            if (current > getHeight() * 0.5f) {
-                fall = 0.42f;   // 高柱快速回落
-            } else if (current > getHeight() * 0.2f) {
-                fall = 0.28f;
-            } else {
-                fall = 0.15f;   // 保留一点余震
+            int dominantIdx = 0;
+            float maxH = 0f;
+            for (int i = 0; i < BAR_COUNT; i++) {
+                if (mBarHeights[i] > maxH) {
+                    maxH = mBarHeights[i];
+                    dominantIdx = i;
+                }
             }
-            current += (target - current) * fall;
-        }
-        // ==================== 低频区结束 ====================
-    } else {
-        // ==================== 中高频保持原逻辑 ====================
-        if (target > current) {
-            float boost = (i == dominantIdx) ? 0.65f : 0.60f;
-            current += (target - current) * boost;
-        } else {
-            current += (target - current) * 0.15f;
-        }
-        // ==================== 中高频结束 ====================
-    }
 
-    mBarHeights[i] = current;
-}
+            for (int i = 0; i < BAR_COUNT; i++) {
+                if (mTargetHeights[i] > mBarHeights[i]) {
+                    // 起跳快（缓出感）：主音柱起跳更快，相邻柱稍慢
+                    float boost = (i == dominantIdx) ? 0.65f : 0.60f;
+                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * boost;
+                } else {
+                    // 下落慢（拖尾感）
+                    mBarHeights[i] += (mTargetHeights[i] - mBarHeights[i]) * 0.15f;
+                }
+            }
             postInvalidate();
         });
         mAnimator.start();
@@ -347,6 +318,10 @@ for (int i = 0; i < BAR_COUNT; i++) {
             // 分段绘制音柱（实现"一段一段"效果）
             // 修改点：分段绘制音柱（仅当音柱高度达到最小阈值时才显示分段效果）
             if (mShowStripes && barHeight >= MIN_HEIGHT_FOR_STRIPES) {
+                // ========== xuameng: 底部实柱兜底区域（不画分段） ==========
+                float minVisibleHeight = height * MIN_VISIBLE_RATIO;
+                float stripeTop = height - barHeight + minVisibleHeight; // 分段起始Y（从兜底线以上开始）
+                // =========================================================
                 // 动态计算实际能显示的分段数量
                 float segmentHeightWithSpacing = mSegmentSpacingFixed * 2; // 每段高度+间距
                 int actualSegmentCount = (int) (barHeight / segmentHeightWithSpacing);
@@ -360,6 +335,15 @@ for (int i = 0; i < BAR_COUNT; i++) {
                 for (int segment = 0; segment < actualSegmentCount; segment++) {
                     float segmentTop = height - (segment + 1) * (actualSegmentHeight + mSegmentSpacingFixed);
                     float segmentBottom = segmentTop + actualSegmentHeight;
+
+                    // ========== xuameng: 只画在兜底线以上 ==========
+                    if (segmentBottom <= stripeTop) {
+                        continue; // 底部兜底区域内不画分段
+                    }
+                    if (segmentTop < stripeTop) {
+                        segmentTop = stripeTop; // 截断，不超出兜底区
+                    }
+                    // ==============================================
                     // 确保段在音柱范围内
                     if (segmentTop >= top) {
                         canvas.drawRect(left, segmentTop, right, segmentBottom, mBarPaint);
