@@ -305,6 +305,7 @@ public class VodController extends BaseController {
             }
         };
     }
+    View rootView;
     SeekBar mSeekBar;
     TextView mCurrentTime;
     TextView mTotalTime;
@@ -669,7 +670,7 @@ public class VodController extends BaseController {
                 showLockView();
             }
         });
-        View rootView = findViewById(R.id.rootView);
+        rootView = findViewById(R.id.rootView);
         rootView.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -1599,13 +1600,13 @@ public class VodController extends BaseController {
                 setLandscapePortrait();
         int requestedOrientation = mActivity.getRequestedOrientation();
         if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-            customVisualizer.postDelayed(() -> {
+            rootView.postDelayed(() -> {
                 updateVisualizerSize(false);  //xuameng 音柱横竖屏幕时大小变化
             }, 500);
         } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
-            customVisualizer.postDelayed(() -> {
+            rootView.postDelayed(() -> {
                 updateVisualizerSize(true);  //xuameng 音柱横竖屏幕时大小变化
-            }, 500);
+            }, 1000);
         }
             }
         });
@@ -2922,8 +2923,8 @@ public class VodController extends BaseController {
                 params.height = AutoSizeUtils.mm2px(getContext(), 150);
             } else {
                 // 小窗口：缩小一倍
-                params.width = AutoSizeUtils.mm2px(getContext(), 560);
-                params.height = AutoSizeUtils.mm2px(getContext(), 105);
+                params.width = AutoSizeUtils.mm2px(getContext(), 640);
+                params.height = AutoSizeUtils.mm2px(getContext(), 120);
             } 
 
         customVisualizer.setLayoutParams(params);
