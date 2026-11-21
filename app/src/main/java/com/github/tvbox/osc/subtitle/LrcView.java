@@ -492,9 +492,6 @@ public class LrcView extends View {
         if (mLrcLines.isEmpty()) {
             return false; // 没解析到任何歌词
         }
-        if (!mShouldShowLyrics) {
-            return false; // 进度还没到 0.1s
-        }
         if (mCurrentLine < 0 || mCurrentLine >= mLrcLines.size()) {
             return false; // 当前行无效
         }
@@ -515,7 +512,7 @@ public class LrcView extends View {
         super.onDraw(canvas);
 
         // 判断是否需要显示提示（没歌词 / 没进度 / 没高亮 /进度大小1秒）
-        if (!isLyricsActive() && mCurrentPosition > 1000) {
+        if (!isLyricsActive() && mCurrentPosition > 100) {
             String hint;
             if (mLrcLines.isEmpty()) {
                 hint = "聚汇影视提示您：暂无歌词!";           // 格式不识别 or 没传歌词
