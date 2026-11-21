@@ -197,8 +197,9 @@ Log.d("LrcView_xuameng", "lrcContent length=" + (lrcContent == null ? "NULL" : l
         mLrcLines.clear();
 
         // xuameng 新增：逐字格式正则
-        // 正则1：逐字格式行首 [秒.毫秒] 如 [0.570]
-        Pattern patternSec = Pattern.compile("\\[(\\d+)[,.](\\d+?)\\]");
+        // 正则1：逐字格式行首 [数字,数字] 或 [数字.数字]，如 [0,1064] 或 [0.570]
+        // xuameng 修改：去掉非贪婪 ?，确保完整匹配毫秒部分
+        Pattern patternSec = Pattern.compile("\\[(\\d+)[,.](\\d+)\\]");
         // 正则2：逐字标签 <偏移,持续,标志> 如 <0,95,0>
         Pattern patternWord = Pattern.compile("<(\\d+),(\\d+),\\d*>([^<]*)");
 
@@ -216,10 +217,27 @@ Log.d("LrcView_xuameng", "lrcContent length=" + (lrcContent == null ? "NULL" : l
             // ===== xuameng 新增：尝试逐字格式解析 =====
             Matcher secMatcher = patternSec.matcher(line);
             if (secMatcher.find()) {
-                // 逐字格式：[0.570]<0,95,0>演<95,95,0>唱...
-                String secPart = secMatcher.group(1);   // "0" 或 "665"
-                String msPart = secMatcher.group(2);    // "570"
-                long lineTime = Long.parseLong(secPart) * 1000 + Long.parseLong(msPart);
+                // xuameng 修改：酷狗逐字格式 [开始毫秒, 持续毫秒]
+                // group(1) = 开始时间（毫秒），group(2) = 行持续时间（毫秒）
+                // 兼容旧格式 [秒.毫秒]：如果 group(1) 很小且 group(2) 很大，则按秒*1000+毫秒算
+                long t1 = Long.parseLong(secMatcher.group(1));
+                long t2 = Long.parseLong(secMatcher.group(2));
+                
+                // xuameng debug
+                Log.d("LrcView_xuameng", "逐字行原始: t1=" + t1 + " t2=" + t2 + " line=" + line.substring(0, Math.min(60, line.length())));
+                
+                long lineTime;
+                if (t1 > 1000 || t2 < 1000) {
+                    // t1 很大说明是绝对毫秒；t2 很小说明 t1 是秒
+                    // 实际上酷狗格式是 [开始ms, 持续ms]，直接取 t1
+                    lineTime = t1;
+                } else {
+                    // 兼容 [秒.毫秒] 格式：0,570 → 0 * 1000+570
+                    lineTime = t1 * 1000 + t2;
+                }
+
+                // xuameng debug
+                Log.d("LrcView_xuameng", "逐字行 lineTime=" + lineTime + "ms (" + lineTime/1000 + "s)");
 
                 String afterBracket = line.substring(secMatcher.end());
                 Matcher wordMatcher = patternWord.matcher(afterBracket);
@@ -305,6 +323,11 @@ Log.d("LrcView_xuameng", "lrcContent length=" + (lrcContent == null ? "NULL" : l
 
         // 移除重复的歌词行
         removeDuplicateLines();
+
+        // xuameng debug：打印前5行时间
+        for (int i = 0; i < Math.min(5, mLrcLines.size()); i++) {
+            Log.d("LrcView_xuameng", "排序后 line[" + i + "] time=" + mLrcLines.get(i).time + " text=" + mLrcLines.get(i).text.substring(0, Math.min(15, mLrcLines.get(i).text.length())));
+        }
 
         // 重置所有状态
         mShouldShowLyrics = false;
@@ -397,17 +420,16 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
      *
      * @param position 当前播放时间（毫秒）
      */
-/**
-     * 更新播放进度
-     *
-     * @param position 当前播放时间（毫秒）
-     */
     public void updateTime(long position) {
+        // xuameng debug
+        Log.d("LrcView_xuameng", "updateTime pos=" + position + " shouldShow=" + mShouldShowLyrics + " currentLine=" + mCurrentLine + " lines=" + (mLrcLines == null ? 0 : mLrcLines.size()));
+
         // 检查是否达到最小显示位置
         if (position < MIN_POSITION_TO_SHOW) {
+            // 进度小于1秒，不显示歌词，但保持在第一行
             mShouldShowLyrics = false;
-            mCurrentLine = 0;
-            mScrollOffset = 0f;
+            mCurrentLine = 0; // 确保强制重置到第一行
+            mScrollOffset = 0f; // 重置滚动偏移
             mSmoothedProgress = 0f;
             invalidate();
             return;
@@ -422,15 +444,16 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
 
         // 关键：没歌词时只更新状态，不访问 mLrcLines
         if (mLrcLines == null || mLrcLines.isEmpty()) {
-            invalidate();
+            invalidate(); // 触发 onDraw 去画"暂无歌词"
             return;
         }
 
-        // xuameng 修改：找最后一个 time <= position 的行
+        // xuameng 修改：找最后一个 time <= position 的行（兼容逐字格式大间隔）
         int targetLine = 0;
         if (position < mLrcLines.get(0).time) {
             targetLine = 0;
         } else {
+            // 反向查找：找最后一个 time <= position 的行
             for (int i = mLrcLines.size() - 1; i >= 0; i--) {
                 if (position >= mLrcLines.get(i).time) {
                     targetLine = i;
@@ -439,10 +462,15 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
             }
         }
 
+        // xuameng debug
+        Log.d("LrcView_xuameng", "updateTime targetLine=" + targetLine + " lineTime=" + mLrcLines.get(targetLine).time);
+
         // 关键修改：处理初始定位
         if (mIsInitialPositioning) {
+            // 初始定位阶段，直接跳转到目标行，不执行滚动动画
             mCurrentLine = targetLine;
             mScrollOffset = 0f;
+            // 初始化新行的进度，避免高亮从头开始
             long newLineTime = mLrcLines.get(targetLine).time;
             long nextTime = (targetLine + 1 < mLrcLines.size())
                     ? mLrcLines.get(targetLine + 1).time
@@ -454,23 +482,29 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
             } else {
                 mSmoothedProgress = 0f;
             }
-            mIsInitialPositioning = false;
+            mIsInitialPositioning = false; // 定位完成，退出初始状态
             invalidate();
             return;
         }
 
         // 正常播放中的滚动逻辑
         if (targetLine != mCurrentLine) {
+            // 计算目标行与当前行的距离和方向
             int lineDiff = targetLine - mCurrentLine;
             int lineDistance = Math.abs(lineDiff);
+    
+            // 判断滚动方向：正数表示向前（下一行），负数表示向后（上一行）
             boolean isForward = lineDiff > 0;
-
+    
+            // 如果距离超过阈值（不是相邻行），直接跳转而不滚动
             if (lineDistance > MAX_SCROLL_DISTANCE) {
                 if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
                     mScrollAnimator.cancel();
                 }
+                // 直接跳转逻辑
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
+                // 初始化新行的进度，避免高亮从头开始
                 long newLineTime = mLrcLines.get(targetLine).time;
                 long nextTime = (targetLine + 1 < mLrcLines.size())
                         ? mLrcLines.get(targetLine + 1).time
@@ -484,18 +518,22 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
                 }
                 invalidate();
             } else {
+                // 相邻行：只有向前滚动（到下一行）才执行平滑滚动
                 if (isForward && targetLine > 3) {
                     smoothScrollTo(targetLine);
                 } else {
+                    // 向后滚动（到上一行）或前三行：直接跳转
                     if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
                         mScrollAnimator.cancel();
                     }
+                    // 只有前三行向前才等铺满
                     if (isForward && targetLine <= 3 && mSmoothedProgress < 1f) {
                         invalidate();
                         return;
                     }
                     mCurrentLine = targetLine;
                     mScrollOffset = 0f;
+                    // 初始化新行的进度，避免高亮从头开始
                     long newLineTime = mLrcLines.get(targetLine).time;
                     long nextTime = (targetLine + 1 < mLrcLines.size())
                             ? mLrcLines.get(targetLine + 1).time
@@ -511,6 +549,7 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
                 }
             }
         } else {
+            // 行数不变，只更新进度
             invalidate();
         }
     }
@@ -566,6 +605,9 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
         float textBottom = y + fm.bottom;
 
         long lineElapsed = mCurrentPosition - line.time; // 当前行已播放多久
+
+        // xuameng debug
+        if (actualIndex == mCurrentLine) { // 注意：这里 actualIndex 不在作用域，下面 onDraw 里已有 Log
 
         for (WordInfo w : line.words) {
             if (lineElapsed >= w.start) {
@@ -642,6 +684,9 @@ Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size()
             float y = startY + i * lineHeight;
 
             if (actualIndex == mCurrentLine) {
+                // xuameng debug：当前行信息
+                Log.d("LrcView_xuameng", "onDraw currentLine=" + actualIndex + " time=" + line.time + " pos=" + mCurrentPosition + " words=" + (line.words != null ? line.words.size() : "null"));
+
                 // xuameng 修改：当前行绘制，支持逐字/普通双模式
                 // ===== 逐字模式 =====
                 if (line.words != null && !line.words.isEmpty()) {
