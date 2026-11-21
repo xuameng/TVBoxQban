@@ -156,6 +156,8 @@ public class MusicVisualizerView extends View {
 // ==================== xuameng 新增：三区域强音扩散算法 ====================
 
 // 1. 定义低 / 中 / 高 三个区域
+int third = BAR_COUNT / 3;
+
 int lowStart  = 0;
 int lowEnd    = third - 1;
 
@@ -267,7 +269,6 @@ System.arraycopy(spreadHeights, 0, mTargetHeights, 0, BAR_COUNT);
 
 // ==================== xuameng：矮柱二次加权（防死柱） ====================
 float shortBarThreshold = getHeight() * 0.1f;   // 高度 < 10%
-int third = BAR_COUNT / 3;
 
 for (int i = 0; i < BAR_COUNT; i++) {
     if (mTargetHeights[i] < shortBarThreshold) {
