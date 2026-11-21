@@ -175,40 +175,54 @@ public class LrcView extends View {
      */
     public void setLrcText(String lrcContent) {
         mLrcLines.clear();
-Pattern pattern = Pattern.compile("\\[(\\d{1,3}):(\\d{2})\\.(\\d{1,3})\\]");
-String[] lines = lrcContent.split("\\r?\\n");
+        String[] lines = lrcContent.split("\n");
+        Pattern pattern = Pattern.compile("\\[(\\d{2}):(\\d{2})\\.(\\d{1,3})\\]");
 
-for (String line : lines) {
-    if (line.trim().isEmpty()) continue;
+        for (String line : lines) {
+            // 跳过空行
+            if (line.trim().isEmpty()) {
+                continue;
+            }
 
-    Matcher matcher = pattern.matcher(line);
-    List<Long> times = new ArrayList<>();
-    int lastEnd = 0;
+            Matcher matcher = pattern.matcher(line);
+            List<Long> times = new ArrayList<>();
+            String text = "";
+            int lastEnd = 0;
 
-    while (matcher.find()) {
-        int min = Integer.parseInt(matcher.group(1));
-        int sec = Integer.parseInt(matcher.group(2));
-        String msStr = matcher.group(3);
-        long ms = msStr.length() == 2 ? Integer.parseInt(msStr) * 10
-                  : msStr.length() == 1 ? Integer.parseInt(msStr) * 100
-                  : Integer.parseInt(msStr);
-        times.add((min * 60L + sec) * 1000L + ms);
-        lastEnd = matcher.end();
-    }
+            // 查找所有时间标签
+            while (matcher.find()) {
+                int min = Integer.parseInt(matcher.group(1));
+                int sec = Integer.parseInt(matcher.group(2));
+                // 处理毫秒部分
+                String msStr = matcher.group(3);
+                long ms;
+                if (msStr.length() == 2) {
+                    // 2位数字，按百分秒处理
+                    ms = Integer.parseInt(msStr) * 10L; // 百分秒转毫秒
+                } else if (msStr.length() == 1) {
+                    ms = Integer.parseInt(msStr) * 100L; // 如.1 -> 100毫秒
+                } else {
+                    ms = Integer.parseInt(msStr); // 3位数字，直接作为毫秒
+                }
+                times.add((min * 60 + sec) * 1000L + ms);
+                lastEnd = matcher.end();
+            }
 
-    if (times.isEmpty()) continue; // ✅ 关键：跳过元数据行
+            // 提取歌词文本（去除时间标签后的内容）
+            text = line.substring(lastEnd).trim();
 
-    String text = lastEnd > 0 ? line.substring(lastEnd).trim() : "";
-    if (text.isEmpty()) continue;
-
-    for (Long time : times) {
-        LrcLine lrcLine = new LrcLine();
-        lrcLine.time = time;
-        lrcLine.text = text;
-        lrcLine.width = mNormalPaint.measureText(text);
-        mLrcLines.add(lrcLine);
-    }
-}
+            // 只有当文本非空时才添加到歌词列表
+            if (!text.isEmpty()) {
+                for (Long time : times) {
+                    LrcLine lrcLine = new LrcLine();
+                    lrcLine.time = time;
+                    lrcLine.text = text;
+                    lrcLine.width = mNormalPaint.measureText(text);
+                    mLrcLines.add(lrcLine);
+                }
+            }
+            // 注意：这里我们跳过了纯时间标签行（如[00:13.760]），因为它们没有歌词内容
+        }
 
         // 按时间排序
         Collections.sort(mLrcLines, (a, b) -> Long.compare(a.time, b.time));
@@ -484,8 +498,9 @@ for (String line : lines) {
         if (!mShouldShowLyrics) {
             // 不显示歌词，显示提示信息
             hint = null;   //xuameng 可以加 歌词载入中... 现是是什么都不显示
+            return;
         } else {
-            if (mLrcLines.isEmpty()) {  //0.1秒以上才没有歌词显示
+            if (mLrcLines == null || mLrcLines.isEmpty()) {  //0.1秒以上才没有歌词显示
                 hint = "聚汇影视提示您：暂无歌词!";   //xuameng 可以加 歌词载入中...
             }
         }
