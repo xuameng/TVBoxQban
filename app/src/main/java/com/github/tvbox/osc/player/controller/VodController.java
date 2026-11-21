@@ -1598,16 +1598,7 @@ public class VodController extends BaseController {
                     hideBottom();
                 }
                 setLandscapePortrait();
-        int requestedOrientation = mActivity.getRequestedOrientation();
-        if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-            customVisualizer.postDelayed(() -> {
-                updateVisualizerSize(false);  //xuameng 音柱横竖屏幕时大小变化
-            }, 500);
-        } else if(requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT || requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT) {
-            customVisualizer.postDelayed(() -> {
-                updateVisualizerSize(true);  //xuameng 音柱横竖屏幕时大小变化
-            }, 500);
-        }
+    updateVisualizerAfterLayout();
             }
         });
         mxuPlay.setNextFocusRightId(R.id.seekBar); //xuameng底部菜单播放右键是进度条
@@ -2929,20 +2920,31 @@ public class VodController extends BaseController {
 
         customVisualizer.setLayoutParams(params);
     }
-rootView.getViewTreeObserver().addOnGlobalLayoutListener(
-    new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            boolean isLandscape =
-                    rootView.getWidth() > rootView.getHeight();
 
-            updateVisualizerSize(!isLandscape);
+private void updateVisualizerAfterLayout() {
+    rootView.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (rootView.getWidth() == 0 || rootView.getHeight() == 0) return;
 
-            rootView.getViewTreeObserver()
-                    .removeOnGlobalLayoutListener(this);
+                boolean isLandscape =
+                        rootView.getWidth() > rootView.getHeight();
+
+                updateVisualizerSize(!isLandscape);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    rootView.getViewTreeObserver()
+                            .removeOnGlobalLayoutListener(this);
+                } else {
+                    rootView.getViewTreeObserver()
+                            .removeGlobalOnLayoutListener(this);
+                }
+            }
         }
-    }
-);
+    );
+}
+
     public static float calculateVolumeLevel(Context context) {  //系统音量监控
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
