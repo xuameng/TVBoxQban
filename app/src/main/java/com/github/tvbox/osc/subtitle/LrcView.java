@@ -13,6 +13,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.content.res.Resources;
+import android.util.Log; //xuameng音乐播放动画
 import android.util.DisplayMetrics;
 
 import androidx.annotation.Nullable;
@@ -191,6 +192,8 @@ public class LrcView extends View {
      * @param lrcContent LRC格式歌词内容
      */
     public void setLrcText(String lrcContent) {
+Log.d("LrcView_xuameng", "lrcContent length=" + (lrcContent == null ? "NULL" : lrcContent.length()) + 
+      " first200=" + (lrcContent == null ? "null" : lrcContent.substring(0, Math.min(200, lrcContent.length()))));
         mLrcLines.clear();
 
         // xuameng 新增：逐字格式正则
@@ -312,6 +315,7 @@ public class LrcView extends View {
         if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
             mScrollAnimator.cancel();
         }
+Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size());
         invalidate(); // 立即重绘
     }
 
