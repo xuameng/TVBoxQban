@@ -153,58 +153,71 @@ public class MusicVisualizerView extends View {
             }
         }
 
-        // ==================== xuameng 新增：强音扩散算法 ====================
-        // 找到当前能量最强的主音柱
-        int dominantIndex = 0;
-        float maxTarget = 0f;
-        for (int i = 0; i < BAR_COUNT; i++) {
-            if (mTargetHeights[i] > maxTarget) {
-                maxTarget = mTargetHeights[i];
-                dominantIndex = i;
-            }
+// ==================== xuameng 新增：强音扩散算法 ====================
+// 找到当前能量最强的主音柱
+int dominantIndex = 0;
+float maxTarget = 0f;
+for (int i = 0; i < BAR_COUNT; i++) {
+    if (mTargetHeights[i] > maxTarget) {
+        maxTarget = mTargetHeights[i];
+        dominantIndex = i;
+    }
+}
+
+// xuameng：如果最强音柱高度 <= 视图高度的40%，强制加权到40%
+float weakBeatThreshold = getHeight() * 0.40f;
+float boostTarget = getHeight() * 0.40f;
+
+if (maxTarget <= weakBeatThreshold) {
+    // 直接把主音柱拉到 0.4f，确保视觉上能“弹起来”
+    mTargetHeights[dominantIndex] = Math.max(
+            mTargetHeights[dominantIndex],
+            boostTarget
+    );
+    maxTarget = mTargetHeights[dominantIndex];
+}
+
+// 只对明显强音做扩散（避免微弱信号也扩散导致乱跳）
+// 阈值：主柱高度超过视图高度的8%才触发扩散
+float spreadThreshold = getHeight() * 0.08f;
+if (maxTarget > spreadThreshold) {
+    // 创建临时数组存储扩散后的高度，不破坏原始计算结果
+    float[] spreadHeights = new float[BAR_COUNT];
+    for (int i = 0; i < BAR_COUNT; i++) {
+        spreadHeights[i] = mTargetHeights[i];
+    }
+
+    // 以主音柱为中心，向左右扩散
+    for (int i = 0; i < BAR_COUNT; i++) {
+        int distance = Math.abs(i - dominantIndex);
+        float spreadFactor;
+
+        if (distance == 0) {
+            // 主音柱本身不受影响，保持最高
+            spreadFactor = 1.0f;
+        } else if (distance <= BEAT_SPREAD_RADIUS) {
+            // 相邻柱：距离越近衰减越小，越近越高
+            spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
+        } else {
+            // 超出扩散半径不参与
+            spreadFactor = 0f;
         }
 
-        // 只对明显强音做扩散（避免微弱信号也扩散导致乱跳）
-        // 阈值：主柱高度超过视图高度的10%才触发扩散
-        float spreadThreshold = getHeight() * 0.10f;
-        if (maxTarget > spreadThreshold) {
-            // 创建临时数组存储扩散后的高度，不破坏原始计算结果
-            float[] spreadHeights = new float[BAR_COUNT];
-            for (int i = 0; i < BAR_COUNT; i++) {
-                spreadHeights[i] = mTargetHeights[i];
-            }
-
-            // 以主音柱为中心，向左右扩散
-            for (int i = 0; i < BAR_COUNT; i++) {
-                int distance = Math.abs(i - dominantIndex);
-                float spreadFactor;
-
-                if (distance == 0) {
-                    // 主音柱本身不受影响，保持最高
-                    spreadFactor = 1.0f;
-                } else if (distance <= BEAT_SPREAD_RADIUS) {
-                    // 相邻柱：距离越近衰减越小，越近越高
-                    spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
-                } else {
-                    // 超出扩散半径不参与
-                    spreadFactor = 0f;
-                }
-
-                if (distance > 0 && spreadFactor > 0f) {
-                    // 相邻柱在自身原始高度基础上叠加主柱能量的衰减部分
-                    // 0.85f 控制扩散强度，避免叠加后过高
-                    spreadHeights[i] = mTargetHeights[i]
-                            + maxTarget * spreadFactor * 0.85f;
-                }
-
-                // 限制最大高度不超过视图的95%
-                spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
-            }
-
-            // 将扩散结果写回目标高度数组
-            System.arraycopy(spreadHeights, 0, mTargetHeights, 0, BAR_COUNT);
+        if (distance > 0 && spreadFactor > 0f) {
+            // 相邻柱在自身原始高度基础上叠加主柱能量的衰减部分
+            // 0.85f 控制扩散强度，避免叠加后过高
+            spreadHeights[i] = mTargetHeights[i]
+                    + maxTarget * spreadFactor * 0.85f;
         }
-        // ==================== 强音扩散算法结束 ====================
+
+        // 限制最大高度不超过视图的95%
+        spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
+    }
+
+    // 将扩散结果写回目标高度数组
+    System.arraycopy(spreadHeights, 0, mTargetHeights, 0, BAR_COUNT);
+}
+// ==================== 强音扩散算法结束 ====================
 
     // ==================== xuameng：矮柱二次加权（防死柱） ====================
     float shortBarThreshold = getHeight() * 0.1f;   // 高度 < 10%
