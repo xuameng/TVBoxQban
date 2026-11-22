@@ -23,7 +23,6 @@ import android.animation.ValueAnimator;
  * 8， 20261121新增兜底音柱高度防止音柱消失
  * 9， 20261122判断暂停静音时隐藏音柱，改成64音柱，频段一对一，矮柱两次加权，动画平滑优化
  * 10，20261122实际音柱高度计算颜色，分段防悬空感
- * 11，20261122统一音量响应模型：扩散+余震+主柱兜底+托底全部纳入volumeLevel控制（xuameng 新增）
  */
 public class MusicVisualizerView extends View {
 
@@ -40,6 +39,15 @@ public class MusicVisualizerView extends View {
     // 扩散衰减系数（越大衰减越慢，扩散越远，0~1之间）
     private static final float BEAT_DECAY = 0.80f;
     // =====================================================================
+
+    /** 主音柱最低高度比例（99%） */
+    private static final float DOMINANT_MIN_RATIO = 0.99f;
+
+    /** 弱柱判定阈值（1%） */
+    private static final float WEAK_BAR_THRESHOLD_RATIO = 0.01f;
+
+    /** 余震最大高度比例（15%） */
+    private static final float AFTERSHOCK_MAX_RATIO = 0.15f;
 
     /**
      * 最低可见高度比例（防止小音量时柱子消失）
@@ -118,16 +126,6 @@ public class MusicVisualizerView extends View {
         postInvalidate();
     }
 
-    /**
-     * xuameng 新增：音量因子映射
-     * 将 volumeLevel(0~1) 映射为响应曲线
-     * 平方曲线：小音量变化更明显，大音量不溢出
-     */
-    private float getVolumeFactor(float volumeLevel) {
-        volumeLevel = Math.max(0f, Math.min(1f, volumeLevel));
-        return volumeLevel * volumeLevel;
-    }
-
     public void updateVisualizer(byte[] fft, float volumeLevel) {
         if (fft == null || fft.length < BAR_COUNT * 2 + 2) return;
         // xuameng处理静音状态重置音柱
@@ -162,53 +160,42 @@ public class MusicVisualizerView extends View {
                 }
                 mTargetHeights[i] = Math.min(
                         (magnitude * getHeight() * weight * volumeLevel) / MAX_AMPLITUDE, // xuameng判断音量大小
-                        getHeight() * 0.95f
+                        getHeight() * 0.99f
                 );
             }
         }
 
-        // ==================== 统一音量响应模型（xuameng 20261122 新增） ====================
-        // 整合：扩散 + 余震 + 主柱兜底 + 托底，全部由 volumeLevel 统一驱动
-
-        final float volumeFactor = getVolumeFactor(volumeLevel);
-        float maxH = getHeight();
-
-        // ---------- 1. 归一化能量评估（脱离像素，用 0~1） ----------
+        // ==================== xuameng 新增：强音扩散算法 ====================
+        // 找到当前能量最强的主音柱
         int dominantIndex = 0;
-        float maxEnergy = 0f;  // 归一化能量 0~1
-        float[] normalizedEnergy = new float[BAR_COUNT];
-
+        float maxTarget = 0f;
         for (int i = 0; i < BAR_COUNT; i++) {
-            normalizedEnergy[i] = maxH > 0 ? (mTargetHeights[i] / maxH) : 0f;
-            if (normalizedEnergy[i] > maxEnergy) {
-                maxEnergy = normalizedEnergy[i];
+            if (mTargetHeights[i] > maxTarget) {
+                maxTarget = mTargetHeights[i];
                 dominantIndex = i;
             }
         }
 
-        // ---------- 2. 主柱决策层（xuameng：替代原 DOMINANT_MIN_RATIO 逻辑） ----------
-        // 主柱"够格"判定：归一化能量 × 音量 超过动态阈值
-        // 音量小 → 阈值低 → 容易触发（不死寂）
-        // 音量大 → 阈值高 → 只有真强拍才触发
-        float beatThreshold = 0.08f + 0.12f * volumeFactor; // 8% ~ 20%
-        boolean hasBeat = (maxEnergy > beatThreshold) && (volumeLevel > 0.03f);
+        // ==================== xuameng：音量感知的主柱最低高度保障 ====================
+        // 主柱最低高度 = 99% × 当前音量百分比
+        float dynamicDominantMinRatio = DOMINANT_MIN_RATIO * volumeLevel;
+        float dominantMinHeight = getHeight() * dynamicDominantMinRatio;
 
-        // 主柱兜底：不是"拉满"，而是"给面子"
-        // xuameng：兜底高度随音量软化，不再固定 90%
-        float baseMinRatio = 0.35f + 0.55f * volumeFactor; // 35% ~ 90%
-        float dominantMinEnergy = baseMinRatio * volumeFactor;
-        dominantMinEnergy = Math.max(dominantMinEnergy, beatThreshold * 1.2f);
+        // 防止极端情况（音量极低时仍保留最低可见高度）
+        float minVisibleHeight = getHeight() * MIN_VISIBLE_RATIO;
+        dominantMinHeight = Math.max(dominantMinHeight, minVisibleHeight);
 
-        if (normalizedEnergy[dominantIndex] < dominantMinEnergy) {
-            normalizedEnergy[dominantIndex] = dominantMinEnergy;
-            maxEnergy = dominantMinEnergy;
-            mTargetHeights[dominantIndex] = maxEnergy * maxH;
+        if (maxTarget < dominantMinHeight) {
+            mTargetHeights[dominantIndex] = dominantMinHeight;
+            maxTarget = dominantMinHeight;
         }
+        // ==================== 主柱高度保障结束 ====================
 
-        // ---------- 3. 强音扩散层（xuameng：替代原强音扩散算法） ----------
-        if (hasBeat) {
-            float spreadStrength = 0.25f + 0.70f * volumeFactor; // 0.25 ~ 0.95
-
+        // 只对明显强音做扩散（避免微弱信号也扩散导致乱跳）
+        // 阈值：主柱高度超过视图高度的10%才触发扩散
+        float spreadThreshold = getHeight() * 0.10f;
+        if (maxTarget > spreadThreshold) {
+            // 创建临时数组存储扩散后的高度，不破坏原始计算结果
             float[] spreadHeights = new float[BAR_COUNT];
             for (int i = 0; i < BAR_COUNT; i++) {
                 spreadHeights[i] = mTargetHeights[i];
@@ -217,16 +204,28 @@ public class MusicVisualizerView extends View {
             // 以主音柱为中心，向左右扩散
             for (int i = 0; i < BAR_COUNT; i++) {
                 int distance = Math.abs(i - dominantIndex);
-                if (distance == 0) continue;
+                float spreadFactor;
 
-                if (distance <= BEAT_SPREAD_RADIUS) {
+                if (distance == 0) {
+                    // 主音柱本身不受影响，保持最高
+                    spreadFactor = 1.0f;
+                } else if (distance <= BEAT_SPREAD_RADIUS) {
                     // 相邻柱：距离越近衰减越小，越近越高
-                    float spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
-                    float boost = maxH * maxEnergy * spreadFactor * spreadStrength;
-                    spreadHeights[i] = mTargetHeights[i] + boost;
-                    // 限制最大高度不超过视图的95%
-                    spreadHeights[i] = Math.min(spreadHeights[i], maxH * 0.95f);
+                    spreadFactor = (float) Math.pow(BEAT_DECAY, distance);
+                } else {
+                    // 超出扩散半径不参与
+                    spreadFactor = 0f;
                 }
+
+                if (distance > 0 && spreadFactor > 0f) {
+                    // 相邻柱在自身原始高度基础上叠加主柱能量的衰减部分
+                    // 0.85f 控制扩散强度，避免叠加后过高
+                    spreadHeights[i] = mTargetHeights[i]
+                            + maxTarget * spreadFactor * 0.85f;
+                }
+
+                // 限制最大高度不超过视图的95%
+                spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
             }
 
             // 将扩散结果写回目标高度数组
@@ -234,19 +233,23 @@ public class MusicVisualizerView extends View {
         }
         // ==================== 强音扩散算法结束 ====================
 
-        // ---------- 4. 弱柱余震层（xuameng：替代原余震跟随逻辑） ----------
-        float aftershockMaxEnergy = 0.15f + 0.20f * volumeFactor; // 15% ~ 35%
+        // ==================== xuameng：弱柱余震跟随主音柱 ====================
+
+        float weakThreshold = getHeight() * WEAK_BAR_THRESHOLD_RATIO;  // 1%
+        float aftershockMax = getHeight() * AFTERSHOCK_MAX_RATIO;       // 15%
+
+        // 只在存在明显强音主柱时才启用余震
+        boolean hasDominantBeat = (maxTarget > spreadThreshold);
 
         for (int i = 0; i < BAR_COUNT; i++) {
 
             // 1. 已经是正常柱 → 不干预
-            float weakThreshold = maxH * 0.01f; // 1% 高度作为弱柱阈值
             if (mTargetHeights[i] >= weakThreshold) {
                 continue;
             }
 
             // 2. 弱柱处理
-            if (hasBeat) {
+            if (hasDominantBeat) {
 
                 // 3. 排除已在强音扩散半径内的柱（避免逻辑冲突）
                 int distance = Math.abs(i - dominantIndex);
@@ -254,24 +257,25 @@ public class MusicVisualizerView extends View {
                     continue;
                 }
 
-                // 4. 余震：随机高度 × 音量因子，但不超过上限
+                // 4. 余震：随机高度，但不超过 15%
                 float randomRatio = (float) Math.random(); // 0~1
-                float aftershockEnergy = aftershockMaxEnergy * randomRatio * volumeFactor;
-                float aftershockHeight = aftershockEnergy * maxH;
+                float aftershockHeight = aftershockMax * randomRatio;
 
                 // 5. 至少保留最低可见高度
-                aftershockHeight = Math.max(aftershockHeight, maxH * MIN_VISIBLE_RATIO);
+                aftershockHeight = Math.max(aftershockHeight, getHeight() * MIN_VISIBLE_RATIO);
 
                 mTargetHeights[i] = aftershockHeight;
             } else {
                 // 6. 无强音时：保持最低可见高度（不跳）
-                mTargetHeights[i] = maxH * MIN_VISIBLE_RATIO;
+                mTargetHeights[i] = getHeight() * MIN_VISIBLE_RATIO;
             }
         }
         // ==================== 余震跟随结束 ====================
 
-        // ---------- 5. 最低可见高度托底（统一出口，xuameng 保留原逻辑） ----------
+        // ==================== xuameng 新增：最低可见高度托底 ====================
+        float maxH = getHeight();
         if (maxH <= 0) maxH = 100f;
+
         float minVisibleHeight = maxH * MIN_VISIBLE_RATIO;
 
         for (int i = 0; i < BAR_COUNT; i++) {
@@ -284,8 +288,6 @@ public class MusicVisualizerView extends View {
             }
         }
         // ==================== 托底逻辑结束 ====================
-        // ==================== 统一音量响应模型结束 ====================
-
         startAnimation();
     }
 
