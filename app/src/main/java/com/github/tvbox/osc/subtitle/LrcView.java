@@ -13,7 +13,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.content.res.Resources;
-import android.util.Log; //xuameng音乐播放动画
+import android.util.Log; //xuameng记录字幕播放日志
 import android.util.DisplayMetrics;
 
 import androidx.annotation.Nullable;
@@ -36,6 +36,7 @@ import java.lang.Math;
  * 新增：不是相邻行不不显示滚动动画
  * 新增：播放进度到当前行的上行或多行不显示滚动动画
  * 20260817 新增：高亮进度平滑滤波 解决最版exoplayer对mp3的升级后字幕卡顿问题
+ * 202601122 新增：逐字卡拉OK格式歌词，无歌词时加长提示文字
  */
 public class LrcView extends View {
 
@@ -600,42 +601,42 @@ public class LrcView extends View {
     /**
      * xuameng 新增：逐字卡拉OK绘制
      */
-private void drawKaraokeLine(Canvas canvas, LrcLine line, float y) {
-    float startX = getWidth() / 2 - line.width / 2;
+    private void drawKaraokeLine(Canvas canvas, LrcLine line, float y) {
+        float startX = getWidth() / 2 - line.width / 2;
 
-    // 1. 先画整行普通底色（和老歌词一样）
-    canvas.drawText(line.text, startX, y, mNormalPaint);
+        // 1. 先画整行普通底色（和老歌词一样）
+        canvas.drawText(line.text, startX, y, mNormalPaint);
 
-    Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
-    float textTop = y + fm.top;
-    float textBottom = y + fm.bottom;
+        Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
+        float textTop = y + fm.top;
+        float textBottom = y + fm.bottom;
 
-    long lineElapsed = mCurrentPosition - line.time;
+        long lineElapsed = mCurrentPosition - line.time;
 
-    float x = startX;
-    for (WordInfo w : line.words) {
-        if (lineElapsed >= w.start) {
-            float wordProgress = 1.0f;
-            if (lineElapsed < w.end) {
-                wordProgress = (float)(lineElapsed - w.start) / (w.end - w.start);
-                wordProgress = Math.max(0f, Math.min(1f, wordProgress));
+        float x = startX;
+        for (WordInfo w : line.words) {
+            if (lineElapsed >= w.start) {
+                float wordProgress = 1.0f;
+                if (lineElapsed < w.end) {
+                    wordProgress = (float)(lineElapsed - w.start) / (w.end - w.start);
+                    wordProgress = Math.max(0f, Math.min(1f, wordProgress));
+                }
+
+                if (wordProgress >= 0.99f) wordProgress = 1.0f;
+
+                float highlightWidth = w.width * wordProgress;
+                if (highlightWidth > 0.5f) {
+                    // 关键：用整行 clipRect，但只裁剪当前字的区域
+                    canvas.save();
+                    canvas.clipRect(x, textTop, x + highlightWidth, textBottom);
+                    // 画整行文本，不是逐字！
+                    canvas.drawText(line.text, startX, y, mHighlightPaint);
+                    canvas.restore();
+                }
             }
-
-            if (wordProgress >= 0.99f) wordProgress = 1.0f;
-
-            float highlightWidth = w.width * wordProgress;
-            if (highlightWidth > 0.5f) {
-                // ✅ 关键：用整行 clipRect，但只裁剪当前字的区域
-                canvas.save();
-                canvas.clipRect(x, textTop, x + highlightWidth, textBottom);
-                // ✅ 画整行文本，不是逐字！
-                canvas.drawText(line.text, startX, y, mHighlightPaint);
-                canvas.restore();
-            }
+            x += w.width;
         }
-        x += w.width;
     }
-}
 
     /**
      * 绘制卡拉OK效果
@@ -647,8 +648,8 @@ private void drawKaraokeLine(Canvas canvas, LrcLine line, float y) {
         // 检查是否应该显示歌词 播放进度0.1秒以上才允许显示
         String hint = null;   //xuameng 可以加 歌词载入中...
         if (!mShouldShowLyrics) {
-            // 不显示歌词，显示提示信息
-            hint = null;   //xuameng 可以加 歌词载入中... 现是是什么都不显示
+            // 0.1秒以内不显示歌词，显示提示信息
+            hint = null;   //xuameng 可以加 歌词载入中... 现是是什么都不显示，如改成文字就取消下面的return;
             return;
         } else {
             if (mLrcLines == null || mLrcLines.isEmpty()) {  //0.1秒以上才没有歌词显示
