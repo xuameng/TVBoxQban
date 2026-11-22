@@ -40,14 +40,14 @@ public class MusicVisualizerView extends View {
     private static final float BEAT_DECAY = 0.80f;
     // =====================================================================
 
-    /** 主音柱最低高度比例（50%） */
-    private static final float DOMINANT_MIN_RATIO = 0.50f;
+    /** 主音柱最低高度比例（90%） */
+    private static final float DOMINANT_MIN_RATIO = 0.90f;
 
     /** 弱柱判定阈值（1%） */
     private static final float WEAK_BAR_THRESHOLD_RATIO = 0.01f;
 
     /** 余震最大高度比例（25%） */
-    private static final float AFTERSHOCK_MAX_RATIO = 0.25f;
+    private static final float AFTERSHOCK_MAX_RATIO = 0.30f;
 
     /**
      * 最低可见高度比例（防止小音量时柱子消失）
@@ -229,7 +229,7 @@ public class MusicVisualizerView extends View {
         // ==================== xuameng：弱柱余震跟随主音柱 ====================
 
         float weakThreshold = getHeight() * WEAK_BAR_THRESHOLD_RATIO;  // 1%
-        float aftershockMax = getHeight() * AFTERSHOCK_MAX_RATIO;       // 25%
+        float aftershockMax = getHeight() * AFTERSHOCK_MAX_RATIO;       // 30%
 
         // 只在存在明显强音主柱时才启用余震
         boolean hasDominantBeat = (maxTarget > spreadThreshold);
@@ -250,22 +250,16 @@ public class MusicVisualizerView extends View {
                     continue;
                 }
 
-                // 4. 余震：随机高度，但不超过 25%
+                // 4. 余震：随机高度，但不超过 30%
                 float randomRatio = (float) Math.random(); // 0~1
                 float aftershockHeight = aftershockMax * randomRatio;
 
-                // 5. 距离衰减（越远余震越弱，最大衰减50%）
-                aftershockHeight *= (1f - (float) distance / BAR_COUNT * 0.5f);
-
-                // 6. 随机相位（避免整齐抖动，0.7~1.0）
-                aftershockHeight *= (0.7f + 0.3f * (float) Math.random());
-
-                // 7. 至少保留最低可见高度
+                // 5. 至少保留最低可见高度
                 aftershockHeight = Math.max(aftershockHeight, getHeight() * MIN_VISIBLE_RATIO);
 
                 mTargetHeights[i] = aftershockHeight;
             } else {
-                // 8. 无强音时：保持最低可见高度（不跳）
+                // 6. 无强音时：保持最低可见高度（不跳）
                 mTargetHeights[i] = getHeight() * MIN_VISIBLE_RATIO;
             }
         }
