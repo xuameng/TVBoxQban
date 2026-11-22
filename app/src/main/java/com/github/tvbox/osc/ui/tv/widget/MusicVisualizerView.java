@@ -9,7 +9,7 @@ import android.view.View;
 import android.animation.ValueAnimator;
 
 /**
- * xuameng 20261120
+ * xuameng
  * 音乐可视化视图组件（带振幅颜色渐变）
  * <p>
  * 新增特性：
@@ -19,7 +19,10 @@ import android.animation.ValueAnimator;
  * 4，振幅随音量大小变化
  * 5，三种颜色随机变化
  * 6，新增音柱分段效果
- * 7，强音扩散算法：强节奏时主柱+相邻柱协同弹起，距离越远越矮（xuameng 新增）
+ * 7， 20261120强音扩散算法：强节奏时主柱+相邻柱协同弹起，距离越远越矮（xuameng 新增）
+ * 8， 20261121新增兜底音柱高度防止音柱消失
+ * 9， 20261122判断暂停静音时隐藏音柱，改成64音柱，频段一对一，矮柱两次加权，动画平滑优化
+ * 10，20261122实际音柱高度计算颜色，分段防悬空感
  */
 public class MusicVisualizerView extends View {
 
@@ -36,6 +39,12 @@ public class MusicVisualizerView extends View {
     // 扩散衰减系数（越大衰减越慢，扩散越远，0~1之间）
     private static final float BEAT_DECAY = 0.80f;
     // =====================================================================
+
+/** 弱柱判定阈值（1%） */
+private static final float WEAK_BAR_THRESHOLD_RATIO = 0.01f;
+
+/** 余震最大高度比例（15%） */
+private static final float AFTERSHOCK_MAX_RATIO = 0.15f;
 
     /**
      * 最低可见高度比例（防止小音量时柱子消失）
@@ -206,31 +215,37 @@ public class MusicVisualizerView extends View {
         }
         // ==================== 强音扩散算法结束 ====================
 
-        // ==================== xuameng：矮柱二次加权（防死柱） ====================
-        float shortBarThreshold = getHeight() * 0.1f;   // 高度 < 10%
-        int third = BAR_COUNT / 3; // 21
-        for (int i = 0; i < BAR_COUNT; i++) {
-            if (mTargetHeights[i] < shortBarThreshold) {
+// ==================== xuameng：弱柱余震跟随（替代二次加权） ====================
 
-                float weight;
-                if (i < third) {
-                    weight = 1.2f;
-                } else if (i < third * 2) {
-                    weight = 12.2f;
-                } else {
-                    float freqFactor = (float) Math.pow(1.5, (i - third * 2) / 2.0f);
-                    weight = 12.2f * freqFactor;
-                   weight = Math.min(weight, 50.0f);
-                }
+float weakThreshold = getHeight() * WEAK_BAR_THRESHOLD_RATIO;
+float aftershockMax = getHeight() * AFTERSHOCK_MAX_RATIO;
 
-                // 关键：限制提升上限，防止矮柱突然变高
-                float boosted = mTargetHeights[i] * weight;
-                boosted = Math.min(boosted, shortBarThreshold * 0.7f);
+// 只在存在明显强音主柱时才启用余震
+boolean hasDominantBeat = (maxTarget > spreadThreshold);
 
-                mTargetHeights[i] = Math.max(mTargetHeights[i], boosted);
-            }
-        }
-        // ==================== 矮柱二次加权结束 ====================
+for (int i = 0; i < BAR_COUNT; i++) {
+
+    // 1. 已经是正常柱 → 不干预
+    if (mTargetHeights[i] >= weakThreshold) {
+        continue;
+    }
+
+    // 2. 弱柱处理
+    if (hasDominantBeat) {
+        // 余震：随机高度，但不超过 15%
+        float randomRatio = (float) Math.random(); // 0~1
+        float aftershockHeight = aftershockMax * randomRatio;
+
+        // 至少保留最低可见高度
+        aftershockHeight = Math.max(aftershockHeight, getHeight() * MIN_VISIBLE_RATIO);
+
+        mTargetHeights[i] = aftershockHeight;
+    } else {
+        // 无强音时：保持最低可见高度（不跳）
+        mTargetHeights[i] = getHeight() * MIN_VISIBLE_RATIO;
+    }
+}
+// ==================== 余震跟随结束 ====================
 
         // ==================== xuameng 新增：最低可见高度托底 ====================
         float maxH = getHeight();
@@ -321,7 +336,7 @@ public class MusicVisualizerView extends View {
                 // ========== xuameng: 底部实柱兜底区域（不画分段） ==========
                 float minVisibleHeight = height * MIN_VISIBLE_RATIO;
                 float stripeTop = height - barHeight + minVisibleHeight; // 分段起始Y（从兜底线以上开始）
-                //第一步：画底部实心兜底柱
+                //第一步：画底部实心兜底柱(要不然分段效果会有悬空感)
                 canvas.drawRect(left, height - minVisibleHeight, right, height, mBarPaint);
                 // =========================================================
                 // 动态计算实际能显示的分段数量
