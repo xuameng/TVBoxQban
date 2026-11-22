@@ -40,9 +40,6 @@ public class MusicVisualizerView extends View {
     private static final float BEAT_DECAY = 0.80f;
     // =====================================================================
 
-    /** 主音柱最低高度比例（99%） */
-    private static final float DOMINANT_MIN_RATIO = 0.99f;
-
     /** 弱柱判定阈值（1%） */
     private static final float WEAK_BAR_THRESHOLD_RATIO = 0.01f;
 
@@ -176,21 +173,6 @@ public class MusicVisualizerView extends View {
             }
         }
 
-        // ==================== xuameng：音量感知的主柱最低高度保障 ====================
-        // 主柱最低高度 = 99% × 当前音量百分比
-        float dynamicDominantMinRatio = DOMINANT_MIN_RATIO * volumeLevel;
-        float dominantMinHeight = getHeight() * dynamicDominantMinRatio;
-
-        // 防止极端情况（音量极低时仍保留最低可见高度）
-        float minVisibleHeight = getHeight() * MIN_VISIBLE_RATIO;
-        dominantMinHeight = Math.max(dominantMinHeight, minVisibleHeight);
-
-        if (maxTarget < dominantMinHeight) {
-            mTargetHeights[dominantIndex] = dominantMinHeight;
-            maxTarget = dominantMinHeight;
-        }
-        // ==================== 主柱高度保障结束 ====================
-
         // 只对明显强音做扩散（避免微弱信号也扩散导致乱跳）
         // 阈值：主柱高度超过视图高度的10%才触发扩散
         float spreadThreshold = getHeight() * 0.10f;
@@ -224,8 +206,8 @@ public class MusicVisualizerView extends View {
                             + maxTarget * spreadFactor * 0.85f;
                 }
 
-                // 限制最大高度不超过视图的95%
-                spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.95f);
+                // 限制最大高度不超过视图的99%
+                spreadHeights[i] = Math.min(spreadHeights[i], getHeight() * 0.99f);
             }
 
             // 将扩散结果写回目标高度数组
