@@ -43,8 +43,8 @@ public class MusicVisualizerView extends View {
 /** 弱柱判定阈值（1%） */
 private static final float WEAK_BAR_THRESHOLD_RATIO = 0.01f;
 
-/** 余震最大高度比例（15%） */
-private static final float AFTERSHOCK_MAX_RATIO = 0.15f;
+/** 余震最大高度比例（5%） */
+private static final float AFTERSHOCK_MAX_RATIO = 0.05f;
 
     /**
      * 最低可见高度比例（防止小音量时柱子消失）
@@ -217,8 +217,8 @@ private static final float AFTERSHOCK_MAX_RATIO = 0.15f;
 
 // ==================== xuameng：弱柱余震跟随（替代二次加权） ====================
 
-float weakThreshold = getHeight() * WEAK_BAR_THRESHOLD_RATIO;
-float aftershockMax = getHeight() * AFTERSHOCK_MAX_RATIO;
+float weakThreshold = getHeight() * WEAK_BAR_THRESHOLD_RATIO;  // 1%
+float aftershockMax = getHeight() * AFTERSHOCK_MAX_RATIO;       // 15%
 
 // 只在存在明显强音主柱时才启用余震
 boolean hasDominantBeat = (maxTarget > spreadThreshold);
@@ -232,16 +232,29 @@ for (int i = 0; i < BAR_COUNT; i++) {
 
     // 2. 弱柱处理
     if (hasDominantBeat) {
-        // 余震：随机高度，但不超过 15%
+
+        // 3. 排除已在强音扩散半径内的柱（避免逻辑冲突）
+        int distance = Math.abs(i - dominantIndex);
+        if (distance <= BEAT_SPREAD_RADIUS) {
+            continue;
+        }
+
+        // 4. 余震：随机高度，但不超过 15%
         float randomRatio = (float) Math.random(); // 0~1
         float aftershockHeight = aftershockMax * randomRatio;
 
-        // 至少保留最低可见高度
+        // 5. 距离衰减（越远余震越弱，最大衰减50%）
+        aftershockHeight *= (1f - (float) distance / BAR_COUNT * 0.5f);
+
+        // 6. 随机相位（避免整齐抖动，0.7~1.0）
+        aftershockHeight *= (0.7f + 0.3f * (float) Math.random());
+
+        // 7. 至少保留最低可见高度
         aftershockHeight = Math.max(aftershockHeight, getHeight() * MIN_VISIBLE_RATIO);
 
         mTargetHeights[i] = aftershockHeight;
     } else {
-        // 无强音时：保持最低可见高度（不跳）
+        // 8. 无强音时：保持最低可见高度（不跳）
         mTargetHeights[i] = getHeight() * MIN_VISIBLE_RATIO;
     }
 }
