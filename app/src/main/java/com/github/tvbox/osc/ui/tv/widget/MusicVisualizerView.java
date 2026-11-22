@@ -171,7 +171,7 @@ public class MusicVisualizerView extends View {
         // 整合：扩散 + 余震 + 主柱兜底 + 托底，全部由 volumeLevel 统一驱动
 
         final float volumeFactor = getVolumeFactor(volumeLevel);
-        final float maxH = getHeight();
+        float maxH = getHeight();
 
         // ---------- 1. 归一化能量评估（脱离像素，用 0~1） ----------
         int dominantIndex = 0;
