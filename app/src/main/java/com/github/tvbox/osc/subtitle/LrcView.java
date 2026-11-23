@@ -36,7 +36,122 @@ import java.lang.Math;
  * 新增：不是相邻行不不显示滚动动画
  * 新增：播放进度到当前行的上行或多行不显示滚动动画
  * 20260817 新增：高亮进度平滑滤波 解决最版exoplayer对mp3的升级后字幕卡顿问题
- * 202601122 新增：逐字卡拉OK格式歌词，无歌词时加长提示文字
+ * 20261122 新增：逐字卡拉OK格式歌词，无歌词时加长提示文字
+ * 20261122 新增：逐字歌词“渲染时间轴”平滑推进
+ * 说明：普通歌词走 mSmoothedProgress 滤波，逐字歌词原来是直接吃播放器原始进度，
+ *      播放器（最新版 ExoPlayer 对 MP3 的改动后）上报的进度是离散跳变的，
+ *      而单字时长只有几十~几百毫秒，一次刷新就会跨过半个字甚至整字。
+ *      本次给逐字高亮单独引入一条逐帧推进的平滑时间轴 mRenderTime，
+ *      并且播放中持续逐帧重绘，彻底消除跳字。
+ * 20261123 新增：外部调用seekto时歌词可以实时滚动
+ * 20261123 合并：普通歌词与逐字歌词合并为同一套方案（EXO 平滑方案统一按逐字歌词的做法实现）。
+ *      普通歌词不再走 mSmoothedProgress 滤波，改为和逐字歌词共用同一条逐帧推进的
+ *      平滑时间轴 mRenderTime；由此删除了 mSmoothedProgress 字段，以及围绕它的
+ *      一批进度初始化判断和“普通歌词等铺满”判断，减少两套方案互相冲突。
+ *      现在只有一套高亮逻辑：进度统一由 mRenderTime 决定，
+ *      逐字行按字的起止时间填充，普通行按整行时长线性填充。
+ * 20261123 新增：修复“当前行还在填充时整行闪一下铺满（没唱完就全亮）”的问题。
+ *      规则改为：当前行尚未真正结束时，绝不允许整行铺满高亮；
+ *      只有整行完全结束时，才一次性铺满整行高亮；并且必须等整行完全铺满之后，
+ *      才进入下一行。逐字歌词与普通歌词统一按此规则处理。
+ * 20261123 补充：把上面“换行前先补铺满”的规则，由原来的“仅第 4 行起向前滚动时生效”
+ *      扩展到所有向前换行：前三行（targetLine <= 3，即第 0/1/2/3 行）向前换行时，
+ *      同样先补铺满再换行，但保持原来“直接跳转、不滚动”的行为；
+ *      第 4 行起（targetLine > 3）仍走平滑滚动，让“铺满”可被看到；
+ *      逐字歌词与普通歌词、所有行统一按此规则处理。
+ * 20261123 新增：修复“这行已经走到最后铺满后，会闪一下全白再铺满”的问题。
+ *      原因是播放器上报进度与渲染时间轴在换行瞬间可能有一帧错位，
+ *      导致已铺满的行在下一帧被判定为“未走完”，底色白字被重新画出（闪白）。
+ *      现给每一行加一个 fullyLit 标记：一旦某行被判定为铺满（mRenderTime 到达行结束时刻），
+ *      这个标记就永久置 true；之后不管时间轴怎么波动，这一行都永远保持整行高亮，
+ *      不再退回到未高亮状态。普通歌词、逐字歌词、前三行统一按此规则处理。
+ * 20261123 新增：修复“高亮铺满时英文/粗体最右侧最后一个字盖不住白字、露出小白边”的问题。
+ *      根源是 Paint.measureText 返回的是排版 advance width 而非视觉绘制边界，
+ *      fakeBold 加粗 + 抗锯齿 + 英文字形（延伸笔画/斜体）会让高亮实际绘制比测量宽度
+ *      向右多 1~3px，导致 clipRect 按测量宽度裁切时切到笔画露白。
+ *      现给所有 clipRect 的右边界统一加 2.5px 溢出补偿，让高亮抗锯齿/粗体/字形延伸
+ *      都能完整画出；未结束阶段仍然通过封顶值保证不提前铺满。
+ *      普通歌词、逐字歌词、前三行统一走 drawKaraokeLine，因此全部生效。
+ * 20261123 修复：seek（拖进度条）后 fullyLit 没有重置的问题。
+ *      现象：调用 seekTo 回到上一行时，之前已经铺满的行还保持全黄，但进度实际在画第一个字，
+ *      原因是 fullyLit 只在 reset()/setLrcText() 里重置，seek 跳转时没有重置。
+ *      现在抽出统一的 resetFullyLitStates() 方法，在下列所有"时间轴被打断/跳转"入口调用：
+ *        1) 往回 seek（RENDER_BACKWARD_SEEK_TOLERANCE_MS 检测）；
+ *        2) 回到开头（position < MIN_POSITION_TO_SHOW）；
+ *        3) 初始定位（mIsInitialPositioning 首次对齐）；
+ *        4) 跨行跳转（快进/跨多行 seek，lineDistance > MAX_SCROLL_DISTANCE），
+ *           并把 mRenderTime 硬对齐到当前 position；
+ *        5) 相邻向后（回到上一行）跳转，同时把 mRenderTime 硬对齐到当前 position；
+ *      正常相邻向前换行（先补铺满再进下一行）不重置 fullyLit，让防闪白规则继续生效。
+ *      普通歌词、逐字歌词、前三行全部统一生效。
+ * 20261123 修改：去掉老代码“不是相邻行就不显示滚动动画”的遗留限制。
+ *      改为：前三行保持“不滚动、直接跳转”不变；其余行（含跨多行）一律显示滚动动画；
+ *      只有 seek/跳转时才不显示滚动动画、直接跳转，防止 seek 后动画乱滚不好看。
+ *      实现：新增 mSeekJump 标记，setSeekPosition 以及 updateTime 的回退兜底检测都会置位，
+ *      updateTime 开头消费一次；跨行分支与向后分支据此决定“滚动”还是“直接跳转”。
+ *      普通歌词、逐字歌词统一生效。
+ * 20261123 修改（修正）：前三行“铺满后延时 300ms 再关闭高亮”的观感优化，明确语义——
+ *      跳转立即发生（mCurrentLine 立刻切到下一行，新行从第一个字开始正常高亮），
+ *      只是上一行（前三行范围内）在它原本的屏幕位置再保持整行高亮 300ms（= mScrollDuration），
+ *      之后才变回白字。
+ * 20261123 修改（调整）：上述“上一行高亮延时关闭”的时长已改为独立参数
+ *      mPrevHighlightDuration = 150ms，与原 300ms(= mScrollDuration) 解耦，
+ *      即：只把这段延时从 300ms 缩短到 150ms，滚动动画时长不受影响、第 4 行起行为不变。
+ *      实现方式：新增 mPrevHighlightLineIndex / mPrevHighlightExpireNanos
+ *      两个字段，前三行向前换行时登记“刚离开的上一行”为延时高亮行，onDraw 画非当前行时
+ *      如果命中且未到期，就画成整行高亮；到期后恢复普通白字并持续重绘到那一时点。
+ *      seek/reset/初始定位/跨行跳转时会清空这个标记，避免高亮残留。第 4 行起行为不变。
+ * 20261123 新增：双语歌词（中英文对照等“同时间结相邻两行”）独立逻辑。
+ *      判定规则：解析并排序去重完成后，扫描 mLrcLines，若相邻两行的 time 完全相等，
+ *      则认定为双语歌词（mIsBilingual = true），第一行为主歌词（isMaster=true），
+ *      第二行为辅歌词（isTranslation=true，masterIndex 指向对应主行下标）。
+ *      辅歌词不占独立的"行槽"，不参与 targetLine 定位与换行计数（查找目标行时自动跳过辅行）；
+ *      辅行字号 = 主行的 2/3；辅行默认颜色为中灰色（0xFF999999）；
+ *      辅行高亮颜色与主行高亮一致（黄色/或宿主通过 setHighlightColor 设置的颜色）；
+ *      主行与辅行的高亮完全同步（同一时间戳、同一结束时刻、同一进度）；
+ *      主行与辅行之间的间距 = 正常行间距的一半（约为主行字号的 0.25 倍）；
+ *      其它所有原有逻辑（逐字/普通、铺满规则、防闪白、seek 重置、滚动、前三行延时、白边补偿）
+ *      全部保持不变，双语相关代码为独立新增实现，不修改原有流程分支。
+ * 20261123 修复：双语歌词字号与主辅间距不一致的问题。
+ *      1) 辅行字号由主行的 0.5 倍改为 2/3（BILINGUAL_TRANS_SIZE_RATIO = 2f/3f）；
+ *      2) 修正"正在唱的主副行间距正常、已唱/未唱行间距挤在一起、段与段之间间距被拉大"的问题：
+ *         原因是 onDraw 里给当前行做了"主行上移 masterLift"的居中处理，但非当前行主行
+ *         没做同样的上移，辅行的 Y 计算却仍减去了 masterLift，导致非当前行辅行几乎贴在主行下方，
+ *         并把下一行槽位的间距挤掉、段间看起来变宽。
+ *         现改为：主行 baseline 固定在槽位 y，辅行 baseline 统一为 y + transBaselineOffset，
+ *         正在唱/已唱/未唱三类行使用完全相同的 Y 公式，主副间距一致，段间间距恢复正常。
+ *         段间间距保持现状（双语一屏显示约 6 行主行+对应辅行，视觉上正好），不做进一步压缩。
+ * 20261123 修复：双语歌词下 seekTo 有时仍会触发滚动动画的问题。
+ *      根因：向前相邻换行分支（lineDistance == 1）的 if (targetLine > 3) 漏判了 seekJump，
+ *            导致 seek 到第 4 行起的相邻下一行时仍会调用 smoothScrollTo，动画就被触发了。
+ *      修复：1) 把判断改为 if (targetLine > 3 && !seekJump)，seek 时走 else 直接跳转、
+ *            不播动画，并在 seek 跳转分支额外 resetFullyLitStates + clearPrevHighlight +
+ *            mRenderTime 硬对齐，保证目标行从第一个字开始唱；
+ *            2) 对称新增"向前大幅跳变兜底"（RENDER_FORWARD_SEEK_TOLERANCE_MS = 2000ms），
+ *            宿主直接把进度往前跳一大段而没调 setSeekPosition 时，同样当作 seek 处理、不滚动；
+ *            3) 大距离 seek 分支补 clearPrevHighlight()，防止前三行延时高亮残留；
+ *            4) 向后 seek 兜底分支也补了 clearPrevHighlight()，保持对称。
+ *      效果：无论宿主是否调用 setSeekPosition，只要是 seek/跳转一律取消滚动动画；
+ *            正常播放（含向前、向后、跨多行）在非前三行时一律滚动；前三行保持不滚动。
+ *      其它（逐字/普通高亮、铺满规则、防闪白、seek 重置 fullyLit、白边补偿、前三行延时 222ms、
+ *      双语逻辑、段间距）全部保持原样未动。
+ *
+ * 20261123 优化：收紧双语歌词"组与组之间"的行间距（用户反馈原组间距是正常行间距的好几倍、太宽）。
+ *      根因：双语主+辅一组被塞进了单行 1.5S 的槽位（S=主行字号），主+辅总高约 1.08S，
+ *            剩下 0.42S 全留给了组间白边；而正常单行两行之间视觉间距只有约 0.15S，所以显得空。
+ *      修复：新增常量 BILINGUAL_GROUP_LINE_HEIGHT_RATIO = 1.2f，双语模式下每组（主+辅）
+ *            槽位高度从 1.5S 改为 1.2S；单语/非双语仍用 1.5S，完全不受影响。
+ *            改后组间视觉白边约 0.12S，比正常行间距略小，视觉紧凑不空旷。
+ *            滚动动画按"行槽"做比例偏移，双语/单语各自槽高一致，动画不会错位。
+ * 20261123 修复：双语歌曲里"单语歌词行"行距被压小的问题。
+ *      现象："既有双语又有单语"的歌曲，单语语句之间的行距比"全是单语歌词"的歌曲明显小。
+ *      根因：onDraw 用整首歌级别的 mIsBilingual 统一决定行槽高度——只要全曲存在任意一处双语对，
+ *            所有行（含单语行）的槽位都被设成双语组槽高 1.2S，单语行原本的 1.5S 被压掉。
+ *      修复：槽位高度改为"逐行判断"——双语对（主+辅）槽位 1.2S，普通单语行槽位 1.5S，
+ *            并逐槽累加各行的 Y 位置（新增 getSlotHeight(index) 与 onDraw 内的 slotOffsets 累加）。
+ *            纯单语歌曲、纯双语歌曲的布局结果与改前完全一致，仅"混合"歌曲的单语行间距恢复成 1.5S。
+ *            滚动偏移改用"当前行的槽高"作步长，相邻换行时与真实像素距离一致，双语/单语都不错位。
+ *      其它（高亮推进、铺满/防闪白、seek 重置、前三行延时、白边补偿、双语配对识别）全部未动。
  */
 public class LrcView extends View {
 
@@ -58,10 +173,20 @@ public class LrcView extends View {
         String text; // 歌词文本
         float width; // 文本宽度（用于绘制）
         List<WordInfo> words; // xuameng 新增：逐字信息，null表示普通行（非逐字格式）
+        boolean fullyLit; // xuameng 新增：是否已经完全铺满高亮（铺满后不再退回未高亮状态，防止闪白）
+        // ===== xuameng 新增：双语歌词相关标记 =====
+        boolean isMaster;      // 是否是双语对中的"主歌词行"（同时间结对中的第一行）
+        boolean isTranslation; // 是否是双语对中的"辅歌词/译词行"（同时间结对中的第二行）
+        int masterIndex;       // 辅行字段：指向对应主行在 mLrcLines 中的下标；主行为 -1
+        float transWidth;      // 辅行字段：辅行文本在辅行字号下的宽度
     }
 
     private List<LrcLine> mLrcLines = new ArrayList<>();
     private Paint mNormalPaint, mHighlightPaint;
+    // ===== xuameng 新增：双语辅歌词独立画笔（不与主歌词共享，避免字号/颜色互相污染） =====
+    private Paint mTransNormalPaint, mTransHighlightPaint;
+    private boolean mIsBilingual = false; // xuameng 新增：当前歌词是否是双语（存在同时间结相邻行）
+
     private int mCurrentLine = 0;
     private long mCurrentPosition = 0;
 
@@ -77,10 +202,62 @@ public class LrcView extends View {
     private boolean mIsInitialPositioning = true;
     // 最大滚动距离（行数）
     private static final int MAX_SCROLL_DISTANCE = 1;
-    // 新增：高亮进度平滑滤波 =====
-    private float mSmoothedProgress = 0f;
 
+    // ===== xuameng：统一的平滑时间轴（普通歌词与逐字歌词共用） =====
+    // 说明：合并前普通歌词用 mSmoothedProgress 滤波、逐字歌词用 mRenderTime 时间轴；
+    //      合并后两者只保留这一条 mRenderTime，普通歌词与逐字歌词的高亮都由它推进。
+    private float mRenderTime = 0f;              // 平滑渲染时间轴（毫秒，浮点），高亮只认它
+    private long mLastFrameNanos = 0L;           // 上一帧的系统时间，用于计算帧间隔
+    private long mLastPositionChangeNanos = 0L;  // 播放器进度“数值发生变化”的最近时间
+    private long mLastHostPosition = Long.MIN_VALUE; // 上一次的播放器进度，用于判断有没有前进
+    private boolean mIsPlaying = false;          // 播放状态（宿主通过 setPlaying/updateTime 告知）
+    private float mPlaybackSpeed = 1.0f;         // 播放倍速，变速播放时同步调用 setPlaybackSpeed
+    // xuameng 新增：标记“本次 updateTime 是否由 seek/跳转触发”。
+    // 为 true 时换行不显示滚动动画、直接跳转（防止 seek 后动画乱滚不好看）；
+    // 为 false（正常播放换行）时一律显示滚动动画。updateTime 开头消费一次即复位。
+    private boolean mSeekJump = false;
 
+    // xuameng 新增：前三行换行时，让“刚离开的上一行”在原位置保持整行高亮 mScrollDuration(默认222ms)
+    // 再熄灭变回白字，而不是切换瞬间立即变白。这样即使前三行时间非常短，肉眼也能看到“铺满”再消失。
+    // 注意：这只是“高亮延时关闭”，不影响 mCurrentLine 的切换——换行立即发生，新行立刻从第一个字开始唱。
+    // xuameng 修改：上述延时时长已从“复用 mScrollDuration(300ms)”独立出来，改为下面的
+    // mPrevHighlightDuration，并缩短为 150ms。此改动只影响“上一行高亮延时关闭”的等待时长，
+    // 滚动动画时长仍为 mScrollDuration(300ms)，两者不再联动。
+    // 以后想再调短/调长，只改下面这一个数字即可（与 setScrollDuration 互不影响）。
+    private int mPrevHighlightDuration = 222; // 前三行“上一行高亮延时关闭”的时长（毫秒）
+    private int mPrevHighlightLineIndex = -1; // 需要延时熄灭高亮的行下标；-1 表示没有
+    private long mPrevHighlightExpireNanos = 0L; // 延时高亮的到期时刻（System.nanoTime() 纳秒）
+
+    /** 每帧向播放器真实进度收敛的系数：越小越平滑、越大越跟手，0.03~0.12 之间比较合适 */
+    private static final float RENDER_SYNC_GAIN = 0.05f;
+    // xuameng 新增：向前大幅跳变兜底阈值（毫秒）。
+    // 正常播放相邻两行时间差一般在几百毫秒到 1~2 秒；若一帧前进超过 2 秒，
+    // 说明用户向前拖了进度条或宿主直接跳进度（部分播放器此时不会调 setSeekPosition），
+    // 此时应当作 seek 处理——不播放滚动动画、重置 fullyLit、硬对齐时间轴。
+    private static final long RENDER_FORWARD_SEEK_TOLERANCE_MS = 2000L;
+    /** 单帧最大推进量，防止掉帧/切后台回来后一次冲过头 */
+    private static final float RENDER_MAX_FRAME_MS = 64f;
+    /** 播放器进度长时间不前进则视为暂停，冻结时间轴（需明显大于宿主的轮询间隔） */
+    private static final long RENDER_IDLE_TIMEOUT_MS = 1000L;
+    /** 与播放器真实进度相差超过该值视为 seek/跳转，时间轴直接硬对齐 */
+    private static final long RENDER_RESYNC_THRESHOLD_MS = 800L;
+    /** 向后 seek 判定：正常播放进度只会前进，倒退超过该值即认定用户拖回了进度条 */
+    private static final long RENDER_BACKWARD_SEEK_TOLERANCE_MS = 250L;
+    /** xuameng：调试日志开关。逐帧重绘时务必关闭，否则日志本身会把渲染拖慢 */
+    private static final boolean DEBUG_LOG = false;
+
+    // ===== xuameng 新增：双语歌词外观常量（可按需微调） =====
+    // xuameng 修改：辅行字号由主行的 0.5 倍改为主行的 2/3（≈0.667）
+    private static final float BILINGUAL_TRANS_SIZE_RATIO = 2f / 3f;
+    private static final int   BILINGUAL_TRANS_NORMAL_COLOR = 0xFF999999; // 辅行默认颜色：中灰色
+    // ===== xuameng 新增：双语组（主+辅）占用的槽位高度（相对主行字号的倍数）。
+    // 原来直接复用单行 lineHeight=1.5S，导致组间白边是正常行间距的好几倍；
+    // 改成 1.2S 后：主+辅总高约 1.08S，剩下约 0.12S 作为组间距白边，比正常行间距略小，视觉紧凑不空旷。
+    // 单语/非双语行仍走 1.5S 的 lineHeight，完全不受此常量影响 =====
+    private static final float BILINGUAL_GROUP_LINE_HEIGHT_RATIO = 1.2f;
+    // 主副歌词之间的间距比例：正常行间距 = 主行字号 * 0.5f（因 lineHeight = textSize*1.5，两行 baseline 之间是 1.5*textSize，
+    // 也就是字外额外 0.5*textSize 的间距）；主副之间取其一半 = 主行字号 * 0.25f。
+    private static final float BILINGUAL_MASTER_TRANS_GAP_RATIO = 0.25f;
 
     public LrcView(Context context) {
         super(context);
@@ -113,6 +290,20 @@ public class LrcView extends View {
         mHighlightPaint.setColor(Color.YELLOW);
         mHighlightPaint.setShadowLayer(3, 1, 1, Color.BLACK);
         mHighlightPaint.setFakeBoldText(true);
+
+        // ===== xuameng 新增：双语辅行画笔独立初始化，默认字号跟随主行的 BILINGUAL_TRANS_SIZE_RATIO 倍 =====
+        mTransNormalPaint = new Paint();
+        mTransNormalPaint.setAntiAlias(true);
+        mTransNormalPaint.setTextSize(36 * BILINGUAL_TRANS_SIZE_RATIO);
+        mTransNormalPaint.setColor(BILINGUAL_TRANS_NORMAL_COLOR);
+        mTransNormalPaint.setShadowLayer(2, 1, 1, Color.BLACK); // 辅行阴影略小
+
+        mTransHighlightPaint = new Paint();
+        mTransHighlightPaint.setAntiAlias(true);
+        mTransHighlightPaint.setTextSize(36 * BILINGUAL_TRANS_SIZE_RATIO);
+        mTransHighlightPaint.setColor(Color.YELLOW); // 与主行高亮颜色保持一致（setHighlightColor 会同步更新）
+        mTransHighlightPaint.setShadowLayer(2, 1, 1, Color.BLACK);
+        mTransHighlightPaint.setFakeBoldText(false); // 辅行不加粗，视觉上作为副文本
     }
 
     /**
@@ -133,6 +324,8 @@ public class LrcView extends View {
         // 将 sp 转换为 px 以便与字幕的字体大小一致
         float pxSize = spToPx(getContext(), textSize);
         mNormalPaint.setTextSize(pxSize);
+        // xuameng 新增：同步更新辅行字号（主行的 2/3）
+        mTransNormalPaint.setTextSize(pxSize * BILINGUAL_TRANS_SIZE_RATIO);
         // 重新计算所有歌词行的宽度
         recalculateLineWidths();
         invalidate();
@@ -147,6 +340,8 @@ public class LrcView extends View {
         // 将 sp 转换为 px 以便与字幕的字体大小一致
         float pxSize = spToPx(getContext(), textSize);
         mHighlightPaint.setTextSize(pxSize);
+        // xuameng 新增：同步更新辅行高亮字号（主行的 2/3）
+        mTransHighlightPaint.setTextSize(pxSize * BILINGUAL_TRANS_SIZE_RATIO);
         // 重新计算所有歌词行的宽度
         recalculateLineWidths();
         invalidate();
@@ -157,11 +352,16 @@ public class LrcView extends View {
      */
     private void recalculateLineWidths() {
         for (LrcLine line : mLrcLines) {
-            line.width = mNormalPaint.measureText(line.text);
-            // xuameng 新增：同步计算逐字宽度
+            // xuameng 修改：双语辅行用辅行画笔测量宽度，主行/普通行用主行画笔
+            Paint measurePaint = line.isTranslation ? mTransNormalPaint : mNormalPaint;
+            line.width = measurePaint.measureText(line.text);
+            if (line.isTranslation) {
+                line.transWidth = line.width; // 辅行同时记录 transWidth
+            }
+            // xuameng 新增：同步计算逐字宽度（逐字字段只在主行/普通行存在，辅行默认没有 words）
             if (line.words != null) {
                 for (WordInfo w : line.words) {
-                    w.width = mNormalPaint.measureText(w.text);
+                    w.width = measurePaint.measureText(w.text);
                 }
             }
         }
@@ -184,7 +384,66 @@ public class LrcView extends View {
      */
     public void setHighlightColor(int color) {
         mHighlightPaint.setColor(color);
+        // xuameng 新增：辅行高亮颜色与主行同步
+        mTransHighlightPaint.setColor(color);
         invalidate();
+    }
+
+    /**
+     * xuameng 新增：设置播放状态
+     * 强烈建议宿主在 Player.Listener#onIsPlayingChanged 里调用它，
+     * 这样暂停时高亮会立刻冻结，不需要靠“进度不前进”去猜。
+     *
+     * @param playing 是否正在播放
+     */
+    public void setPlaying(boolean playing) {
+        if (mIsPlaying == playing) {
+            return;
+        }
+        mIsPlaying = playing;
+        if (playing) {
+            // 从暂停恢复：只有偏差明显（seek 或长时间漂移）才硬对齐。
+            // 原来这里是无条件 mRenderTime = mCurrentPosition，这是“高亮往回走一点”的主因之一：
+            // seek 期间宿主不会调用 updateTime，mCurrentPosition 仍是 seek 之前的旧值，
+            // 恢复播放时会把已经平滑的时间轴拽回旧位置，之后才慢慢爬向新位置。
+            if (Math.abs((float) mCurrentPosition - mRenderTime) > RENDER_RESYNC_THRESHOLD_MS) {
+                mRenderTime = mCurrentPosition;
+            }
+            mLastPositionChangeNanos = System.nanoTime();
+        }
+        mLastFrameNanos = 0L; // 重置帧计时，避免把暂停时长算进下一帧
+        if (playing) {
+            postInvalidateOnAnimation();
+        }
+    }
+
+    /**
+     * xuameng 新增：设置播放倍速（变速播放时调用，保证时间轴推进速度一致）
+     *
+     * @param speed 倍速，默认 1.0f
+     */
+    public void setPlaybackSpeed(float speed) {
+        if (speed > 0.1f && speed < 5.0f) {
+            mPlaybackSpeed = speed;
+        }
+    }
+
+    /**
+     * xuameng 新增：宿主 seekTo 之后立即调用（推荐）
+     * 时间轴瞬时对齐到 seek 的目标位置，绝不做平滑追赶，从根上避免“高亮往回走一点”。
+     * 暂停状态下 seek 也能立刻反映到画面上（此时宿主不会走正常的进度轮询）。
+     *
+     * @param position seek 的目标位置（毫秒）
+     */
+    public void setSeekPosition(long position) {
+        mRenderTime = position;                 // 时间轴先行硬对齐
+        mCurrentPosition = position;
+        mLastHostPosition = position;           // 同步基准，避免下一次被当成倒退再对齐一次
+        mLastPositionChangeNanos = System.nanoTime();
+        mLastFrameNanos = 0L;                   // 重置帧计时，seek 的耗时不算进下一帧
+        // xuameng 新增：标记本次为 seek/跳转触发，换行时不显示滚动动画（直接跳转）
+        mSeekJump = true;
+        updateTime(position, mIsPlaying);       // 复用定位/换行/滚动逻辑，立即刷新画面
     }
 
     /**
@@ -194,9 +453,13 @@ public class LrcView extends View {
      */
     public void setLrcText(String lrcContent) {
         // xuameng debug
-        Log.d("LrcView_xuameng", "lrcContent length=" + (lrcContent == null ? "NULL" : lrcContent.length()) + 
-              " first200=" + (lrcContent == null ? "null" : lrcContent.substring(0, Math.min(200, lrcContent.length()))));
+        if (DEBUG_LOG) {
+            Log.d("LrcView_xuameng", "lrcContent length=" + (lrcContent == null ? "NULL" : lrcContent.length()) +
+                  " first200=" + (lrcContent == null ? "null" : lrcContent.substring(0, Math.min(200, lrcContent.length()))));
+        }
         mLrcLines.clear();
+        // xuameng 新增：重置双语标记，避免上一首歌词的标记残留
+        mIsBilingual = false;
 
         // xuameng 新增：逐字格式正则
         // 正则1：逐字格式行首 [数字,数字] 或 [数字.数字]，如 [0,1064] 或 [0.570]
@@ -222,10 +485,12 @@ public class LrcView extends View {
                 // xuameng 修改：酷狗逐字格式 [开始毫秒, 持续毫秒]
                 long t1 = Long.parseLong(secMatcher.group(1));
                 long t2 = Long.parseLong(secMatcher.group(2));
-                
+
                 // xuameng debug
-                Log.d("LrcView_xuameng", "逐字行原始: t1=" + t1 + " t2=" + t2 + " line=" + line.substring(0, Math.min(60, line.length())));
-                
+                if (DEBUG_LOG) {
+                    Log.d("LrcView_xuameng", "逐字行原始: t1=" + t1 + " t2=" + t2 + " line=" + line.substring(0, Math.min(60, line.length())));
+                }
+
                 long lineTime;
                 if (t1 > 1000 || t2 < 1000) {
                     // t1 很大说明是绝对毫秒；t2 很小说明 t1 是秒
@@ -237,7 +502,9 @@ public class LrcView extends View {
                 }
 
                 // xuameng debug
-                Log.d("LrcView_xuameng", "逐字行 lineTime=" + lineTime + "ms (" + lineTime/1000 + "s)");
+                if (DEBUG_LOG) {
+                    Log.d("LrcView_xuameng", "逐字行 lineTime=" + lineTime + "ms (" + lineTime/1000 + "s)");
+                }
 
                 String afterBracket = line.substring(secMatcher.end());
                 Matcher wordMatcher = patternWord.matcher(afterBracket);
@@ -266,6 +533,11 @@ public class LrcView extends View {
                     lrcLine.text = fullText.toString();
                     lrcLine.width = mNormalPaint.measureText(fullText.toString());
                     lrcLine.words = words;
+                    // xuameng 新增：默认非双语标记（detectBilingualPairs 后面会覆盖）
+                    lrcLine.isMaster = false;
+                    lrcLine.isTranslation = false;
+                    lrcLine.masterIndex = -1;
+                    lrcLine.transWidth = 0f;
                     for (WordInfo w : words) {
                         w.width = mNormalPaint.measureText(w.text);
                     }
@@ -310,6 +582,11 @@ public class LrcView extends View {
                     lrcLine.text = text;
                     lrcLine.width = mNormalPaint.measureText(text);
                     lrcLine.words = null; // 普通行，无逐字信息
+                    // xuameng 新增：默认非双语标记
+                    lrcLine.isMaster = false;
+                    lrcLine.isTranslation = false;
+                    lrcLine.masterIndex = -1;
+                    lrcLine.transWidth = 0f;
                     mLrcLines.add(lrcLine);
                 }
             }
@@ -322,23 +599,80 @@ public class LrcView extends View {
         // 移除重复的歌词行
         removeDuplicateLines();
 
+        // ===== xuameng 新增：排序去重完成后，检测并标记双语同时间结对 =====
+        detectBilingualPairs();
+        // 双语标记之后再统一测量一次宽度（保证辅行用辅行画笔测宽）
+        recalculateLineWidths();
+
         // xuameng debug：打印前5行时间
-        for (int i = 0; i < Math.min(5, mLrcLines.size()); i++) {
-            Log.d("LrcView_xuameng", "排序后 line[" + i + "] time=" + mLrcLines.get(i).time + " text=" + mLrcLines.get(i).text.substring(0, Math.min(15, mLrcLines.get(i).text.length())));
+        if (DEBUG_LOG) {
+            for (int i = 0; i < Math.min(5, mLrcLines.size()); i++) {
+                Log.d("LrcView_xuameng", "排序后 line[" + i + "] time=" + mLrcLines.get(i).time
+                        + " master=" + mLrcLines.get(i).isMaster
+                        + " trans=" + mLrcLines.get(i).isTranslation
+                        + " text=" + mLrcLines.get(i).text.substring(0, Math.min(15, mLrcLines.get(i).text.length())));
+            }
+            Log.d("LrcView_xuameng", "mIsBilingual=" + mIsBilingual);
         }
 
         // 重置所有状态
         mShouldShowLyrics = false;
         mCurrentLine = 0; // 总是从第0行开始
         mScrollOffset = 0f;
-        mSmoothedProgress = 0f;
         mCurrentPosition = 0;
         mIsInitialPositioning = true; // 新增：重置初始定位状态
+        // xuameng 新增：重置每一行的“已铺满”标记，防止旧歌词的标记残留
+        resetFullyLitStates();
+        // xuameng 新增：重置平滑时间轴
+        mRenderTime = 0f;
+        mLastFrameNanos = 0L;
+        mLastHostPosition = Long.MIN_VALUE;
+        mLastPositionChangeNanos = 0L;
         if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
             mScrollAnimator.cancel();
         }
-        Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size());
+        // xuameng 新增：换歌词时清掉延时高亮标记
+        clearPrevHighlight();
+        if (DEBUG_LOG) {
+            Log.d("LrcView_xuameng", "setLrcText done, mLrcLines.size()=" + mLrcLines.size());
+        }
         invalidate(); // 立即重绘
+    }
+
+    /**
+     * xuameng 新增：在排序与去重之后扫描 mLrcLines，
+     * 若相邻两行 time 完全相等，则认定为双语对：第一行 isMaster=true，第二行 isTranslation=true。
+     * 只识别相邻同时间结对（中英文对照歌词的典型排布）；不处理 3 行以上同时间结。
+     * 辅行 masterIndex 指向其主行；扫描时跳过上一对已被占用的主行/辅行。
+     */
+    private void detectBilingualPairs() {
+        mIsBilingual = false;
+        if (mLrcLines == null || mLrcLines.size() < 2) {
+            return;
+        }
+        // 先把所有行的双语标记重置一遍
+        for (LrcLine line : mLrcLines) {
+            line.isMaster = false;
+            line.isTranslation = false;
+            line.masterIndex = -1;
+            line.transWidth = 0f;
+        }
+        int i = 0;
+        while (i < mLrcLines.size() - 1) {
+            LrcLine cur = mLrcLines.get(i);
+            LrcLine next = mLrcLines.get(i + 1);
+            // 同时间结且文本不同（文本相同的视为重复行，已经被 removeDuplicateLines 处理过）
+            if (cur.time == next.time && !cur.text.equals(next.text)) {
+                cur.isMaster = true;
+                cur.masterIndex = -1;
+                next.isTranslation = true;
+                next.masterIndex = i;
+                mIsBilingual = true;
+                i += 2; // 跳过这一对，避免把第三行/错位行错误并入
+            } else {
+                i += 1;
+            }
+        }
     }
 
     /**
@@ -378,7 +712,6 @@ public class LrcView extends View {
         if (lineDiff == 0) {
             return; // 无需滚动
         }
-        mSmoothedProgress = 0f;
         // 设置动画
         mScrollAnimator = ValueAnimator.ofFloat(0f, (float) lineDiff);
         mScrollAnimator.setDuration(mScrollDuration);
@@ -397,7 +730,6 @@ public class LrcView extends View {
                 // 动画结束后更新当前行
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
-                mSmoothedProgress = 0f; 
             }
 
             @Override
@@ -405,7 +737,6 @@ public class LrcView extends View {
                 // 动画取消时也更新当前行
                 mCurrentLine = targetLine;
                 mScrollOffset = 0f;
-                mSmoothedProgress = 0f; 
             }
 
         });
@@ -414,21 +745,121 @@ public class LrcView extends View {
     }
 
     /**
-     * 更新播放进度
+     * xuameng 新增：推进高亮的平滑时间轴（普通歌词与逐字歌词共用）
+     * 规则：按帧自主推进（保证连续） + 缓慢向播放器真实进度收敛（保证不跑偏）
+     *
+     * @return 时间轴本次是否真的在推进（用于决定要不要请求下一帧）
+     */
+    private boolean advanceRenderTime() {
+        long now = System.nanoTime();
+        if (mLastFrameNanos == 0L) {
+            mLastFrameNanos = now;
+            return false;
+        }
+        float dtMs = (now - mLastFrameNanos) / 1_000_000f;
+        mLastFrameNanos = now;
+        if (dtMs <= 0f) {
+            return false;
+        }
+        if (dtMs > RENDER_MAX_FRAME_MS) {
+            dtMs = RENDER_MAX_FRAME_MS; // 掉帧保护
+        }
+
+        // 播放器进度是否还在前进（暂停、宿主停止轮询时都会停止前进）
+        boolean progressAlive = (mLastPositionChangeNanos != 0L)
+                && (now - mLastPositionChangeNanos) < RENDER_IDLE_TIMEOUT_MS * 1_000_000L;
+
+        if (mIsPlaying && progressAlive) {
+            // 1) 按帧自主推进：这才是高亮平滑的关键，不再依赖播放器给的时间精度
+            mRenderTime += dtMs * mPlaybackSpeed;
+            // 2) 缓慢收敛到真实进度：消除系统时钟与音频时钟的漂移，误差不会累积
+            mRenderTime += (mCurrentPosition - mRenderTime) * RENDER_SYNC_GAIN;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 更新播放进度（旧入口，默认按“正在播放”处理）
+     * 内部会结合“进度数值有没有变化”自动识别暂停，宿主不改代码也能基本可用。
      *
      * @param position 当前播放时间（毫秒）
      */
     public void updateTime(long position) {
-        // xuameng debug
-        Log.d("LrcView_xuameng", "updateTime pos=" + position + " shouldShow=" + mShouldShowLyrics + " currentLine=" + mCurrentLine + " lines=" + (mLrcLines == null ? 0 : mLrcLines.size()));
+        updateTime(position, true);
+    }
+
+    /**
+     * xuameng 新增：更新播放进度 + 播放状态（推荐宿主使用这个重载）
+     *
+     * @param position 当前播放时间（毫秒）
+     * @param playing  是否正在播放
+     */
+    public void updateTime(long position, boolean playing) {
+        long now = System.nanoTime();
+        long previousHostPosition = mLastHostPosition; // 新增：先留住上一次进度，用于判断前进还是倒退
+
+        if (position != mLastHostPosition) {
+            mLastHostPosition = position;
+            mLastPositionChangeNanos = now;
+        }
+        mIsPlaying = playing;
+
+        // xuameng 新增：本次更新是否由 seek/跳转触发（消费一次即复位），
+        // 供下面的换行逻辑判断：是显示滚动动画，还是直接跳转。
+        boolean seekJump = mSeekJump;
+        mSeekJump = false;
+
+        if (DEBUG_LOG) {
+            Log.d("LrcView_xuameng", "updateTime pos=" + position + " playing=" + playing
+                    + " render=" + mRenderTime + " shouldShow=" + mShouldShowLyrics
+                    + " currentLine=" + mCurrentLine + " lines=" + (mLrcLines == null ? 0 : mLrcLines.size()));
+        }
+
+        // xuameng 新增：seek / 跳转 / 首次进入时，平滑时间轴直接硬对齐，不做平滑追赶
+        if (Math.abs((float) position - mRenderTime) > RENDER_RESYNC_THRESHOLD_MS) {
+            mRenderTime = position;
+        }
+
+        // xuameng 新增：向后 seek 检测（宿主没有调用 setSeekPosition 时的兜底）
+        // 正常播放进度只会前进；本次进度比上次倒退超过阈值，就说明用户把进度条拖回去了，
+        // 必须立刻硬对齐。否则差值落在 800ms 阈值以内时会走 RENDER_SYNC_GAIN 慢收敛，
+        // 表现为高亮以极小步幅一点点往回爬，也就是“高亮往回走一点”。
+        if (previousHostPosition != Long.MIN_VALUE
+                && position < previousHostPosition - RENDER_BACKWARD_SEEK_TOLERANCE_MS) {
+            mRenderTime = position;
+            // xuameng 新增：往回 seek（拖进度条回上一段/上一行）时，重置所有行的“已铺满”标记，
+            // 否则之前已经唱完、fullyLit=true 的行会在跳回去后仍保持整行高亮，
+            // 出现“进度回到第一个字但整行已经黄了”的问题。
+            resetFullyLitStates();
+            // xuameng 新增：兜底检测到的回退同样属于 seek/跳转，换行时不显示滚动动画
+            seekJump = true;
+            // xuameng 新增：回退时清掉前三行延时高亮，避免与新位置不符
+            clearPrevHighlight();
+        }
+
+        // xuameng 新增：向前大幅跳变兜底（宿主直接往前跳进度、没调 setSeekPosition 时的保护）。
+        // 正常播放相邻两行时间差一般 < 2s；一帧前进超过 2000ms 就认定是向前 seek，
+        // 此时同样不播滚动动画、重置 fullyLit、硬对齐时间轴，防止跨多行时触发动画乱滚。
+        if (previousHostPosition != Long.MIN_VALUE
+                && position > previousHostPosition + RENDER_FORWARD_SEEK_TOLERANCE_MS) {
+            mRenderTime = position;
+            resetFullyLitStates();
+            clearPrevHighlight();
+            seekJump = true;
+        }
 
         // 检查是否达到最小显示位置
         if (position < MIN_POSITION_TO_SHOW) {
-            // 进度小于1秒，不显示歌词，但保持在第一行
+            // 进度小于0.1秒，不显示歌词，但保持在第一行
             mShouldShowLyrics = false;
             mCurrentLine = 0; // 确保强制重置到第一行
             mScrollOffset = 0f; // 重置滚动偏移
-            mSmoothedProgress = 0f;
+            mRenderTime = position; // 新增：时间轴同步重置
+            // xuameng 新增：回到开头也属于时间跳转，重置 fullyLit
+            resetFullyLitStates();
+            // xuameng 新增：回到开头时清掉延时高亮
+            clearPrevHighlight();
             invalidate();
             return;
         }
@@ -446,42 +877,59 @@ public class LrcView extends View {
             return;
         }
 
-        // xuameng 修改：反向查找最后一个 time <= position 的行
+        // xuameng 修改：反向查找最后一个 time <= position 的"非辅行"行，
+        // 辅行（isTranslation==true）不参与 targetLine 定位与换行计数，永远跟随其主行。
+        // 非双语模式下 isTranslation 始终为 false，行为与原来完全一致。
         int targetLine = 0;
 
-        // 如果当前时间比第一行还早，保持在第一行
-        if (position < mLrcLines.get(0).time) {
-            targetLine = 0;
+        // 如果当前时间比第一行还早，保持在第一行（第一行若是辅行，则取其主行）
+        LrcLine firstLine = mLrcLines.get(0);
+        int firstLogicalLine = firstLine.isTranslation ? firstLine.masterIndex : 0;
+        if (position < firstLine.time) {
+            targetLine = firstLogicalLine;
         } else {
-            // 否则找到合适的时间点
+            // 否则反向查找：找到最后一个 time <= position 且不是辅行的行
+            boolean found = false;
             for (int i = mLrcLines.size() - 1; i >= 0; i--) {
-                if (position >= mLrcLines.get(i).time) {
+                LrcLine l = mLrcLines.get(i);
+                if (l.isTranslation) {
+                    continue; // 跳过辅行，不把它当成换行目标
+                }
+                if (position >= l.time) {
                     targetLine = i;
+                    found = true;
                     break;
                 }
             }
+            if (!found) {
+                targetLine = firstLogicalLine;
+            }
+        }
+
+        // xuameng 新增：保证 mCurrentLine 也永远落在主行/普通行上，不停在辅行下标
+        if (mCurrentLine >= 0 && mCurrentLine < mLrcLines.size()
+                && mLrcLines.get(mCurrentLine).isTranslation) {
+            mCurrentLine = mLrcLines.get(mCurrentLine).masterIndex;
         }
 
         // xuameng debug
-        Log.d("LrcView_xuameng", "updateTime targetLine=" + targetLine + " lineTime=" + mLrcLines.get(targetLine).time);
+        if (DEBUG_LOG) {
+            Log.d("LrcView_xuameng", "updateTime targetLine=" + targetLine + " lineTime=" + mLrcLines.get(targetLine).time);
+        }
 
         // 关键修改：处理初始定位
         if (mIsInitialPositioning) {
             // 初始定位阶段，直接跳转到目标行，不执行滚动动画
             mCurrentLine = targetLine;
             mScrollOffset = 0f;
-            // 初始化新行的进度，避免高亮从头开始
-            long newLineTime = mLrcLines.get(targetLine).time;
-            long nextTime = (targetLine + 1 < mLrcLines.size())
-                    ? mLrcLines.get(targetLine + 1).time
-                    : newLineTime + 5000;
-            long duration = nextTime - newLineTime;
-            if (duration > 0 && mCurrentPosition >= newLineTime) {
-                float initProgress = (float) (mCurrentPosition - newLineTime) / duration;
-                mSmoothedProgress = Math.max(0f, Math.min(1f, initProgress));
-            } else {
-                mSmoothedProgress = 0f;
-            }
+            // 合并后高亮进度由平滑时间轴直接决定：初始定位时把时间轴硬对齐到当前进度，
+            // 高亮自然落在正确位置，不再需要单独初始化行进度
+            mRenderTime = position; // xuameng 新增：初始定位时时间轴硬对齐
+            // xuameng 新增：初始定位（含 setLrcText 后的首次定位）时重置 fullyLit，
+            // 避免旧歌词/上一次播放残留的整行高亮标记污染新位置。
+            resetFullyLitStates();
+            // xuameng 新增：初始定位时清掉延时高亮
+            clearPrevHighlight();
             mIsInitialPositioning = false; // 定位完成，退出初始状态
             invalidate();
             return;
@@ -489,73 +937,110 @@ public class LrcView extends View {
 
         // 正常播放中的滚动逻辑
         if (targetLine != mCurrentLine) {
-            // 计算目标行与当前行的距离和方向
+            // 计算目标行与当前行的距离和方向（这里的行下标都是主行/普通行，已跳过辅行）
             int lineDiff = targetLine - mCurrentLine;
             int lineDistance = Math.abs(lineDiff);
-    
+
             // 判断滚动方向：正数表示向前（下一行），负数表示向后（上一行）
             boolean isForward = lineDiff > 0;
-    
-            // 如果距离超过阈值（不是相邻行），直接跳转而不滚动
+
+            // xuameng 修改：去掉老代码“不是相邻行就不显示滚动动画”的遗留限制。
+            // 现在只有 seek/跳转（seekJump）才不显示滚动动画、直接跳转（防止动画乱滚不好看）；
+            // 正常播放时无论跨几行都显示滚动动画。
             if (lineDistance > MAX_SCROLL_DISTANCE) {
-                if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
-                    mScrollAnimator.cancel();
-                }
-                // 直接跳转逻辑
-                mCurrentLine = targetLine;
-                mScrollOffset = 0f;
-                // 初始化新行的进度，避免高亮从头开始
-                long newLineTime = mLrcLines.get(targetLine).time;
-                long nextTime = (targetLine + 1 < mLrcLines.size())
-                        ? mLrcLines.get(targetLine + 1).time
-                        : newLineTime + 5000;
-                long duration = nextTime - newLineTime;
-                if (duration > 0 && mCurrentPosition >= newLineTime) {
-                    float initProgress = (float) (mCurrentPosition - newLineTime) / duration;
-                    mSmoothedProgress = Math.max(0f, Math.min(1f, initProgress));
-                } else {
-                    mSmoothedProgress = 0f;
-                }
-                invalidate();
-            } else {
-                // 相邻行：只有向前滚动（到下一行）才执行平滑滚动
-                if (isForward && targetLine > 3) {
-                    smoothScrollTo(targetLine);
-                } else {
-                    // 向后滚动（到上一行）或前三行：直接跳转
+                if (seekJump) {
+                    // seek / 跳转：取消动画，直接跳转
                     if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
                         mScrollAnimator.cancel();
                     }
-                    // 只有前三行向前才等铺满（逐字歌词直接切换，不等铺满）
-                    if (isForward && targetLine <= 3 && mSmoothedProgress < 1f) {
-                        LrcLine line = mLrcLines.get(mCurrentLine);
-                        if (line.words != null && !line.words.isEmpty()) {
-                            // 逐字歌词：直接跳转，不走等铺满
-                            mCurrentLine = targetLine;
-                            mScrollOffset = 0f;
-                            mSmoothedProgress = 0f;
-                            invalidate();
-                            return;
-                        }
-                        // 普通歌词：等铺满
-                        invalidate();
-                        return;
-                    }
+                    resetFullyLitStates();
+                    clearPrevHighlight(); // xuameng 新增：seek 跨多行时清掉前三行延时高亮
+                    mRenderTime = position;
                     mCurrentLine = targetLine;
                     mScrollOffset = 0f;
-                    // 初始化新行的进度，避免高亮从头开始
-                    long newLineTime = mLrcLines.get(targetLine).time;
-                    long nextTime = (targetLine + 1 < mLrcLines.size())
-                            ? mLrcLines.get(targetLine + 1).time
-                            : newLineTime + 5000;
-                    long duration = nextTime - newLineTime;
-                    if (duration > 0 && mCurrentPosition >= newLineTime) {
-                        float initProgress = (float) (mCurrentPosition - newLineTime) / duration;
-                        mSmoothedProgress = Math.max(0f, Math.min(1f, initProgress));
-                    } else {
-                        mSmoothedProgress = 0f;
-                    }
                     invalidate();
+                } else {
+                    // 正常播放跨行（含双语歌词隔行换行）：
+                    // 已在滚动就直接忽略本次，绝不 cancel —— cancel 会触发 onAnimationCancel，
+                    // 把 mCurrentLine 直接设成目标行并清零偏移，动画当场被打断，看起来就是直接跳转。
+                    if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
+                        return;
+                    }
+                    resetFullyLitStates();
+                    mRenderTime = position;
+                    smoothScrollTo(targetLine);
+                }
+            } else {
+                // xuameng 修改：向前换行先补铺满，保证“铺满之后才进入下一行”；
+                // 是否滚动沿用原规则——前三行（targetLine <= 3，即第 0/1/2/3 行）不滚动、
+                // 直接跳转；第 4 行起（targetLine > 3）才走平滑滚动。
+                // xuameng 修复：第 4 行起还需要额外满足 !seekJump——seek/跳转时一律不播滚动动画，
+                // 防止 seek 到相邻下一行（lineDistance == 1）时仍触发 smoothScrollTo 导致动画乱滚。
+                if (isForward) {
+                    // xuameng 新增：进入下一行之前，先确认当前行已经“完全铺满”。
+                    // 若时间轴还没走完当前行，就把它补到当前行结束时刻（整行立即完全铺满），
+                    // 再执行换行；从根上保证“完全铺满高亮之后，才进入下一行”。
+                    // 注意：这一步对所有向前换行都执行（含前三行），只补铺满、不改变是否滚动。
+                    long currentLineEnd = getLineEndTime(mCurrentLine);
+                    if (mRenderTime < currentLineEnd) {
+                        mRenderTime = currentLineEnd;
+                    }
+                    // xuameng 修复：原判断 if (targetLine > 3) 漏了 !seekJump，
+                    // 导致 seek 到第 4 行起的相邻下一行时仍然启动滚动动画。
+                    // 现改为：只有"不是 seek"并且"目标行在第 4 行之后"才走平滑滚动。
+                    if (targetLine > 3 && !seekJump) {
+                        smoothScrollTo(targetLine);
+                    } else {
+                        // 前三行 / seek 触发：上面已把时间轴补到当前行结束（逻辑上已完整铺满），
+                        // 此处立即跳转、不播放滚动动画。
+                        // xuameng 新增：跳转前把“刚离开的上一行”登记为延时高亮行（仅非 seek 的前三行换行才登记），
+                        // 让它在原位置再保持一段短延时整行高亮再熄灭变白，
+                        // 避免前三行时间太短肉眼看不到铺满。
+                        // 注意：mCurrentLine 立刻切到 targetLine，新行从第一个字开始正常唱，不做等待。
+                        int justLeftLine = mCurrentLine;
+                        if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
+                            mScrollAnimator.cancel();
+                        }
+                        mCurrentLine = targetLine;
+                        mScrollOffset = 0f;
+                        // xuameng 新增：seek 跳转时额外重置 fullyLit 并硬对齐时间轴，
+                        // 保证目标行从第一个字开始唱，不会残留之前的整行黄。
+                        if (seekJump) {
+                            resetFullyLitStates();
+                            clearPrevHighlight();
+                            mRenderTime = position;
+                        }
+                        // 登记延时高亮：仅限前三行（justLeftLine <= 3），并且不是 seek/跳转触发
+                        if (!seekJump && justLeftLine >= 0 && justLeftLine <= 3 && justLeftLine != targetLine) {
+                            mPrevHighlightLineIndex = justLeftLine;
+                            // xuameng 修改：改用独立的 mPrevHighlightDuration(222ms)，不再复用 mScrollDuration(300ms)
+                            mPrevHighlightExpireNanos = System.nanoTime() + (long) mPrevHighlightDuration * 1_000_000L;
+                        } else {
+                            clearPrevHighlight(); // seek 触发时不保留延时高亮，避免与实际进度不符
+                        }
+                        invalidate();
+                    }
+                } else {
+                    // 向后滚动（到上一行）
+                    if (mScrollAnimator != null && mScrollAnimator.isRunning()) {
+                        mScrollAnimator.cancel();
+                    }
+                    // 合并后普通歌词与逐字歌词同为一套方案：高亮进度统一由平滑时间轴决定，
+                    // 换行时不再需要按行类型分别初始化进度，也不再需要“普通歌词等铺满”的判断
+                    // xuameng 新增：回到上一行（向后 seek 一格）也重置 fullyLit，
+                    // 保证回去后从第一个字重新唱，不会保留整行黄。
+                    resetFullyLitStates();
+                    // xuameng 新增：向后跳转时清掉延时高亮
+                    clearPrevHighlight();
+                    mRenderTime = position; // 回到上一行时时间轴硬对齐
+                    // xuameng 修改：只有 seek/跳转才不显示滚动动画；正常播放回到上一行照样滚动
+                    if (seekJump) {
+                        mCurrentLine = targetLine;
+                        mScrollOffset = 0f;
+                        invalidate();
+                    } else {
+                        smoothScrollTo(targetLine);
+                    }
                 }
             }
         } else {
@@ -565,7 +1050,7 @@ public class LrcView extends View {
     }
 
     /**
-     * 新增：手动设置是否显示歌词
+     * xuameng 新增：手动设置是否显示歌词
      *
      * @param show 是否显示歌词
      */
@@ -574,6 +1059,53 @@ public class LrcView extends View {
             mShouldShowLyrics = show;
             invalidate();
         }
+    }
+
+    /**
+     * xuameng 新增：重置所有行的“已铺满”标记。
+     * 用于 seek / 跨行跳转 / 初始定位 / 回退 这类“时间轴被手动打断”的场景：
+     * 必须在重绘前把 fullyLit 清空，否则之前已经唱过、fullyLit=true 的行会在跳回去后
+     * 仍保持整行高亮，出现“进度回到第一个字但整行已经黄了”的问题。
+     */
+    private void resetFullyLitStates() {
+        if (mLrcLines == null) {
+            return;
+        }
+        for (LrcLine line : mLrcLines) {
+            line.fullyLit = false;
+        }
+    }
+
+    /**
+     * xuameng 新增：清除“前三行上一行延时高亮”标记。
+     * 在 seek / reset / 初始定位 / 跨行跳转 / 回到开头 / 回退 等打断播放的入口统一调用，
+     * 避免跳转后上一行还挂着延时高亮、或者标记过期时间不准导致高亮残留。
+     */
+    private void clearPrevHighlight() {
+        mPrevHighlightLineIndex = -1;
+        mPrevHighlightExpireNanos = 0L;
+    }
+
+    /**
+     * xuameng 新增：计算 mLrcLines 某个下标所占用"槽位"的高度（像素，用于垂直布局）。
+     * - 双语对（主行 + 其辅行）所在的槽位：BILINGUAL_GROUP_LINE_HEIGHT_RATIO * S（默认 1.2S）；
+     * - 普通单语行（不属于任何双语对）所在的槽位：1.5S，与"全是单语歌词"的歌曲完全一致。
+     * 关键点：本方法按"每一行自己是不是双语对"逐行判断，而不是看整首歌有没有双语对。
+     * 原来 onDraw 用整首歌级别的 mIsBilingual 统一决定行高，只要歌曲里出现任意一处双语，
+     * 全曲所有单语行的槽位也会被压成 1.2S，导致"既有双语又有单语"的歌曲里单语行间距变小。
+     * 现在逐槽判断后，单语行间距恒为 1.5S（=全单语歌曲），双语对槽位仍是 1.2S（双语观感不变）。
+     */
+    private float getSlotHeight(int index) {
+        float masterSize = mNormalPaint.getTextSize();
+        float singleLineHeight = masterSize * 1.5f;
+        float bilingualGroupHeight = masterSize * BILINGUAL_GROUP_LINE_HEIGHT_RATIO;
+        if (mLrcLines != null && index >= 0 && index < mLrcLines.size()) {
+            LrcLine line = mLrcLines.get(index);
+            if (line.isMaster || line.isTranslation) {
+                return bilingualGroupHeight;
+            }
+        }
+        return singleLineHeight;
     }
 
     /**
@@ -593,49 +1125,168 @@ public class LrcView extends View {
         mCurrentPosition = 0;
         mCurrentLine = 0;
         mScrollOffset = 0f;
-        mSmoothedProgress = 0f;  
         mIsInitialPositioning = true; // 新增：重置初始定位状态
+        // xuameng 新增：重置每一行的“已铺满”标记
+        resetFullyLitStates();
+        // xuameng 新增：清除前三行“上一行延时高亮”标记
+        clearPrevHighlight();
+        // xuameng 新增：重置平滑时间轴
+        mRenderTime = 0f;
+        mLastFrameNanos = 0L;
+        mLastHostPosition = Long.MIN_VALUE;
+        mLastPositionChangeNanos = 0L;
+        // xuameng 新增：重置双语标记
+        mIsBilingual = false;
         invalidate();
     }
 
     /**
-     * xuameng 新增：逐字卡拉OK绘制
+     * xuameng 新增：取某一行“整行真正走完”的时刻（绝对时间，毫秒）。
+     * - 逐字行：行起始时间 + 最后一个字在本行内的结束偏移；
+     * - 普通行：下一个"非辅行"行的起始时间（最后一行没有下一行，退化为 起始时间 + 5000ms）。
+     * 该时刻用于判定“整行是否完整结束”：未结束不许铺满，结束后必须铺满。
+     * 双语模式下，辅行不参与"下一行时间"计算，直接跳到下一个主行/普通行。
+     *
+     * @param index 行的下标（必须是主行/普通行，不应是辅行）
+     * @return 整行结束的绝对时间（毫秒）
      */
-    private void drawKaraokeLine(Canvas canvas, LrcLine line, float y) {
-        float startX = getWidth() / 2 - line.width / 2;
+    private long getLineEndTime(int index) {
+        if (index < 0 || index >= mLrcLines.size()) {
+            return Long.MAX_VALUE;
+        }
+        LrcLine line = mLrcLines.get(index);
+        if (line.words != null && !line.words.isEmpty()) {
+            long wordsEnd = 0;
+            for (WordInfo w : line.words) {
+                if (w.end > wordsEnd) {
+                    wordsEnd = w.end;
+                }
+            }
+            return line.time + wordsEnd;
+        } else {
+            // xuameng 修改：双语模式下找"下一个非辅行"作为 endTime，跳过 isTranslation 的行
+            long nextTime = line.time + 5000;
+            for (int k = index + 1; k < mLrcLines.size(); k++) {
+                LrcLine nl = mLrcLines.get(k);
+                if (!nl.isTranslation) {
+                    nextTime = nl.time;
+                    break;
+                }
+            }
+            return nextTime;
+        }
+    }
 
-        // 1. 先画整行普通底色（和老歌词一样）
-        canvas.drawText(line.text, startX, y, mNormalPaint);
+    /**
+     * xuameng 新增：卡拉OK高亮绘制的通用版本，允许传入"普通/高亮画笔"对，
+     * 这样主行与辅行可以共用同一套逐字/逐像素裁剪逻辑，只是画笔（字号/颜色/粗体）不同。
+     * 原 drawKaraokeLine(canvas, line, index, y) 保留不动，内部转调本重载使用主行画笔。
+     */
+    private void drawKaraokeLine(Canvas canvas, LrcLine line, int index, float y,
+                                 Paint normalPaint, Paint highlightPaint) {
+        float lineWidth = line.isTranslation ? line.transWidth : line.width;
+        float startX = getWidth() / 2 - lineWidth / 2;
 
-        Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
+        // 1. 先画整行普通底色
+        canvas.drawText(line.text, startX, y, normalPaint);
+
+        Paint.FontMetrics fm = highlightPaint.getFontMetrics();
         float textTop = y + fm.top;
         float textBottom = y + fm.bottom;
 
-        long lineElapsed = mCurrentPosition - line.time;
+        // 高亮进度统一由平滑时间轴决定
+        float lineElapsed = mRenderTime - line.time;
 
-        float x = startX;
-        for (WordInfo w : line.words) {
-            if (lineElapsed >= w.start) {
-                float wordProgress = 1.0f;
-                if (lineElapsed < w.end) {
-                    wordProgress = (float)(lineElapsed - w.start) / (w.end - w.start);
-                    wordProgress = Math.max(0f, Math.min(1f, wordProgress));
+        // 判断"当前行是否已经完整结束"
+        long lineEndTime = getLineEndTime(line.isTranslation ? line.masterIndex : index);
+        boolean lineCompleted = (mRenderTime >= lineEndTime) || line.fullyLit;
+        if (lineCompleted && !line.fullyLit) {
+            line.fullyLit = true;
+        }
+        float fullRight = startX + lineWidth;
+
+        // 英文/粗体右边界溢出补偿（主行 2.5px；辅行字号小，溢出也小，用 1.5px 就够）
+        final float HIGHLIGHT_OVERFLOW_PAD = line.isTranslation ? 1.5f : 2.5f;
+
+        float maxVisibleRight;
+        if (!lineCompleted) {
+            float margin = Math.max(1f, Math.min(3f, lineWidth * 0.004f));
+            maxVisibleRight = fullRight - margin;
+        } else {
+            maxVisibleRight = fullRight + HIGHLIGHT_OVERFLOW_PAD;
+        }
+        float maxDrawRight = maxVisibleRight - HIGHLIGHT_OVERFLOW_PAD;
+
+        // 已铺满的行：直接整行高亮，不走逐字/逐像素裁剪
+        if (line.fullyLit) {
+            canvas.drawText(line.text, startX, y, highlightPaint);
+            return;
+        }
+
+        if (line.words != null && !line.words.isEmpty()) {
+            // ===== 逐字歌词：每个字按自己的起止时间推进 =====
+            float x = startX;
+            for (WordInfo w : line.words) {
+                if (lineElapsed >= w.start) {
+                    float wordProgress = 1.0f;
+                    long wordDur = w.end - w.start;
+                    if (wordDur > 0 && lineElapsed < w.end) {
+                        wordProgress = (lineElapsed - w.start) / (float) wordDur;
+                        wordProgress = Math.max(0f, Math.min(1f, wordProgress));
+                    }
+                    if (wordProgress > 0.99f) wordProgress = 1.0f;
+                    float highlightWidth = w.width * wordProgress;
+                    float wordRight = Math.min(x + highlightWidth, maxDrawRight);
+                    float clipRight = wordRight + HIGHLIGHT_OVERFLOW_PAD;
+                    if (clipRight - x > 0.5f) {
+                        canvas.save();
+                        canvas.clipRect(x, textTop, clipRight, textBottom);
+                        // 注意：辅行一般没有 words 字段（双语普通歌词），这里用传入的 highlightPaint 画
+                        canvas.drawText(line.text, startX, y, highlightPaint);
+                        canvas.restore();
+                    }
                 }
-
-                if (wordProgress >= 0.99f) wordProgress = 1.0f;
-
-                float highlightWidth = w.width * wordProgress;
-                if (highlightWidth > 0.5f) {
-                    // 关键：用整行 clipRect，但只裁剪当前字的区域
-                    canvas.save();
-                    canvas.clipRect(x, textTop, x + highlightWidth, textBottom);
-                    // 画整行文本，不是逐字！
-                    canvas.drawText(line.text, startX, y, mHighlightPaint);
-                    canvas.restore();
+                x += w.width;
+            }
+        } else {
+            // ===== 普通歌词：整行按行时长线性推进 =====
+            // 行时长：找下一个非辅行的 time
+            long nextTime = line.time + 5000;
+            int searchFrom = line.isTranslation ? line.masterIndex : index;
+            for (int k = searchFrom + 1; k < mLrcLines.size(); k++) {
+                LrcLine nl = mLrcLines.get(k);
+                if (!nl.isTranslation) {
+                    nextTime = nl.time;
+                    break;
                 }
             }
-            x += w.width;
+            long duration = nextTime - line.time;
+            float progress = 0f;
+            if (duration > 0) {
+                progress = (mRenderTime - line.time) / (float) duration;
+                progress = Math.max(0f, Math.min(1f, progress));
+            }
+            if (progress > 0.99f) progress = 1.0f;
+            float highlightWidth = lineWidth * progress;
+            if (highlightWidth > maxDrawRight) {
+                highlightWidth = maxDrawRight;
+            }
+            float clipRight = startX + highlightWidth + HIGHLIGHT_OVERFLOW_PAD;
+            if (clipRight - startX > 0.5f) {
+                canvas.save();
+                canvas.clipRect(startX, textTop, clipRight, textBottom);
+                canvas.drawText(line.text, startX, y, highlightPaint);
+                canvas.restore();
+            }
         }
+    }
+
+    /**
+     * xuameng 新增：卡拉OK高亮绘制（主行版本），保持与原签名完全一致，
+     * 内部转调支持自定义画笔的重载，使用主行 mNormalPaint/mHighlightPaint。
+     */
+    private void drawKaraokeLine(Canvas canvas, LrcLine line, int index, float y) {
+        drawKaraokeLine(canvas, line, index, y, mNormalPaint, mHighlightPaint);
     }
 
     /**
@@ -665,16 +1316,70 @@ public class LrcView extends View {
             return;
         }
 
+        // xuameng 新增：推进高亮平滑时间轴（必须放在绘制之前）
+        boolean timeAdvancing = advanceRenderTime();
+
         // 计算总高度和起始Y位置，实现垂直居中
-        float lineHeight = mNormalPaint.getTextSize() * 1.5f;
+        float masterTextSize = mNormalPaint.getTextSize();
+        // xuameng 修改：槽位高度改为"逐行判断"——
+        // 双语对（主+辅）槽位 = BILINGUAL_GROUP_LINE_HEIGHT_RATIO * S（默认 1.2S，双语观感不变）；
+        // 普通单语行槽位 = 1.5S，与"全是单语歌词"的歌曲完全一致。
+        // 原实现用整首歌级别 mIsBilingual 统一决定行高，导致"既有双语又有单语"的歌曲里
+        // 单语行间距也被压成 1.2S；现在逐槽累加后该问题消除，且纯单语 / 纯双语歌曲结果与改前完全一致。
         int visibleLines = Math.min(mLrcLines.size(), 7); // 显示最多7行歌词
-        float totalHeight = lineHeight * visibleLines;
-        // 将浮点数偏移转换为整数像素，避免亚像素渲染问题
-        float scrollOffsetPixels = Math.round(mScrollOffset * lineHeight);  //滚动偏移像素
-        float startY = (getHeight() - totalHeight) / 2 + mNormalPaint.getTextSize() - scrollOffsetPixels;  // 计算起始Y位置，使当前行居中显示  并滚动
+
         // 计算实际可见的行范围，确保不会超出歌词列表边界
         int startLineIndex = Math.max(0, mCurrentLine - 3);
-        int endLineIndex = Math.min(mLrcLines.size() - 1, mCurrentLine + 3);
+
+        // xuameng 新增：逐槽累加各槽位相对窗口顶部的高度
+        // （slotOffsets[k] = 窗口内第 k 个槽位相对起点的偏移；槽位高度由 getSlotHeight 逐行判断）
+        float[] slotOffsets = new float[visibleLines + 1];
+        slotOffsets[0] = 0f;
+        for (int k = 0; k < visibleLines; k++) {
+            slotOffsets[k + 1] = slotOffsets[k] + getSlotHeight(startLineIndex + k);
+        }
+        float totalHeight = slotOffsets[visibleLines];
+        // 滚动偏移像素：以"当前行的槽高"为步长（mScrollOffset 的单位是 mLrcLines 下标步数，
+        // 相邻换行时 mScrollOffset × 当前行槽高正好等于两行之间的真实像素距离，双语/单语都对齐）
+        float scrollStep = getSlotHeight(mCurrentLine);
+        float scrollOffsetPixels = Math.round(mScrollOffset * scrollStep);
+        float startY = (getHeight() - totalHeight) / 2 + masterTextSize - scrollOffsetPixels;
+
+        // xuameng 新增：在开始绘制前，先判断“前三行上一行延时高亮”是否已经到期。
+        // 到期后把标记清掉，该位置就会恢复普通白字绘制；未到期则持续重绘直到那一时点。
+        long drawNowNanos = System.nanoTime();
+        boolean prevHighlightStillOn;
+        if (mPrevHighlightLineIndex >= 0) {
+            if (drawNowNanos >= mPrevHighlightExpireNanos) {
+                clearPrevHighlight(); // 到期熄灭
+                prevHighlightStillOn = false;
+            } else {
+                prevHighlightStillOn = true;
+            }
+        } else {
+            prevHighlightStillOn = false;
+        }
+
+        // ===== xuameng 新增：提前判断当前行是否是"双语主行（需要顺带画辅行）" =====
+        boolean currentHasTranslation = false;
+        LrcLine currentTransLine = null;
+        if (mIsBilingual && mCurrentLine >= 0 && mCurrentLine < mLrcLines.size()) {
+            LrcLine curLine = mLrcLines.get(mCurrentLine);
+            if (curLine.isMaster && mCurrentLine + 1 < mLrcLines.size()) {
+                LrcLine next = mLrcLines.get(mCurrentLine + 1);
+                if (next.isTranslation && next.masterIndex == mCurrentLine) {
+                    currentHasTranslation = true;
+                    currentTransLine = next;
+                }
+            }
+        }
+        // 主辅之间的间距 = 主行字号 * 0.25（正常行间距的一半）
+        float masterTransGap = mNormalPaint.getTextSize() * BILINGUAL_MASTER_TRANS_GAP_RATIO;
+        // 辅行 baseline 相对于"所属主行 baseline"的固定下移量（= 主辅间距，不再叠辅行字号——
+        // baseline 之间用"间距"足够，让辅行紧贴主行下方半间距处；这样已唱/正在唱/未唱
+        // 三类主副块的几何完全一致，不会出现"正在唱的间距正常、其它行间距挤在一起"的情况）。
+        float transTextSize = mTransNormalPaint.getTextSize();
+        float transBaselineOffset = transTextSize * 0.85f + masterTransGap;
 
         // 绘制当前行及前后行
         for (int i = 0; i < visibleLines; i++) {
@@ -684,68 +1389,69 @@ public class LrcView extends View {
             }
 
             LrcLine line = mLrcLines.get(actualIndex);
-            float y = startY + i * lineHeight;
+            float y = startY + slotOffsets[i];
+
+            // ===== xuameng 新增：双语模式下，辅行不单独占一个绘制槽位，
+            // 因为 targetLine/startLineIndex 都是主行下标，辅行不会被迭代到；
+            // 这里做一次保险：万一由于边界计算 iter 到了辅行下标，直接跳过，由其主行绘制 =====
+            if (line.isTranslation) {
+                continue;
+            }
+
+            // 统一预先判断"这一行（非当前行/延时高亮/普通）是否需要顺带画辅行"，
+            // 辅行的 Y 都用 y + transBaselineOffset（与当前行的辅行 Y 公式完全相同），
+            // 保证已唱/正在唱/未唱三类主副块的主辅间距完全一致。
+            boolean hasTrans = false;
+            LrcLine transLine = null;
+            if (mIsBilingual && line.isMaster && actualIndex + 1 < mLrcLines.size()) {
+                LrcLine next = mLrcLines.get(actualIndex + 1);
+                if (next.isTranslation && next.masterIndex == actualIndex) {
+                    hasTrans = true;
+                    transLine = next;
+                }
+            }
 
             if (actualIndex == mCurrentLine) {
-                // xuameng debug
-                Log.d("LrcView_xuameng", "onDraw currentLine=" + actualIndex + " time=" + line.time + " pos=" + mCurrentPosition + " words=" + (line.words != null ? line.words.size() : "null"));
-
-                if (line.words != null && !line.words.isEmpty()) {
-                    drawKaraokeLine(canvas, line, y);
+                // 当前行：卡拉OK高亮效果（普通行/逐字行统一走 drawKaraokeLine）
+                if (currentHasTranslation && currentTransLine != null) {
+                    // 双语主行：主行 baseline 就在槽位 y，辅行在 y + transBaselineOffset（固定下移）
+                    drawKaraokeLine(canvas, line, actualIndex, y);
+                    float transY = y + transBaselineOffset;
+                    drawKaraokeLine(canvas, currentTransLine, actualIndex, transY,
+                            mTransNormalPaint, mTransHighlightPaint);
                 } else {
-                    // 当前行：卡拉OK高亮效果
-                    float targetProgress = 0f;
-                    if (mCurrentPosition >= line.time) {
-                        long nextTime = (actualIndex + 1 < mLrcLines.size())
-                            ? mLrcLines.get(actualIndex + 1).time
-                            : line.time + 5000;
-                        long duration = nextTime - line.time;
-
-                       if (duration > 0) {
-                           targetProgress = (float) (mCurrentPosition - line.time) / duration;
-                           targetProgress = Math.max(0f, Math.min(1f, targetProgress));
-                       }
-                    }
-
-                    if (targetProgress > 0.99f) {
-                        targetProgress = 1.0f;
-                    }
-
-                    // 平滑滤波
-                    if (targetProgress >= 1.0f) {
-                        mSmoothedProgress = 1.0f;
-                    } else {
-                        mSmoothedProgress += (targetProgress - mSmoothedProgress) * 0.1f;
-                    }
-                    float progress = mSmoothedProgress;
-
-                    // 获取字体度量信息
-                    Paint.FontMetrics fm = mHighlightPaint.getFontMetrics();
-                    float textTop = y + fm.top;
-                    float textBottom = y + fm.bottom;
-
-                    // 绘制背景文本（完整）
-                    canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
-
-                    // 绘制高亮部分（渐变填充）
-                    float highlightWidth = line.width * progress;
-                    // 防止裁剪区域无效
-                    if (highlightWidth < 1f) {
-                        highlightWidth = 1f;
-                    }
-                    canvas.save();
-                    // 使用精确的裁剪区域
-                    canvas.clipRect(getWidth() / 2 - line.width / 2, 
-                                    textTop,
-                                    getWidth() / 2 - line.width / 2 + highlightWidth, 
-                                    textBottom);
-                    canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mHighlightPaint);
-                    canvas.restore();
+                    // 非双语当前行：按原逻辑绘制
+                    drawKaraokeLine(canvas, line, actualIndex, y);
                 }
             } else {
-                // 非当前行：普通显示
-                canvas.drawText(line.text, getWidth() / 2 - line.width / 2, y, mNormalPaint);
+                // 非当前行：普通显示；如果命中“前三行上一行延时高亮”且未到期，则整行画高亮
+                if (prevHighlightStillOn && actualIndex == mPrevHighlightLineIndex) {
+                    float x = getWidth() / 2 - line.width / 2;
+                    canvas.drawText(line.text, x, y, mHighlightPaint);
+                    // 如果该主行有对应辅行，辅行也画成高亮色（保持视觉一致，Y 与正在唱的辅行一致）
+                    if (hasTrans && transLine != null) {
+                        float tx = getWidth() / 2 - transLine.transWidth / 2;
+                        float ty = y + transBaselineOffset;
+                        canvas.drawText(transLine.text, tx, ty, mTransHighlightPaint);
+                    }
+                } else {
+                    float x = getWidth() / 2 - line.width / 2;
+                    canvas.drawText(line.text, x, y, mNormalPaint);
+                    // 双语非当前主行：辅行同样画在 y + transBaselineOffset（与正在唱的辅行坐标一致）
+                    if (hasTrans && transLine != null) {
+                        float tx = getWidth() / 2 - transLine.transWidth / 2;
+                        float ty = y + transBaselineOffset;
+                        canvas.drawText(transLine.text, tx, ty, mTransNormalPaint);
+                    }
+                }
             }
+        }
+
+        // xuameng 新增：延时高亮还在亮着时，需要持续请求下一帧重绘，保证到点准时熄灭变白；
+        // 否则上一行会一直保持黄字直到下一次进度更新触发 invalidate。
+        boolean needNextFrame = timeAdvancing || prevHighlightStillOn;
+        if (needNextFrame) {
+            postInvalidateOnAnimation();
         }
     }
 
